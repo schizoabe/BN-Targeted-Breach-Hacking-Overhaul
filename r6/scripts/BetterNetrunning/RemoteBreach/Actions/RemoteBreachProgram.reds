@@ -1,5 +1,16 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Actions
 
 import BetterNetrunning.*
@@ -13,6 +24,10 @@ import HackingExtensions.*
 
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
+
+
+
+
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
@@ -58,6 +73,7 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
             stateSystem.ClearCurrentDevice();
         }
 
+
         this.m_devicePS.FinalizeNetrunnerDive(HackingMinigameState.Succeeded);
     }
 
@@ -77,14 +93,20 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
 
         if IsDefined(devicePS) {
 
+
             devicePS.FinalizeNetrunnerDive(HackingMinigameState.Failed);
         }
+
 
         let stateSystem: ref<DeviceRemoteBreachStateSystem> = StateSystemUtils.GetDeviceStateSystem(gameInstance);
         if IsDefined(stateSystem) {
             stateSystem.ClearCurrentDevice();
         }
     }
+
+
+
+
 
     
     protected func GetHackedDevice() -> ref<ScriptableDeviceComponentPS> {
@@ -110,6 +132,11 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
     }
 }
 
+
+
+
+
+
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachEasyProgramAction extends RemoteBreachProgramActionBase {
 
@@ -124,6 +151,11 @@ public class RemoteBreachMediumProgramAction extends RemoteBreachProgramActionBa
 public class RemoteBreachHardProgramAction extends RemoteBreachProgramActionBase {
 
 }
+
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(PlayerPuppet)

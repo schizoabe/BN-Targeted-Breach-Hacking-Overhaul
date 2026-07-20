@@ -1,11 +1,18 @@
 ﻿
 
+
+
 module BetterNetrunning.Utils
 import BetterNetrunning.Logging.*
 
 import BetterNetrunning.Core.*
 
 public abstract class BonusDaemonUtils {
+
+
+
+
+
 
   public static func HasProgram(programs: array<TweakDBID>, programID: TweakDBID) -> Bool {
     let i: Int32 = 0;
@@ -17,6 +24,7 @@ public abstract class BonusDaemonUtils {
     }
     return false;
   }
+
 
   public static func IsDatamineDaemon(programID: TweakDBID) -> Bool {
     return Equals(programID, BNConstants.PROGRAM_DATAMINE_BASIC())

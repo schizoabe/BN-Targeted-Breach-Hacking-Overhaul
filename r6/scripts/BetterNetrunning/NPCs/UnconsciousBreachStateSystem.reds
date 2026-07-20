@@ -1,5 +1,24 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.NPCs
 
 import BetterNetrunning.Logging.*
@@ -20,6 +39,9 @@ public class UnconsciousBreachStateSystem extends ScriptableSystem {
   public func ClearNPC() -> Void {
     this.m_npcPS = null;
   }
+
+
+
 
   public func IsAvailableForDevice(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
     if !IsDefined(this.m_npcPS) { return false; }

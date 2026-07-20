@@ -1,8 +1,25 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Core
 
 import BetterNetrunning.Logging.*
+
 
 @addField(ScriptedPuppetPS)
 public let m_bnNPCIceHitsRequired: Int32;
@@ -10,8 +27,11 @@ public let m_bnNPCIceHitsRequired: Int32;
 @addField(ScriptedPuppetPS)
 public let m_bnNPCIceHitsApplied: Int32;
 
+
+
 @addField(ScriptedPuppetPS)
 public let m_bnNPCIceDefeated: Bool;
+
 
 public class NPCRemoteBreachStateSystem extends ScriptableSystem {
   private let m_currentNPC: wref<ScriptedPuppetPS>;

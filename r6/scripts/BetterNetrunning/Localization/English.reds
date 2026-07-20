@@ -1,5 +1,26 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Localization
 import Codeware.Localization.*
 
@@ -9,6 +30,7 @@ public class English extends ModLocalizationPackage {
     this.Text("Category-Controls", "Controls");
     this.Text("DisplayName-BetterNetrunning-BreachingHotkey", "Unconscious Breaching Hotkey");
     this.Text("Description-BetterNetrunning-BreachingHotkey", "Select which hotkey to assign Breach for unconscious NPCs.");
+
 
     this.Text("Category-Breaching", "Breaching");
     this.Text("DisplayName-BetterNetrunning-EnableClassicMode", "Enable Classic Mode");
@@ -23,6 +45,7 @@ public class English extends ModLocalizationPackage {
     this.Text("DisplayName-BetterNetrunning-QuickhackUnlockDurationHours", "Quickhack Unlock Duration (Hours)");
     this.Text("Description-BetterNetrunning-QuickhackUnlockDurationHours",
               "Sets how long quickhacks remain unlocked after a successful breach (in-game time). \nSet to 0: Once breached, targets remain unlocked indefinitely (no expiration). \nSet to 1+: Targets re-lock after the specified hours and require another breach.");
+
 
     this.Text("Category-RemoteBreach", "Remote Breach");
     this.Text("DisplayName-BetterNetrunning-RemoteBreachEnabledDevice", "Remote Breach - Basic Devices");
@@ -49,6 +72,7 @@ public class English extends ModLocalizationPackage {
     this.Text("Description-BetterNetrunning-RemoteBreachRAMCostPercent",
               "Percentage of max RAM consumed by Remote Breach (default: 50% = 1/2. 100% = full RAM). \nAllows you to balance the cost of remote breaching.");
 
+
     this.Text("Category-BreachPenalty", "Breach Failure Penalty");
     this.Text("DisplayName-BetterNetrunning-BreachFailurePenaltyEnabled", "Enable Breach Failure Penalty");
     this.Text("Description-BetterNetrunning-BreachFailurePenaltyEnabled",
@@ -70,10 +94,12 @@ public class English extends ModLocalizationPackage {
     this.Text("Description-BetterNetrunning-BreachPenaltyDurationMinutes",
               "Duration that breach failure penalties persist (in-game time).\nAP Breach: Jack In action locked on failed target\nNPC Breach: Breach action locked on failed NPC\nRemoteBreach: Breach Protocol quickhacks locked on entire connected network (if network-connected) or standalone/vehicle targets within range (if standalone)");
 
+
     this.Text("Category-AccessPoints", "Access Points");
     this.Text("DisplayName-BetterNetrunning-UnlockIfNoAccessPoint", "Unlock Networks Without Access Points");
     this.Text("Description-BetterNetrunning-UnlockIfNoAccessPoint",
               "If TRUE, targets without access points are always unlocked (no breach required). \nIf FALSE, standalone targets are controlled by Radial Unlock System \n(auto-unlocks within breach radius from breached network's center. Radius configurable in Radial Breach settings).");
+
 
     this.Text("Category-UnlockedQuickhacks", "Always Unlocked Quickhacks");
     this.Text("DisplayName-BetterNetrunning-AlwaysAllowPing", "Ping");
@@ -106,9 +132,11 @@ public class English extends ModLocalizationPackage {
     this.Text("DisplayName-BetterNetrunning-AlwaysNPCsUltimate", "NPCs - Ultimate");
     this.Text("Description-BetterNetrunning-AlwaysNPCsUltimate", "If true, ultimate NPC quickhacks are always available on unbreached networks.");
 
+
     this.Text("Category-Progression", "Progression");
     this.Text("DisplayName-BetterNetrunning-ProgressionRequireAll", "Require All");
     this.Text("Description-BetterNetrunning-ProgressionRequireAll", "If true, all progression categories (that are not disabled) must be met to unlock a type of hack. If false, at least one must be met.");
+
 
     this.Text("Category-BetterNetrunning-ProgressionCyberdeck", "Progression - Cyberdeck Quality");
     this.Text("DisplayName-BetterNetrunning-ProgressionCyberdeckEnabled", "Enable Cyberdeck Progression");
@@ -147,6 +175,7 @@ public class English extends ModLocalizationPackage {
     this.Text("DisplayValues-BetterNetrunning-cyberdeckQuality-LegendaryPlus", "Tier 5+");
     this.Text("DisplayValues-BetterNetrunning-cyberdeckQuality-LegendaryPlusPlus", "Tier 5++");
 
+
     this.Text("Category-BetterNetrunning-ProgressionIntelligence", "Progression - Intelligence");
     this.Text("DisplayName-BetterNetrunning-ProgressionIntelligenceEnabled", "Enable Intelligence Progression");
     this.Text("Description-BetterNetrunning-ProgressionIntelligenceEnabled", "If enabled, Intelligence attribute requirements will be enforced for accessing quickhacks. Disable to ignore Intelligence restrictions.");
@@ -172,6 +201,7 @@ public class English extends ModLocalizationPackage {
     this.Text("DisplayName-BetterNetrunning-ProgressionIntelligenceNPCsUltimate", "NPCs - Ultimate");
     this.Text("Description-BetterNetrunning-ProgressionIntelligenceNPCsUltimate", "Minimum intelligence to access ultimate quickhacks on NPCs.");
 
+
     this.Text("Category-BetterNetrunning-ProgressionEnemyRarity", "Progression - Enemy Tier Difference");
     this.Text("DisplayName-BetterNetrunning-ProgressionEnemyRarityEnabled", "Enable Enemy Tier Progression");
     this.Text("Description-BetterNetrunning-ProgressionEnemyRarityEnabled", "When enabled, enemy tier requirements are applied to quickhack access. Disable to ignore enemy tier restrictions.");
@@ -196,6 +226,7 @@ public class English extends ModLocalizationPackage {
     this.Text("DisplayValues-BetterNetrunning-NPCRarity-Elite", "Elite");
     this.Text("DisplayValues-BetterNetrunning-NPCRarity-Boss", "Boss");
     this.Text("DisplayValues-BetterNetrunning-NPCRarity-MaxTac", "MaxTac");
+
 
     this.Text("Category-Debug", "Debug");
     this.Text("DisplayName-BetterNetrunning-EnableDebugLog", "Enable Debug Logging");

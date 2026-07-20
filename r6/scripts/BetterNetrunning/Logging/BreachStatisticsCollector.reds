@@ -1,5 +1,20 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Logging
 
 import BetterNetrunning.*
@@ -10,6 +25,9 @@ import BetterNetrunning.Logging.*
 
 public abstract class BreachStatisticsCollector {
 
+
+
+
     
     public static func CollectNetworkDeviceStats(
         networkDevices: array<ref<DeviceComponentPS>>,
@@ -19,13 +37,16 @@ public abstract class BreachStatisticsCollector {
 
         stats.networkDeviceCount = ArraySize(networkDevices);
 
+
         if ArraySize(networkDevices) == 0 {
             return;
         }
 
+
         let i: Int32 = 0;
         while i < ArraySize(networkDevices) {
             let device: ref<DeviceComponentPS> = networkDevices[i];
+
 
             if IsDefined(device) {
                 BreachStatisticsCollector.ProcessNetworkDevice(device, unlockFlags, stats);
@@ -34,6 +55,10 @@ public abstract class BreachStatisticsCollector {
             i += 1;
         }
     }
+
+
+
+
 
     
     private static func ProcessNetworkDevice(
@@ -44,7 +69,9 @@ public abstract class BreachStatisticsCollector {
 
         let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
 
+
         let shouldUnlock: Bool = DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags);
+
 
         if DeviceTypeUtils.IsCameraDevice(device) {
             stats.cameraCount += 1;
@@ -76,12 +103,17 @@ public abstract class BreachStatisticsCollector {
             }
         }
 
+
         if shouldUnlock {
             stats.devicesUnlocked += 1;
         } else {
             stats.devicesSkipped += 1;
         }
     }
+
+
+
+
 
     
     public static func CollectDisplayedDaemons(
@@ -111,6 +143,7 @@ public abstract class BreachStatisticsCollector {
         while i < ArraySize(minigamePrograms) {
             let programID: TweakDBID = minigamePrograms[i];
 
+
             if BonusDaemonUtils.IsDatamineDaemon(programID) {
                 ArrayPush(stats.executedBonusDaemons, programID);
                 i += 1;
@@ -124,6 +157,13 @@ public abstract class BreachStatisticsCollector {
         }
     }
 }
+
+
+
+
+
+
+
 
 public class DisplayedDaemonsStateSystem extends ScriptableSystem {
     private let m_displayedDaemons: array<TweakDBID>;

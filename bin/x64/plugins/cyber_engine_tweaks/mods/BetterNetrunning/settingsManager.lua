@@ -1,6 +1,11 @@
 ﻿
 
+
+
+
+
 local SettingsManager = {}
+
 
 local defaults = {
 
@@ -68,11 +73,14 @@ local defaults = {
     DebugLogLevel = 2  -- 0=ERROR, 1=WARNING, 2=INFO (default), 3=DEBUG, 4=TRACE
 }
 
+
 local current = {}
+
 
 for k, v in pairs(defaults) do
     current[k] = v
 end
+
 
 function SettingsManager.Load()
     local file = io.open("settings.json", "r")
@@ -97,6 +105,7 @@ function SettingsManager.Load()
     return false
 end
 
+
 function SettingsManager.Save()
     local validJson, contents = pcall(function() return json.encode(current) end)
 
@@ -111,17 +120,21 @@ function SettingsManager.Save()
     return false
 end
 
+
 function SettingsManager.Get(key)
     return current[key]
 end
+
 
 function SettingsManager.Set(key, value)
     current[key] = value
 end
 
+
 function SettingsManager.GetAll()
     return current
 end
+
 
 function SettingsManager.OverrideConfigFunctions()
 

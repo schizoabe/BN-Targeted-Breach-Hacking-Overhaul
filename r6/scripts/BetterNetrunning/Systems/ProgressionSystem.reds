@@ -1,8 +1,26 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Systems
 
 import BetterNetrunningConfig.*
+
 
 public func CyberdeckQualityFromConfigValue(value: Int32) -> gamedataQuality {
   switch(value) {
@@ -32,6 +50,7 @@ public func CyberdeckQualityFromConfigValue(value: Int32) -> gamedataQuality {
   return gamedataQuality.Invalid;
 }
 
+
 public func CyberdeckQualityToRank(quality: gamedataQuality) -> Int32 {
   switch(quality) {
     case gamedataQuality.Common:
@@ -60,6 +79,7 @@ public func CyberdeckQualityToRank(quality: gamedataQuality) -> Int32 {
   return 0;
 }
 
+
 public func CyberdeckConditionMet(gameInstance: GameInstance, value: Int32) -> Bool {
   let systemReplacementID: ItemID = EquipmentSystem.GetData(GetPlayer(gameInstance)).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
   let itemRecord: wref<Item_Record> = RPGManager.GetItemRecord(systemReplacementID);
@@ -68,11 +88,21 @@ public func CyberdeckConditionMet(gameInstance: GameInstance, value: Int32) -> B
   return CyberdeckQualityToRank(playerCyberdeckQuality) >= CyberdeckQualityToRank(minQuality);
 }
 
+
+
+
+
+
 public func IntelligenceConditionMet(gameInstance: GameInstance, value: Int32) -> Bool {
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(gameInstance);
   let playerIntelligence: Int32 = Cast(statsSystem.GetStatValue(Cast(GetPlayer(gameInstance).GetEntityID()), gamedataStatType.Intelligence));
   return playerIntelligence >= value;
 }
+
+
+
+
+
 
 public func NPCRarityToRank(rarity: gamedataNPCRarity) -> Int32 {
   switch rarity {
@@ -96,6 +126,7 @@ public func NPCRarityToRank(rarity: gamedataNPCRarity) -> Int32 {
   return 0;
 }
 
+
 public func EnemyRarityConditionMet(gameInstance: GameInstance, enemy: wref<Entity>, value: Int32) -> Bool {
   let puppet: wref<ScriptedPuppet> = enemy as ScriptedPuppet;
   if !IsDefined(puppet) {
@@ -104,6 +135,11 @@ public func EnemyRarityConditionMet(gameInstance: GameInstance, enemy: wref<Enti
   let rarity: gamedataNPCRarity = puppet.GetNPCRarity();
   return NPCRarityToRank(rarity) <= value;
 }
+
+
+
+
+
 
 public func ShouldUnlockHackNPC(gameInstance: GameInstance, enemy: wref<Entity>, alwaysAllow: Bool, cyberdeckValue: Int32, intelligenceValue: Int32, enemyRarityValue: Int32) -> Bool {
   if alwaysAllow {
@@ -129,6 +165,7 @@ public func ShouldUnlockHackNPC(gameInstance: GameInstance, enemy: wref<Entity>,
     return (useConditionCyberdeck && conditionCyberdeck) || (useConditionIntelligence && conditionIntelligence) || (useConditionEnemyRarity && conditionEnemyRarity);
   }
 }
+
 
 public func ShouldUnlockHackDevice(gameInstance: GameInstance, alwaysAllow: Bool, cyberdeckValue: Int32, intelligenceValue: Int32) -> Bool {
   if alwaysAllow {

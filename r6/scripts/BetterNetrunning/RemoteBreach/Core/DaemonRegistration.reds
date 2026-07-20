@@ -1,5 +1,22 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Core
 
 import BetterNetrunning.*
@@ -11,6 +28,10 @@ import HackingExtensions.*
 
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 
@@ -33,6 +54,8 @@ private func RegisterBetterNetrunningDaemons() -> Void {
         return;
     }
 
+
+
     let unlockBasicAction: ref<DeviceDaemonAction> = new DeviceDaemonAction();
     unlockBasicAction.SetDaemonType(DaemonTypes.Basic());
     hackingSystem.AddProgramAction(BNConstants.PROGRAM_ACTION_BN_UNLOCK_BASIC(), unlockBasicAction);
@@ -49,6 +72,12 @@ private func RegisterBetterNetrunningDaemons() -> Void {
     unlockTurretAction.SetDaemonType(DaemonTypes.Turret());
     hackingSystem.AddProgramAction(BNConstants.PROGRAM_ACTION_BN_UNLOCK_TURRET(), unlockTurretAction);
 
+
+
+
+
+
+
     let rbIcepickV1: ref<RemoteBreachIcepickV1Action> = new RemoteBreachIcepickV1Action();
     hackingSystem.AddProgramAction(BNConstants.PROGRAM_ACTION_BN_RB_ICEPICK_V1(), rbIcepickV1);
 
@@ -57,6 +86,9 @@ private func RegisterBetterNetrunningDaemons() -> Void {
 
     let rbIcepickV3: ref<RemoteBreachIcepickV3Action> = new RemoteBreachIcepickV3Action();
     hackingSystem.AddProgramAction(BNConstants.PROGRAM_ACTION_BN_RB_ICEPICK_V3(), rbIcepickV3);
+
+
+
 
     let vehicleUnlockBasicAction: ref<DeviceDaemonAction> = new DeviceDaemonAction();
     vehicleUnlockBasicAction.SetDaemonType(DaemonTypes.Basic());

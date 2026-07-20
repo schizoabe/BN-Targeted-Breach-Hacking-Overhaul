@@ -1,5 +1,23 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Core
 
 import BetterNetrunning.*
@@ -21,6 +39,19 @@ import HackingExtensions.*
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.Programs.*
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 public abstract class DaemonTypes {
     public static func Basic() -> String { return TDBID.ToStringDEBUG(BNConstants.PROGRAM_UNLOCK_QUICKHACKS()); }
     public static func NPC() -> String { return TDBID.ToStringDEBUG(BNConstants.PROGRAM_UNLOCK_NPC_QUICKHACKS()); }
@@ -30,6 +61,8 @@ public abstract class DaemonTypes {
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class StateSystemUtils {
+
+
 
     public static func GetHeatScaledICEHits(gi: GameInstance) -> Int32 {
         let c: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gi);
@@ -62,7 +95,7 @@ public abstract class StateSystemUtils {
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class RemoteBreachRAMUtils {
-
+  
   public static func CheckAndLockRemoteBreachRAM(
     actions: script_ref<array<ref<DeviceAction>>>
   ) -> Void {
@@ -93,7 +126,7 @@ public abstract class RemoteBreachRAMUtils {
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class ProgramIDUtils {
-
+    
     public static func ApplyProgramToSharedPS(programID: TweakDBID, sharedPS: ref<SharedGameplayPS>, gameInstance: GameInstance) -> Void {
         let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
 
@@ -135,9 +168,24 @@ public abstract class ProgramIDUtils {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public abstract class RemoteBreachUtils {
-
+    
     public static func UnlockNearbyNetworkDevices(sourceEntity: wref<GameObject>, gameInstance: GameInstance, unlockBasic: Bool, unlockNPCs: Bool, unlockCameras: Bool, unlockTurrets: Bool, logPrefix: String) -> RadialUnlockResult {
         let result: RadialUnlockResult;
 
@@ -171,6 +219,7 @@ public abstract class RemoteBreachUtils {
 
         return result;
     }
+
 
     private static func SetupDeviceTargeting(sourceEntity: wref<GameObject>, gameInstance: GameInstance) -> TargetingSetup {
         let setup: TargetingSetup;
@@ -223,15 +272,18 @@ public abstract class RemoteBreachUtils {
             return result;
         }
 
+
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         if ArraySize(apControllers) == 0 {
             return result;  // Not network-connected
         }
 
+
         let distance: Float = Vector4.Distance(setup.sourcePos, entity.GetWorldPosition());
         if distance > setup.breachRadius {
             return result;
         }
+
 
         let isCamera: Bool = DeviceTypeUtils.IsCameraDevice(devicePS);
         let isTurret: Bool = DeviceTypeUtils.IsTurretDevice(devicePS);
@@ -247,7 +299,9 @@ public abstract class RemoteBreachUtils {
             result.basicCount = 1;
         }
 
+
         let unlocked: Bool = RemoteBreachUtils.UnlockDeviceByType(devicePS, flags);
+
 
         if unlocked {
             if isCamera {
@@ -268,9 +322,11 @@ public abstract class RemoteBreachUtils {
     private static func UnlockDeviceByType(devicePS: ref<ScriptableDeviceComponentPS>, flags: BreachUnlockFlags) -> Bool {
         let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(devicePS);
 
+
         if !DeviceTypeUtils.ShouldUnlockByFlags(TargetType, flags) {
             return false;  // Device type not allowed by flags
         }
+
 
         DeviceUnlockUtils.ApplyTimestampUnlock(
             devicePS,
@@ -308,6 +364,11 @@ public abstract class ComputerRemoteBreachUtils {
         }
     }
 
+
+
+
+
+
     private static func ProcessAccessPointDevices(apPS: ref<AccessPointControllerPS>, flags: BreachUnlockFlags) -> Void {
         if !IsDefined(apPS) {
             return;
@@ -325,6 +386,7 @@ public abstract class ComputerRemoteBreachUtils {
         }
     }
 
+
     private static func CreateBreachEvent(gameInstance: GameInstance, flags: BreachUnlockFlags) -> ref<SetBreachedSubnet> {
         let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
         let event: ref<SetBreachedSubnet> = new SetBreachedSubnet();
@@ -334,6 +396,7 @@ public abstract class ComputerRemoteBreachUtils {
         event.unlockTimestampTurrets = flags.unlockTurrets ? currentTime : 0.0;
         return event;
     }
+
 
     private static func ProcessNetworkConnectedDevice(
         device: ref<DeviceComponentPS>,
@@ -345,7 +408,9 @@ public abstract class ComputerRemoteBreachUtils {
             return;
         }
 
+
         apPS.QueuePSEvent(device, setBreachedEvent);
+
 
         let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
         let shouldUnlock: Bool = ComputerRemoteBreachUtils.ShouldUnlockDeviceType(TargetType, flags);
@@ -354,6 +419,7 @@ public abstract class ComputerRemoteBreachUtils {
             apPS.QueuePSEvent(device, apPS.ActionSetExposeQuickHacks());
         }
     }
+
 
     private static func ShouldUnlockDeviceType(TargetType: TargetType, flags: BreachUnlockFlags) -> Bool {
         switch TargetType {
@@ -371,8 +437,15 @@ public abstract class ComputerRemoteBreachUtils {
     }
 }
 
-public abstract class MinigameIDHelper {
 
+
+
+
+
+
+
+public abstract class MinigameIDHelper {
+    
     public static func GetMinigameID(targetType: MinigameTargetType, difficulty: GameplayDifficulty, opt devicePS: ref<ScriptableDeviceComponentPS>) -> TweakDBID {
         switch targetType {
             case MinigameTargetType.Computer:
@@ -387,6 +460,7 @@ public abstract class MinigameIDHelper {
         }
     }
 
+
     private static func GetComputerMinigameID(difficulty: GameplayDifficulty) -> TweakDBID {
         switch difficulty {
             case GameplayDifficulty.Easy:
@@ -397,6 +471,10 @@ public abstract class MinigameIDHelper {
                 return BNConstants.MINIGAME_COMPUTER_BREACH_MEDIUM();
         }
     }
+
+
+
+
 
     private static func GetDeviceMinigameID(difficulty: GameplayDifficulty, devicePS: ref<ScriptableDeviceComponentPS>) -> TweakDBID {
 
@@ -410,6 +488,7 @@ public abstract class MinigameIDHelper {
             minigameBase = "DeviceRemoteBreach";
         }
 
+
         switch difficulty {
             case GameplayDifficulty.Easy:
                 return TDBID.Create("Minigame." + minigameBase + "Easy");
@@ -420,11 +499,13 @@ public abstract class MinigameIDHelper {
         }
     }
 
+
     private static func GetVehicleMinigameID(difficulty: GameplayDifficulty) -> TweakDBID {
 
         return BNConstants.MINIGAME_VEHICLE_BREACH();
     }
 }
+
 
 enum GameplayDifficulty {
     Easy = 0,
@@ -432,27 +513,41 @@ enum GameplayDifficulty {
     Hard = 2
 }
 
+
 enum MinigameTargetType {
     Computer = 0,
     Device = 1,
     Vehicle = 2
 }
 
+
+
+
+
+
+
+
 public abstract class RemoteBreachActionHelper {
+
 
     public static func Initialize(action: ref<CustomAccessBreach>, devicePS: ref<ScriptableDeviceComponentPS>, actionName: CName) -> Void {
         action.clearanceLevel = DefaultActionsParametersHolder.GetInteractiveClearance();
         action.SetUp(devicePS);
         action.AddDeviceName(devicePS.GetDeviceName());
 
+
+
         action.SetObjectActionID(BNConstants.DEVICE_ACTION_REMOTE_BREACH());
 
         action.CreateInteraction();
 
+
         action.actionName = actionName;
+
 
         RemoteBreachActionHelper.SetDynamicRAMCost(action, devicePS);
     }
+
 
     private static func SetDynamicRAMCost(action: ref<CustomAccessBreach>, devicePS: ref<ScriptableDeviceComponentPS>) -> Void {
         let player: ref<PlayerPuppet> = GetPlayer(devicePS.GetGameInstance());
@@ -469,19 +564,24 @@ public abstract class RemoteBreachActionHelper {
 
         let playerID: StatsObjectID = Cast<StatsObjectID>(player.GetEntityID());
 
+
         let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(devicePS.GetGameInstance());
 
         let currentRAM: Float = statPoolSystem.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
         let maxRAMCap: Float = statsSystem.GetStatValue(playerID, gamedataStatType.Memory);
 
+
         let costPercent: Int32 = BetterNetrunningSettings.RemoteBreachRAMCostPercent();
         let ramCost: Float = maxRAMCap * (Cast<Float>(costPercent) / 100.0);
 
+
         let roundedCost: Int32 = Cast<Int32>(ramCost + 0.5);
+
 
         if roundedCost < 1 {
             roundedCost = 1;
         }
+
 
         let remoteBreachAction: ref<BaseRemoteBreachAction> = action as BaseRemoteBreachAction;
         if IsDefined(remoteBreachAction) {
@@ -489,8 +589,11 @@ public abstract class RemoteBreachActionHelper {
         }
     }
 
+
     public static func SetMinigameDefinition(action: ref<CustomAccessBreach>, targetType: MinigameTargetType, difficulty: GameplayDifficulty, devicePS: ref<ScriptableDeviceComponentPS>) -> Void {
         let minigameID: TweakDBID = MinigameIDHelper.GetMinigameID(targetType, difficulty, devicePS);
+
+
 
         action.SetProperties(
             devicePS.GetDeviceName(),  // networkName
@@ -502,11 +605,17 @@ public abstract class RemoteBreachActionHelper {
             devicePS                   // targetHack
         );
 
+
+
     }
+
+
+
 
     public static func GetCurrentDifficulty() -> GameplayDifficulty {
         return GameplayDifficulty.Medium;
     }
+
 
     public static func RemoveTweakDBRemoteBreach(actions: script_ref<array<ref<DeviceAction>>>, actionName: CName) -> Void {
         let actionsArray: array<ref<DeviceAction>> = Deref(actions);
@@ -524,8 +633,16 @@ public abstract class RemoteBreachActionHelper {
     }
 }
 
+
+
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
+
+
 
     public func Execute() -> Void {
         BNInfo("RemoteBreachSucceeded", "Execute: START");
@@ -544,10 +661,16 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         BNInfo("RemoteBreachSucceeded", "Execute: DONE");
     }
 
+
+
+
     private func GetActivePrograms() -> array<TweakDBID> {
         let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(GetGameInstance()).Get(GetAllBlackboardDefs().HackingMinigame);
         return FromVariant<array<TweakDBID>>(minigameBB.GetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms));
     }
+
+
+
 
     private func RetrieveTargetDevice() -> wref<ScriptableDeviceComponentPS> {
 
@@ -558,8 +681,10 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
             }
         }
 
+
         return this.TryGetDeviceFromStateSystems();
     }
+
 
     private func TryGetDeviceFromHackInstanceSettings() -> wref<ScriptableDeviceComponentPS> {
 
@@ -567,6 +692,7 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         if IsDefined(device) {
             return device;
         }
+
 
         let targetObj: ref<GameObject> = this.hackInstanceSettings.hackedTarget as GameObject;
         if !IsDefined(targetObj) {
@@ -582,6 +708,8 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         return device;
     }
 
+
+
     private func TryGetDeviceFromStateSystems() -> wref<ScriptableDeviceComponentPS> {
         let deviceStateSystem: ref<DeviceRemoteBreachStateSystem> = GameInstance.GetScriptableSystemsContainer(GetGameInstance()).Get(BNConstants.CLASS_DEVICE_REMOTE_BREACH_STATE_SYSTEM()) as DeviceRemoteBreachStateSystem;
         if IsDefined(deviceStateSystem) {
@@ -590,6 +718,9 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         return null;
     }
 
+
+
+
     private func ExecuteProgramsAndRewardsWithStats(activePrograms: array<TweakDBID>, device: wref<ScriptableDeviceComponentPS>) -> Void {
 
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: START — device=" + device.GetDeviceName());
@@ -597,12 +728,14 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         stats.minigameSuccess = true;
         stats.programsInjected = ArraySize(activePrograms);
 
+
         let unlockFlags: BreachUnlockFlags = DaemonFilterUtils.ExtractUnlockFlags(activePrograms);
         stats.unlockBasic = unlockFlags.unlockBasic;
         stats.unlockCameras = unlockFlags.unlockCameras;
         stats.unlockTurrets = unlockFlags.unlockTurrets;
         stats.unlockNPCs = unlockFlags.unlockNPCs;
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: unlockFlags — basic=" + ToString(unlockFlags.unlockBasic) + " cameras=" + ToString(unlockFlags.unlockCameras) + " turrets=" + ToString(unlockFlags.unlockTurrets) + " npcs=" + ToString(unlockFlags.unlockNPCs));
+
 
         let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(GetGameInstance());
         let stateSystem: ref<DisplayedDaemonsStateSystem> = container.Get(BNConstants.CLASS_DISPLAYED_DAEMONS_STATE_SYSTEM()) as DisplayedDaemonsStateSystem;
@@ -615,9 +748,12 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
             displayedDaemons = activePrograms;
         }
 
+
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: collecting daemon stats");
         BreachStatisticsCollector.CollectDisplayedDaemons(displayedDaemons, stats);  // All daemons in minigame
         BreachStatisticsCollector.CollectExecutedDaemons(activePrograms, stats);     // Successfully completed daemons
+
+
 
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: resolving network devices");
         let networkDevices: array<ref<DeviceComponentPS>>;
@@ -646,19 +782,23 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         }
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: networkDevices=" + ToString(ArraySize(networkDevices)));
 
+
         BreachStatisticsCollector.CollectNetworkDeviceStats(networkDevices, unlockFlags, stats);
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: CollectNetworkDeviceStats done");
 
         let deviceEntity: ref<Device> = GameInstance.FindEntityByID(GetGameInstance(), PersistentID.ExtractEntityID(device.GetID())) as Device;
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: deviceEntity=" + (IsDefined(deviceEntity) ? "ok" : "NULL — entity may have streamed out"));
 
+
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: calling GiveReward — entityID=" + ToString(device.GetMyEntityID()));
         RPGManager.GiveReward(GetGameInstance(), t"RPGActionRewards.Hacking", Cast<StatsObjectID>(device.GetMyEntityID()));
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: GiveReward done");
 
+
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: calling DisableJackInInteraction");
         DeviceInteractionUtils.DisableJackInInteractionForAccessPoint(device);
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: DisableJackInInteraction done");
+
 
         stats.Finalize();
         LogBreachSummary(stats);
@@ -666,6 +806,8 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
     }
 
 }// -----------------------------------------------------------------------------
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public class OnRemoteBreachFailed extends OnCustomHackingFailed {
@@ -677,8 +819,10 @@ public class OnRemoteBreachFailed extends OnCustomHackingFailed {
             return;
         }
 
+
         device.FinalizeNetrunnerDive(HackingMinigameState.Failed);
     }
+
 
     private func RetrieveTargetDevice() -> wref<ScriptableDeviceComponentPS> {
         if IsDefined(this.hackInstanceSettings) && IsDefined(this.hackInstanceSettings.hackedTarget) {
@@ -696,6 +840,7 @@ public class OnRemoteBreachFailed extends OnCustomHackingFailed {
         if IsDefined(device) {
             return device;
         }
+
 
         let targetObj: ref<GameObject> = this.hackInstanceSettings.hackedTarget as GameObject;
         if !IsDefined(targetObj) {
@@ -720,12 +865,25 @@ public class OnRemoteBreachFailed extends OnCustomHackingFailed {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
 
   public func Execute() -> Void {
     let gi: GameInstance = GetGameInstance();
     let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gi);
+
 
     let devicePS: ref<ScriptableDeviceComponentPS>;
     let stateSystem: ref<DeviceRemoteBreachStateSystem> =
@@ -738,6 +896,8 @@ public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
       container.Get(BNConstants.CLASS_COUNTER_BREACH_SYSTEM()) as CounterBreachSystem;
 
     if IsDefined(devicePS) {
+
+
 
       let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi)
         .Get(GetAllBlackboardDefs().HackingMinigame);
@@ -760,6 +920,7 @@ public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
       let ms: ref<MarkingStateSystem> =
         container.Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
       let heat: Float = IsDefined(ms) ? ms.GetSessionHeat() : 0.0;
+
 
       if IsDefined(ms) && ms.GetDisarmICETimer() > 0.0 && state.hitsRequired > 0 {
         state.hitsRequired = 1;
@@ -790,10 +951,12 @@ public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
 
         DeviceUnlockUtils.ApplyTimestampUnlock(devicePS, gi, true, unlockNPC, unlockCamera, unlockTurret);
 
+
         let persistency: ref<GamePersistencySystem> = GameInstance.GetPersistencySystem(gi);
         let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
         exposeEvt.isRemote = true;
         persistency.QueuePSEvent(devicePS.GetID(), devicePS.GetClassName(), exposeEvt);
+
 
         let deviceEntity: wref<GameObject> = devicePS.GetOwnerEntityWeak() as GameObject;
         if IsDefined(deviceEntity) && IsDefined(stateSystem) {
@@ -816,8 +979,25 @@ public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
   }
 }
 
-public abstract class RemoteBreachLockUtils {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public abstract class RemoteBreachLockUtils {
+  
   public static func RemoveAllRemoteBreachActions(
     outActions: script_ref<array<ref<DeviceAction>>>
   ) -> Void {
@@ -844,14 +1024,17 @@ public abstract class RemoteBreachLockUtils {
   ) -> String {
     canExecute = true;
 
+
     if !action.CanPayCost(player) {
       canExecute = false;
       return BNConstants.LOCKEY_RAM_INSUFFICIENT();
     }
 
+
     if !BetterNetrunningSettings.BreachFailurePenaltyEnabled() {
       return "";
     }
+
 
     if RemoteBreachLockSystem.IsRemoteBreachLockedByTimestamp(devicePS, devicePS.GetGameInstance()) {
       canExecute = false;

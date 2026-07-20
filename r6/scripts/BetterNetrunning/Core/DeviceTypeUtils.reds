@@ -1,8 +1,27 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Core
 
 import BetterNetrunning.Integration.*
+
 
 public enum TargetType {
   NPC = 0,
@@ -11,11 +30,13 @@ public enum TargetType {
   Basic = 3
 }
 
+
 public struct DeviceBreachInfo {
   public let isCamera: Bool;
   public let isTurret: Bool;
   public let isStandaloneDevice: Bool;
 }
+
 
 public struct DevicePermissions {
   public let allowCameras: Bool;
@@ -24,6 +45,7 @@ public struct DevicePermissions {
   public let allowPing: Bool;
   public let allowDistraction: Bool;
 }
+
 
 public struct NPCHackPermissions {
   public let isBreached: Bool;
@@ -35,6 +57,7 @@ public struct NPCHackPermissions {
   public let allowWhistle: Bool;
 }
 
+
 public struct BreachUnlockFlags {
   public let unlockBasic: Bool;
   public let unlockNPCs: Bool;
@@ -44,6 +67,10 @@ public struct BreachUnlockFlags {
 
 public abstract class DeviceTypeUtils {
 
+
+
+
+
   
   public static func GetDeviceType(device: ref<DeviceComponentPS>) -> TargetType {
 
@@ -51,11 +78,14 @@ public abstract class DeviceTypeUtils {
       return TargetType.NPC;
     }
 
+
     let entity: wref<GameObject> = device.GetOwnerEntityWeak() as GameObject;
+
 
     if IsDefined(entity as SurveillanceCamera) {
       return TargetType.Camera;
     }
+
 
     if IsDefined(entity as SecurityTurret) {
       return TargetType.Turret;
@@ -98,6 +128,10 @@ public abstract class DeviceTypeUtils {
     return Equals(DeviceTypeUtils.GetDeviceType(device), TargetType.Basic);
   }
 
+
+
+
+
   
   public static func IsBreached(TargetType: TargetType, sharedPS: ref<SharedGameplayPS>) -> Bool {
     if !IsDefined(sharedPS) {
@@ -116,6 +150,8 @@ public abstract class DeviceTypeUtils {
     }
   }
 
+
+
   
   public static func ShouldUnlockByFlags(TargetType: TargetType, flags: BreachUnlockFlags) -> Bool {
     switch TargetType {
@@ -129,6 +165,9 @@ public abstract class DeviceTypeUtils {
         return flags.unlockBasic;
     }
   }
+
+
+
 
   public static func IsNPC(TargetType: TargetType) -> Bool {
     return Equals(TargetType, TargetType.NPC);
@@ -145,6 +184,9 @@ public abstract class DeviceTypeUtils {
   public static func IsBasicDevice(TargetType: TargetType) -> Bool {
     return Equals(TargetType, TargetType.Basic);
   }
+
+
+
 
   public static func DeviceTypeToString(TargetType: TargetType) -> String {
     switch TargetType {

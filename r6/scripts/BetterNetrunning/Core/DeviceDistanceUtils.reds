@@ -1,5 +1,22 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Core
 
 public abstract class DeviceDistanceUtils {
@@ -30,10 +47,12 @@ public abstract class DeviceDistanceUtils {
       return Vector4(-999999.0, -999999.0, -999999.0, 1.0);
     }
 
+
     let deviceEntity: wref<GameObject> = device.GetOwnerEntityWeak() as GameObject;
     if IsDefined(deviceEntity) {
       return deviceEntity.GetWorldPosition();
     }
+
 
     let entityID: EntityID = PersistentID.ExtractEntityID(device.GetID());
     let deviceObject: ref<Device> = GameInstance.FindEntityByID(gameInstance, entityID) as Device;
@@ -41,8 +60,12 @@ public abstract class DeviceDistanceUtils {
       return deviceObject.GetWorldPosition();
     }
 
+
     return Vector4(-999999.0, -999999.0, -999999.0, 1.0);
   }
+
+
+
 
   public static func IsDeviceWithinRadius(
     device: ref<DeviceComponentPS>,
@@ -51,6 +74,7 @@ public abstract class DeviceDistanceUtils {
     gameInstance: GameInstance
   ) -> Bool {
     let devicePosition: Vector4 = DeviceDistanceUtils.GetDevicePosition(device, gameInstance);
+
 
     if devicePosition.X <= -999000.0 {
       return true; // Fallback: allow if position unavailable

@@ -1,5 +1,23 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Core
 import BetterNetrunning.Logging.*
 
@@ -16,9 +34,15 @@ import HackingExtensions.*
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
 
+
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
     public let m_calculatedRAMCost: Int32; // Dynamic RAM cost
+
 
     public let m_isICEBoard: Bool;
 
@@ -26,6 +50,9 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
     public func SetProperties(networkName: String, npcCount: Int32, attemptsCount: Int32, isRemote: Bool, isSuicide: Bool, minigameDefinition: TweakDBID, targetHack: ref<IScriptable>) -> Void {
 
         super.SetProperties(networkName, npcCount, attemptsCount, isRemote, isSuicide, minigameDefinition, targetHack);
+
+
+
 
     }
 
@@ -37,14 +64,20 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
             DebugUtils.LogRemoteBreachTarget(devicePS, "RemoteBreach");
         }
 
+
+
         let npcSS: ref<NPCRemoteBreachStateSystem> =
           GameInstance.GetScriptableSystemsContainer(gameInstance)
             .Get(BNConstants.CLASS_NPC_REMOTE_BREACH_STATE_SYSTEM()) as NPCRemoteBreachStateSystem;
         if IsDefined(npcSS) { npcSS.ClearCurrentNPC(); }
 
+
+
         this.SetStateSystemTarget(gameInstance);
 
+
         let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
+
 
         let allProgramsRecord: array<wref<Program_Record>>;
         let minigameRecord: ref<Minigame_Def_Record> = TweakDBInterface.GetMinigame_DefRecord(this.m_minigameDefinition);
@@ -71,14 +104,18 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
             BNError("RemoteBreach", "Failed to get Minigame_Def_Record for: " + TDBID.ToStringDEBUG(this.m_minigameDefinition));
         }
 
+
         let customHackSystem: ref<CustomHackingSystem> = container.Get(BNConstants.CLASS_CUSTOM_HACKING_SYSTEM()) as CustomHackingSystem;
 
         if IsDefined(customHackSystem) {
 
             let emptyData: array<Variant>;
 
+
+
             let onSucceed: ref<OnCustomHackingSucceeded> = this.CreateSuccessCallback();
             let onFailed: ref<OnRemoteBreachFailed> = new OnRemoteBreachFailed();
+
 
             let success: Bool = customHackSystem.StartNewQuickhackInstance(
                 this.m_networkName,      // Network name
@@ -97,6 +134,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
             BNError("RemoteBreach", "CustomHackingSystem not found - bonus daemons will not execute");
         }
 
+
         let blackboard: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().NetworkBlackboard);
         blackboard.SetInt(GetAllBlackboardDefs().NetworkBlackboard.DevicesCount, this.m_npcCount);
         blackboard.SetBool(GetAllBlackboardDefs().NetworkBlackboard.OfficerBreach, false);
@@ -107,11 +145,18 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
         blackboard.SetEntityID(GetAllBlackboardDefs().NetworkBlackboard.DeviceID, GetPlayer(gameInstance).GetEntityID(), true);
         blackboard.SetInt(GetAllBlackboardDefs().NetworkBlackboard.Attempt, this.m_attempt);
 
+
+
+
         let psmEvent: ref<PSMPostponedParameterBool> = new PSMPostponedParameterBool();
         psmEvent.id = n"NanoWireRemoteBreach";
         psmEvent.value = true;
         GameInstance.GetPlayerSystem(gameInstance).GetLocalPlayerMainGameObject().QueueEvent(psmEvent);
     }
+
+
+
+
 
     
     public func GetCost() -> Int32 {
@@ -135,9 +180,11 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
         let currentRAM: Float = statPoolSystem.GetStatPoolValue(executorID, gamedataStatPoolType.Memory, false);
         let costFloat: Float = Cast<Float>(this.m_calculatedRAMCost);
 
+
         if currentRAM < costFloat {
             return false;
         }
+
 
         let newRAM: Float = currentRAM - costFloat;
         statPoolSystem.RequestSettingStatPoolValue(executorID, gamedataStatPoolType.Memory, newRAM, executor, false);
@@ -177,6 +224,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
             return false;
         }
 
+
         return this.CanPayCost();
     }
 
@@ -191,6 +239,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
     
     public func GetTargetDevice() -> wref<ScriptableDeviceComponentPS> {
 
+
         if IsDefined(this.m_targetHack) {
             let device: ref<Device> = this.m_targetHack as Device;
             if IsDefined(device) {
@@ -199,6 +248,8 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
         }
         return null;
     }
+
+
 
     private func SetStateSystemTarget(gameInstance: GameInstance) -> Void {
         if !IsDefined(this.m_targetHack) {

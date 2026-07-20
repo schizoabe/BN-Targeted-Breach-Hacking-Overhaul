@@ -1,11 +1,38 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Marking
 
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Network.*
+
+
+
+
 
 @if(ModuleExists("HackthePlanetForReal"))
 @addMethod(ScriptedPuppetPS)
@@ -17,6 +44,10 @@ public func BN_StampSJKIBreached() -> Void {
 @if(!ModuleExists("HackthePlanetForReal"))
 @addMethod(ScriptedPuppetPS)
 public func BN_StampSJKIBreached() -> Void {}
+
+
+
+
 
 public abstract class TargetedBreachUtils {
 
@@ -97,6 +128,7 @@ public abstract class TargetedBreachUtils {
         while i < ArraySize(entityIDs) {
             let entityID: EntityID = entityIDs[i];
 
+
             let failed: Bool = failChance > 0.0 && RandF() < failChance;
             if failed {
                 BNInfo("TargetedBreachUtils",
@@ -116,6 +148,7 @@ public abstract class TargetedBreachUtils {
                         + " class=" + NameToString(entity.GetClassName()));
 
                     let unlocked: Bool = false;
+
 
                     let puppet: ref<ScriptedPuppet> = entity as ScriptedPuppet;
                     if IsDefined(puppet) {
@@ -175,11 +208,14 @@ public abstract class TargetedBreachUtils {
             return;
         }
 
+
         sharedPS.m_betterNetrunningUnlockTimestampBasic = currentTime;
+
 
         if sharedPS.m_bnIceHitsRequired <= 0 { sharedPS.m_bnIceHitsRequired = 1; }
         sharedPS.m_bnIceHitsApplied = sharedPS.m_bnIceHitsRequired;
         sharedPS.m_bnIceDefeated = true;
+
 
         let persistency: ref<GamePersistencySystem> =
             GameInstance.GetPersistencySystem(gameInstance);
@@ -209,6 +245,7 @@ public abstract class TargetedBreachUtils {
             return;
         }
 
+
         let deviceLink: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
         if IsDefined(deviceLink) {
             deviceLink.m_betterNetrunningUnlockTimestampNPCs = currentTime;
@@ -218,11 +255,14 @@ public abstract class TargetedBreachUtils {
                 "NPC is standalone -- no DeviceLink timestamp needed");
         }
 
+
         npcPS.BN_StampSJKIBreached();
+
 
         if npcPS.m_bnNPCIceHitsRequired <= 0 { npcPS.m_bnNPCIceHitsRequired = 1; }
         npcPS.m_bnNPCIceHitsApplied = npcPS.m_bnNPCIceHitsRequired;
         npcPS.m_bnNPCIceDefeated = true;
+
 
         let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
         exposeEvt.isRemote = true;
@@ -252,15 +292,19 @@ public abstract class TargetedBreachUtils {
             return;
         }
 
+
         TimeUtils.SetDeviceUnlockTimestamp(sharedPS, targetType, currentTime);
+
 
         if sharedPS.m_bnIceHitsRequired <= 0 { sharedPS.m_bnIceHitsRequired = 1; }
         sharedPS.m_bnIceHitsApplied = sharedPS.m_bnIceHitsRequired;
         sharedPS.m_bnIceDefeated = true;
 
+
         let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
         exposeEvt.isRemote = true;
         persistency.QueuePSEvent(devicePS.GetID(), devicePS.GetClassName(), exposeEvt);
+
 
         let subnetEvt: ref<SetBreachedSubnet> = new SetBreachedSubnet();
         subnetEvt.unlockTimestampBasic   = Equals(targetType, TargetType.Basic)   ? currentTime : 0.0;

@@ -1,5 +1,24 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Core
 
 import BetterNetrunning.*
@@ -14,6 +33,10 @@ import HackingExtensions.*
 
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class DaemonExecutionUtils {
@@ -32,15 +55,22 @@ public abstract class DaemonExecutionUtils {
             return;
         }
 
+
+
+
+
         let TargetType: TargetType = DaemonExecutionUtils.GetDeviceTypeFromDaemonType(daemonTypeStr);
+
 
         let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
         TimeUtils.SetDeviceUnlockTimestamp(sharedPS, TargetType, currentTime);
+
 
         let stateSystem: ref<IScriptable> = strategy.GetStateSystem(gameInstance);
         if IsDefined(stateSystem) {
             strategy.MarkBreached(stateSystem, sourcePS.GetID(), gameInstance);
         }
+
 
         strategy.ExecuteUnlock(daemonTypeStr, TargetType, sourcePS, gameInstance);
     }
@@ -64,6 +94,10 @@ public abstract class DaemonExecutionUtils {
         return TargetType;
     }
 }
+
+
+
+
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class DeviceDaemonAction extends HackProgramAction {
@@ -120,6 +154,15 @@ public class DeviceDaemonAction extends HackProgramAction {
 @if(ModuleExists("HackingExtensions.Programs"))
 public class BetterNetrunningDaemonAction extends DeviceDaemonAction {}
 
+
+
+
+
+
+
+
+
+
 @if(ModuleExists("HackingExtensions.Programs"))
 public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
 
@@ -131,6 +174,7 @@ public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
     if !IsDefined(player) { return; }
     let gi: GameInstance = player.GetGame();
 
+
     let devicePS: ref<ScriptableDeviceComponentPS>;
     let stateSystem: ref<DeviceRemoteBreachStateSystem> = StateSystemUtils.GetDeviceStateSystem(gi);
     if IsDefined(stateSystem) {
@@ -139,9 +183,15 @@ public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
 
     if IsDefined(devicePS) {
 
+
+
       this.ApplyHeatDelta(gi);
       return;
     }
+
+
+
+
 
     let npcStateSystem: ref<NPCRemoteBreachStateSystem> = StateSystemUtils.GetNPCStateSystem(gi);
     if IsDefined(npcStateSystem) {
@@ -164,17 +214,20 @@ public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
   protected func ExecuteProgramFailure() -> Void {}
 }
 
+
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachIcepickV1Action extends RemoteBreachIcepickActionBase {
   protected func GetHits() -> Int32 { return 2; }
   protected func GetHeatDelta() -> Float { return 0.2; }
 }
 
+
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachIcepickV2Action extends RemoteBreachIcepickActionBase {
   protected func GetHits() -> Int32 { return 0; }
   protected func GetHeatDelta() -> Float { return -0.3; }
 }
+
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachIcepickV3Action extends RemoteBreachIcepickActionBase {

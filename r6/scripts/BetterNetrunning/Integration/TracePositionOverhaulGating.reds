@@ -1,13 +1,48 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Integration
 
 @if(ModuleExists("TracePositionOverhaul"))
 import TracePositionOverhaul.*
 
+
+
+
+
 public abstract class TracePositionOverhaulGating {
 
   
+
 
   @if(ModuleExists("TracePositionOverhaul"))
   public static func IsValidTraceSource(npc: wref<NPCPuppet>) -> Bool {
@@ -16,12 +51,17 @@ public abstract class TracePositionOverhaulGating {
     if !ScriptedPuppet.IsAlive(npc) { return false; }
     if ScriptedPuppet.IsDefeated(npc) { return false; }
 
+
+
+
     if !ScriptedPuppet.CanTrace(npc) { return false; }
+
 
     if !npc.IsNetrunnerPuppet() { return false; }
 
     return true;
   }
+
 
   @if(!ModuleExists("TracePositionOverhaul"))
   public static func IsValidTraceSource(npc: wref<NPCPuppet>) -> Bool {
@@ -30,12 +70,14 @@ public abstract class TracePositionOverhaulGating {
     if !ScriptedPuppet.IsAlive(npc) { return false; }
     if ScriptedPuppet.IsDefeated(npc) { return false; }
 
+
     if !npc.IsNetrunnerPuppet() { return false; }
 
     return true;
   }
 
   
+
 
   @if(ModuleExists("TracePositionOverhaul"))
   public static func GetNPCsInRadius(
@@ -45,7 +87,9 @@ public abstract class TracePositionOverhaulGating {
   ) -> array<ref<GameObject>> {
     let npcs: array<ref<GameObject>>;
 
+
     let targetingSystem: ref<TargetingSystem> = GameInstance.GetTargetingSystem(gameInstance);
+
 
     let searchQuery: TargetSearchQuery;
     searchQuery.testedSet = TargetingSet.Complete;
@@ -57,6 +101,7 @@ public abstract class TracePositionOverhaulGating {
 
     let targetParts: array<TS_TargetPartInfo>;
     targetingSystem.GetTargetParts(player, searchQuery, targetParts);
+
 
     let i: Int32 = 0;
     while i < ArraySize(targetParts) {
@@ -73,12 +118,14 @@ public abstract class TracePositionOverhaulGating {
     return npcs;
   }
 
+
   @if(!ModuleExists("TracePositionOverhaul"))
   public static func GetNPCsInRadius(
     player: wref<PlayerPuppet>,
     gameInstance: GameInstance,
     radius: Float
   ) -> array<ref<GameObject>> {
+
 
     let npcs: array<ref<GameObject>>;
     return npcs;
@@ -94,9 +141,11 @@ public abstract class TracePositionOverhaulGating {
 
     let npcs: array<ref<GameObject>> = TracePositionOverhaulGating.GetNPCsInRadius(player, gameInstance, radius);
 
+
     if ArraySize(npcs) == 0 {
       return null;
     }
+
 
     let playerPos: Vector4 = player.GetWorldPosition();
     let nearestNPC: wref<NPCPuppet>;
@@ -107,9 +156,11 @@ public abstract class TracePositionOverhaulGating {
     while i < count {
       let npcPuppet: wref<NPCPuppet> = npcs[i] as NPCPuppet;
 
+
       if TracePositionOverhaulGating.IsValidTraceSource(npcPuppet) {
         let npcPos: Vector4 = npcPuppet.GetWorldPosition();
         let distSq: Float = Vector4.DistanceSquared2D(playerPos, npcPos);
+
 
         if distSq < nearestDistSq {
           nearestDistSq = distSq;

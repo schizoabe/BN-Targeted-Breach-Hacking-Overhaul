@@ -1,16 +1,41 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Common
 
 import BetterNetrunning.Core.TimeUtils
 import BetterNetrunning.Utils.*
 import BetterNetrunningConfig.*
 
+
+
+
+
+
 public struct UnlockExpirationResult {
   public let isUnlocked: Bool;
   public let wasExpired: Bool;
   public let expiredDeviceType: CName;
 }
+
+
+
+
 
 public abstract class UnlockExpirationUtils {
 
@@ -23,6 +48,7 @@ public abstract class UnlockExpirationUtils {
 
     let unlockDurationHours: Int32 = BetterNetrunningSettings.QuickhackUnlockDurationHours();
     let gameInstance: GameInstance = devicePS.GetGameInstance();
+
 
     if IsDefined(devicePS as VehicleComponentPS) {
       UnlockExpirationUtils.CheckVehicleExpiration(devicePS, unlockDurationHours, gameInstance, result);
@@ -52,12 +78,15 @@ public abstract class UnlockExpirationUtils {
   ) -> Void {
     let timestamp: Float = devicePS.m_betterNetrunningUnlockTimestampBasic;
 
+
     if timestamp == 0.0 { return; }
+
 
     if unlockDurationHours == 0 {
       result.isUnlocked = true;
       return;
     }
+
 
     let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
     let elapsedTime: Float = currentTime - timestamp;
@@ -82,12 +111,15 @@ public abstract class UnlockExpirationUtils {
   ) -> Void {
     let timestamp: Float = devicePS.m_betterNetrunningUnlockTimestampCameras;
 
+
     if timestamp == 0.0 { return; }
+
 
     if unlockDurationHours == 0 {
       result.isUnlocked = true;
       return;
     }
+
 
     let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
     let elapsedTime: Float = currentTime - timestamp;
@@ -112,12 +144,15 @@ public abstract class UnlockExpirationUtils {
   ) -> Void {
     let timestamp: Float = devicePS.m_betterNetrunningUnlockTimestampTurrets;
 
+
     if timestamp == 0.0 { return; }
+
 
     if unlockDurationHours == 0 {
       result.isUnlocked = true;
       return;
     }
+
 
     let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
     let elapsedTime: Float = currentTime - timestamp;
@@ -142,12 +177,15 @@ public abstract class UnlockExpirationUtils {
   ) -> Void {
     let timestamp: Float = devicePS.m_betterNetrunningUnlockTimestampBasic;
 
+
     if timestamp == 0.0 { return; }
+
 
     if unlockDurationHours == 0 {
       result.isUnlocked = true;
       return;
     }
+
 
     let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
     let elapsedTime: Float = currentTime - timestamp;

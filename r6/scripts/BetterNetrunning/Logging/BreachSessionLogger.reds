@@ -1,5 +1,26 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Logging
 
 import BetterNetrunning.Core.*
@@ -7,26 +28,34 @@ import BetterNetrunning.Minigame.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 
+
+
+
+
 public class BreachSessionStats {
 
   public let breachType: String;           // "AccessPoint", "RemoteBreach", "UnconsciousNPC"
   public let breachTarget: String;         // Device name (e.g., "AccessPoint", "Turret")
   public let timestamp: Float;             // Start time
 
+
   public let minigameSuccess: Bool;        // Success/Failure
   public let programsInjected: Int32;      // Daemon count injected
   public let programsFiltered: Int32;      // Daemon count after filtering
   public let programsRemoved: Int32;       // Daemon count removed
+
 
   public let networkDeviceCount: Int32;    // Total network devices
   public let devicesUnlocked: Int32;       // Successfully unlocked
   public let devicesFailed: Int32;         // Failed to unlock
   public let devicesSkipped: Int32;        // Skipped (flag check)
 
+
   public let basicCount: Int32;            // Basic devices (doors, terminals, etc.)
   public let cameraCount: Int32;           // Surveillance cameras
   public let turretCount: Int32;           // Security turrets
   public let npcNetworkCount: Int32;       // Network-connected NPCs (via device link)
+
 
   public let basicUnlocked: Int32;         // Basic devices successfully unlocked
   public let basicSkipped: Int32;          // Basic devices skipped (flag check)
@@ -37,10 +66,12 @@ public class BreachSessionStats {
   public let npcNetworkUnlocked: Int32;    // Network NPCs successfully unlocked
   public let npcNetworkSkipped: Int32;     // Network NPCs skipped (flag check)
 
+
   public let unlockBasic: Bool;            // Basic Subnet unlocked
   public let unlockCameras: Bool;          // Camera Subnet unlocked
   public let unlockTurrets: Bool;          // Turret Subnet unlocked
   public let unlockNPCs: Bool;             // NPC Subnet unlocked
+
 
   public let displayedSubnetDaemons: array<TweakDBID>;  // All Subnet daemons displayed (success + failed)
   public let executedSubnetDaemons: array<TweakDBID>;  // Subnet daemons successfully executed
@@ -48,7 +79,9 @@ public class BreachSessionStats {
   public let executedNormalDaemons: array<TweakDBID>;  // Normal daemons successfully executed
   public let executedBonusDaemons: array<TweakDBID>;   // Bonus daemons (auto Datamine) executed
 
+
   public let processingTimeMs: Float;      // Milliseconds (auto-calculated in Finalize)
+
 
   public static func Create(breachType: String, breachTarget: String) -> ref<BreachSessionStats> {
     let stats: ref<BreachSessionStats> = new BreachSessionStats();
@@ -58,11 +91,18 @@ public class BreachSessionStats {
     return stats;
   }
 
+
+
   public func Finalize() -> Void {
     let currentTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(GetGameInstance()));
     this.processingTimeMs = (currentTime - this.timestamp) * 1000.0;
   }
 }
+
+
+
+
+
 
 public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
   BNInfo("BreachStats", "");
@@ -71,20 +111,27 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
   BNInfo("BreachStats", "╚═══════════════════════════════════════════════════════════╝");
   BNInfo("BreachStats", "");
 
+
   BNInfo("BreachStats", "┌─ BASIC INFO ──────────────────────────────────────────────┐");
   BNInfo("BreachStats", "│ Type         : " + stats.breachType);
   BNInfo("BreachStats", "│ Target       : " + GetLocalizedTextByKey(StringToName(stats.breachTarget)) + " (" + DebugUtils.CleanDeviceName(stats.breachTarget) + ")");
   BNInfo("BreachStats", "│ Result       : " + (stats.minigameSuccess ? "SUCCESS" : "FAILED"));
+
 
   let timeStr: String = FloatToStringPrec(stats.processingTimeMs, 1);
   BNInfo("BreachStats", "│ Processing   : " + timeStr + " ms");
   BNInfo("BreachStats", "└───────────────────────────────────────────────────────────┘");
   BNInfo("BreachStats", "");
 
+
+
+
   BNInfo("BreachStats", "┌─ EXECUTED DAEMONS ─────────────────────────────────────────┐");
+
 
   let subnetExecuted: Int32 = ArraySize(stats.executedSubnetDaemons);
   let subnetTotal: Int32 = ArraySize(stats.displayedSubnetDaemons);
+
 
   BNInfo("BreachStats", "│ Subnet System (" + ToString(subnetExecuted) + "/" + ToString(subnetTotal) + "):");
   LogDaemonList(
@@ -95,6 +142,7 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
     true,  // showIcon - Subnet type icons (🔌📷🔫👤)
     ""     // no additional suffix
   );
+
 
   if ArraySize(stats.displayedNormalDaemons) > 0 {
     BNInfo("BreachStats", "│");
@@ -110,6 +158,7 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
       ""      // no additional suffix
     );
   }
+
 
   if ArraySize(stats.executedBonusDaemons) > 0 {
     BNInfo("BreachStats", "│");
@@ -128,6 +177,7 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
   BNInfo("BreachStats", "└────────────────────────────────────────────────────────────┘");
   BNInfo("BreachStats", "");
 
+
   if stats.networkDeviceCount > 0 {
     let unlockPercent: Int32 = (stats.devicesUnlocked * 100) / stats.networkDeviceCount;
     BNInfo("BreachStats", "┌─ NETWORK UNLOCK RESULTS ──────────────────────────────────┐");
@@ -138,6 +188,7 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
     BNInfo("BreachStats", "└───────────────────────────────────────────────────────────┘");
     BNInfo("BreachStats", "");
   }
+
 
   let hasDevices: Bool = stats.basicCount > 0 || stats.cameraCount > 0 || stats.turretCount > 0 || stats.npcNetworkCount > 0;
   if hasDevices {
@@ -165,6 +216,11 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
   BNInfo("BreachStats", "═══════════════════════════════════════════════════════════");
 }
 
+
+
+
+
+
 private static func LogDeviceTypeBreakdown(
   deviceCount: Int32,
   unlockedCount: Int32,
@@ -179,6 +235,7 @@ private static func LogDeviceTypeBreakdown(
   let icon: String = GetSubnetDaemonIcon(iconProgram);
   let paddedLabel: String = label;
 
+
   while StrLen(paddedLabel) < 8 {
     paddedLabel += " ";
   }
@@ -189,6 +246,11 @@ private static func LogDeviceTypeBreakdown(
     BNInfo("BreachStats", "│ " + icon + " " + paddedLabel + ": ⊘" + ToString(skippedCount));
   }
 }
+
+
+
+
+
 
 private static func LogDaemonList(
   daemons: array<TweakDBID>,
@@ -204,10 +266,12 @@ private static func LogDaemonList(
     return;
   }
 
+
   let i: Int32 = 0;
   while i < ArraySize(daemons) {
     let programID: TweakDBID = daemons[i];
     let daemonName: String = DaemonFilterUtils.GetDaemonDisplayName(programID);
+
 
     let statusPrefix: String = "";
     if showStatusIcon {
@@ -217,10 +281,12 @@ private static func LogDaemonList(
       statusPrefix = "✓ ";
     }
 
+
     let iconStr: String = "";
     if showIcon {
       iconStr = GetSubnetDaemonIcon(programID) + " ";
     }
+
 
     let suffix: String = NotEquals(additionalSuffix, "") ? " " + additionalSuffix : "";
 
@@ -228,6 +294,11 @@ private static func LogDaemonList(
     i += 1;
   }
 }
+
+
+
+
+
 
 private static func GetSubnetDaemonIcon(programID: TweakDBID) -> String {
 

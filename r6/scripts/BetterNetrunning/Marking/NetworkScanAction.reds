@@ -1,5 +1,45 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Marking
 
 import BetterNetrunning.Core.*
@@ -9,6 +49,10 @@ import BetterNetrunning.Utils.*
 
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.*
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public class BNMarkNPCAction extends CustomAccessBreach {
@@ -32,6 +76,7 @@ public class BNMarkNPCAction extends CustomAccessBreach {
     return ram >= Cast<Float>(this.m_ramCost);
   }
 
+
   public func PayCost(opt checkOverclock: Bool) -> Bool { return true; }
 
   private func CompleteAction(gameInstance: GameInstance) -> Void {
@@ -43,6 +88,7 @@ public class BNMarkNPCAction extends CustomAccessBreach {
     let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance)
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
     if !IsDefined(mss) { return; }
+
 
     let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
     if IsDefined(player) && this.m_ramCost > 0 {
@@ -61,6 +107,10 @@ public class BNMarkNPCAction extends CustomAccessBreach {
     if IsDefined(logSys) { logSys.ShowIfNew(); }
   }
 }
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public class BNUnmarkNPCAction extends CustomAccessBreach {
@@ -96,6 +146,7 @@ public class BNUnmarkNPCAction extends CustomAccessBreach {
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
     if !IsDefined(mss) { return; }
 
+
     let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
     if IsDefined(player) && this.m_ramCost > 0 {
       let pool: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gameInstance);
@@ -113,6 +164,20 @@ public class BNUnmarkNPCAction extends CustomAccessBreach {
     if IsDefined(logSys) { logSys.Refresh(); }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptedPuppet)
@@ -193,6 +258,10 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   ArrayPush(Deref(commands), entry);
 }
 
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public class BNMarkDeviceAction extends CustomAccessBreach {
   private let m_devicePS: ref<ScriptableDeviceComponentPS>;
@@ -201,12 +270,16 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
   public func SetDevicePS(devicePS: ref<ScriptableDeviceComponentPS>, ramCost: Int32) -> Void {
     this.m_devicePS = devicePS;
     this.m_ramCost = ramCost;
+    this.SetObjectActionID(t"QuickHack.BNMark");
   }
 
   public func GetTweakDBChoiceRecord() -> String { return "BNMark"; }
   public func GetInteractionDescription() -> String {
     let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNMark");
-    if IsDefined(rec) { return LocKeyToString(rec.ObjectActionUI().Caption()); }
+    if IsDefined(rec) {
+      let s: String = LocKeyToString(rec.ObjectActionUI().Caption());
+      if NotEquals(s, "") { return s; }
+    }
     return "Mark";
   }
   public func GetCost() -> Int32 { return this.m_ramCost; }
@@ -259,7 +332,8 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
         currentRAM - Cast<Float>(this.m_ramCost), player, false);
     }
 
-    let displayName: String = this.m_devicePS.GetDeviceName();
+    let displayName: String = GetLocalizedText(deviceEntity.GetDisplayName());
+    if Equals(displayName, "") { displayName = "Device"; }
     mss.AddMarkNamed(deviceEntity.GetEntityID(), subnetType, displayName, iceHitsRequired);
     BNInfo("NetworkScan", "Device marked: " + displayName);
 
@@ -269,6 +343,10 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
   }
 }
 
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public class BNUnmarkDeviceAction extends CustomAccessBreach {
   private let m_devicePS: ref<ScriptableDeviceComponentPS>;
@@ -277,12 +355,16 @@ public class BNUnmarkDeviceAction extends CustomAccessBreach {
   public func SetDevicePS(devicePS: ref<ScriptableDeviceComponentPS>, ramCost: Int32) -> Void {
     this.m_devicePS = devicePS;
     this.m_ramCost = ramCost;
+    this.SetObjectActionID(t"QuickHack.BNUnmark");
   }
 
   public func GetTweakDBChoiceRecord() -> String { return "BNUnmark"; }
   public func GetInteractionDescription() -> String {
     let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNUnmark");
-    if IsDefined(rec) { return LocKeyToString(rec.ObjectActionUI().Caption()); }
+    if IsDefined(rec) {
+      let s: String = LocKeyToString(rec.ObjectActionUI().Caption());
+      if NotEquals(s, "") { return s; }
+    }
     return "Unmark";
   }
   public func GetCost() -> Int32 { return this.m_ramCost; }
@@ -320,7 +402,7 @@ public class BNUnmarkDeviceAction extends CustomAccessBreach {
         currentRAM - Cast<Float>(this.m_ramCost), player, false);
     }
 
-    let displayName: String = this.m_devicePS.GetDeviceName();
+    let displayName: String = GetLocalizedText(deviceEntity.GetDisplayName());
     mss.RemoveMarkAny(deviceEntity.GetEntityID());
     BNInfo("NetworkScan", "Device unmarked: " + displayName);
 
@@ -329,6 +411,26 @@ public class BNUnmarkDeviceAction extends CustomAccessBreach {
     if IsDefined(logSys) { logSys.Refresh(); }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptableDeviceComponentPS)
@@ -361,6 +463,9 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
 
   let hackSystem: ref<CustomHackingSystem> =
     GameInstance.GetScriptableSystemsContainer(gi).Get(BNConstants.CLASS_CUSTOM_HACKING_SYSTEM()) as CustomHackingSystem;
+
+
+
 
   if IsDefined(hackSystem) {
     let scanBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);

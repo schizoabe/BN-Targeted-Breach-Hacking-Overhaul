@@ -1,12 +1,47 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local MarkingSystem                = {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 local SYSTEM_CLASS                 = "BetterNetrunning.Marking.MarkingStateSystem"
 local PERK_SYSTEM_CLASS            = "BetterNetrunning.Perks.BNPerkSystem"
 
+
 local PERK_COLD_TRACE              = 0
 local PERK_TRACE_SCRAMBLER         = 6
+
+
 
 local COUNTER_BREACH_SYSTEM_CLASS  = "BetterNetrunning.CounterBreach.CounterBreachSystem"
 local COUNTER_BREACH_THRESHOLD     = 0.95 -- Heat level that arms retaliation (cap is 1.0, use 0.95 for reliable trigger)
@@ -14,7 +49,16 @@ local COUNTER_BREACH_DISARM        = 0.5  -- Heat must drop below this to cancel
 local COUNTER_BREACH_COOLDOWN      = 5.0  -- Seconds between counter-breach attempts
 local COUNTER_BREACH_DELAY         = 5.0  -- Warning window before minigame fires
 
+
 local HEAT_PASSIVE_DECAY_PER_SEC   = 0.001 -- Passive session heat decay per second (very slow)
+
+
+
+
+
+
+
+
 
 local isInitialized                = false
 local counterBreachTimer           = 0.0   -- cooldown between counter-breach boards (starts when board CLOSES)
@@ -26,6 +70,10 @@ local isPlayerInControl            = false -- set by GameplayState listener; fal
 local currentMaxHeat               = 0.0   -- session heat, shared with DrawUI
 local panelRefreshTimer            = 0.0   -- countdown to next live panel refresh (0.25s cadence)
 local hudPanelsVisible             = false -- toggle state for BNTestPanel + ICEScoutLog
+
+
+
+
 
 local function getMarkingSystem()
     local container = Game.GetScriptableSystemsContainer()
@@ -45,6 +93,8 @@ local function getPerkSystem()
     return container:Get(PERK_SYSTEM_CLASS)
 end
 
+
+
 local function getHeatDecayPerSec()
     local perkSys = getPerkSystem()
     if not perkSys then return HEAT_PASSIVE_DECAY_PER_SEC end
@@ -55,6 +105,8 @@ local function getHeatDecayPerSec()
     return HEAT_PASSIVE_DECAY_PER_SEC
 end
 
+
+
 local function getCounterBreachCooldown()
     local perkSys = getPerkSystem()
     if not perkSys then return COUNTER_BREACH_COOLDOWN end
@@ -64,6 +116,59 @@ local function getCounterBreachCooldown()
     end
     return COUNTER_BREACH_COOLDOWN
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 local function hasCyberdeckEquipped()
     local player = Game.GetPlayer()
@@ -76,6 +181,11 @@ local function hasCyberdeckEquipped()
         local itemID = playerData:GetActiveItem(gamedataEquipmentArea.SystemReplacementCW)
         if not ItemID.IsValid(itemID) then return false end
 
+
+
+
+
+
         local tdbStr = TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID))
         local cyberwareType = TweakDB:GetFlat(TDBID.Create(tdbStr .. ".cyberwareType"))
         if not cyberwareType then return false end
@@ -84,11 +194,74 @@ local function hasCyberdeckEquipped()
     return ok and result or false
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function MarkingSystem.ClearAll()
     local ms = getMarkingSystem()
     if ms then ms:ClearAll() end
     print("[BetterNetrunning] All breach marks cleared")
 end
+
+
+
+
 
 function MarkingSystem.SetPlayerInControl(v)
     isPlayerInControl = v
@@ -100,10 +273,14 @@ function MarkingSystem.Update(deltaTime)
     local ms = getMarkingSystem()
     if not ms then return end
 
+
+
+
     local shouldTick = isPlayerInControl
     local cbs        = getCounterBreachSystem()
     local inMinigame = false
     if cbs then pcall(function() inMinigame = cbs:IsMinigameActive() end) end
+
 
     local hideTimer        = 0.0
     local disarmTimer      = 0.0
@@ -117,13 +294,19 @@ function MarkingSystem.Update(deltaTime)
         if signalNoiseTimer > 0 then pcall(function() ms:SetSignalNoiseTimer(signalNoiseTimer - deltaTime) end) end
     end
 
+
+
+
     if shouldTick and hideTimer <= 0 then
         pcall(function() ms:AddSessionHeat(-getHeatDecayPerSec() * deltaTime) end)
     end
 
+
     local maxHeat = 0.0
     pcall(function() maxHeat = ms:GetSessionHeat() end)
     currentMaxHeat = maxHeat
+
+
 
     panelRefreshTimer = panelRefreshTimer - deltaTime
     if panelRefreshTimer <= 0 then
@@ -140,18 +323,27 @@ function MarkingSystem.Update(deltaTime)
         end
     end
 
+
     if ms:HasAnyMarked() then
         ms:PruneExpiredMarksWithHeat(maxHeat)
     end
 
+
+
+
+
+
     local cbActive = false
     if cbs then pcall(function() cbActive = cbs:IsActive() end) end
+
 
     if counterBreachWasActive and not cbActive then
         counterBreachTimer = getCounterBreachCooldown()
         print('[BetterNetrunning] Counter-breach ended -- cooldown ' .. counterBreachTimer .. 's before next')
     end
     counterBreachWasActive = cbActive
+
+
 
     if counterBreachWasInMinigame and not inMinigame and counterBreachPending > 0 then
         counterBreachPending = COUNTER_BREACH_DELAY
@@ -160,9 +352,12 @@ function MarkingSystem.Update(deltaTime)
     end
     counterBreachWasInMinigame = inMinigame
 
+
     if shouldTick then
         counterBreachTimer = counterBreachTimer - deltaTime
     end
+
+
 
     if not cbActive then
         local armThreshold = counterBreachEngaged and COUNTER_BREACH_DISARM or COUNTER_BREACH_THRESHOLD
@@ -205,10 +400,32 @@ function MarkingSystem.Update(deltaTime)
 
 end
 
+
+
+
+
+
+
+
+
+
 function MarkingSystem.Init()
     isInitialized = true
     print("[BetterNetrunning] Marking system ready")
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function MarkingSystem.HK_ClearMarks()
     MarkingSystem.ClearAll()
@@ -252,6 +469,8 @@ function MarkingSystem.HK_ForceJackOut()
         print("[BetterNetrunning] ForceJackOut error: " .. tostring(err))
     end
 end
+
+
 
 function MarkingSystem.HK_DEV_TriggerCounterBreach()
     local cbs = getCounterBreachSystem()

@@ -1,5 +1,23 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.NPCs
 import BetterNetrunning.Logging.*
 
@@ -9,6 +27,8 @@ import BetterNetrunning.Utils.*
 import BetterNetrunning.Systems.*
 import BetterNetrunning.Breach.*
 
+
+
 @wrapMethod(ScriptedPuppetPS)
 public func OnSetExposeQuickHacks(evt: ref<SetExposeQuickHacks>) -> EntityNotificationType {
 
@@ -17,11 +37,13 @@ public func OnSetExposeQuickHacks(evt: ref<SetExposeQuickHacks>) -> EntityNotifi
     return wrappedMethod(evt);
   }
 
+
   let deviceLink: ref<SharedGameplayPS> = this.GetDeviceLink();
   if !IsDefined(deviceLink) {
     BNInfo("NPCQuickhacks", "OnSetExposeQuickHacks: no device link — allowing vanilla");
     return wrappedMethod(evt);
   }
+
 
   let npcUnlockTime: Float = deviceLink.m_betterNetrunningUnlockTimestampNPCs;
   if npcUnlockTime > 0.0 {
@@ -29,22 +51,27 @@ public func OnSetExposeQuickHacks(evt: ref<SetExposeQuickHacks>) -> EntityNotifi
     return wrappedMethod(evt);
   }
 
+
   BNInfo("NPCQuickhacks", "OnSetExposeQuickHacks: BLOCKED (timestamp=0, connectedToAP=true)");
   return EntityNotificationType.DoNotNotifyEntity;
 }
+
 
 @wrapMethod(ScriptedPuppetPS)
 public final const func GetAllChoices(const actions: script_ref<array<wref<ObjectAction_Record>>>, const context: script_ref<GetActionsContext>, puppetActions: script_ref<array<ref<PuppetAction>>>) -> Void {
 
   let permissions: NPCHackPermissions = this.CalculateNPCHackPermissions();
 
+
   wrappedMethod(actions, context, puppetActions);
+
 
   let ownerPuppet: wref<ScriptedPuppet> = this.GetOwnerEntity() as ScriptedPuppet;
   if IsDefined(ownerPuppet) && ownerPuppet.IsDead() {
     ArrayClear(Deref(puppetActions));
     return;
   }
+
 
   let ownerEntity: wref<GameObject> = this.GetOwnerEntity();
   let localPlayer: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
@@ -53,8 +80,10 @@ public final const func GetAllChoices(const actions: script_ref<array<wref<Objec
     : EAIAttitude.AIA_Neutral;
   this.ApplyBetterNetrunningQuickhackFilter(puppetActions, permissions, attiudeTowardsPlayer);
 
+
   DebugUtils.LogNPCQuickhackState(this, puppetActions, "NPCQuickhacks");
 }
+
 
 @addMethod(ScriptedPuppetPS)
 private final func ApplyBetterNetrunningQuickhackFilter(
@@ -66,6 +95,7 @@ private final func ApplyBetterNetrunningQuickhackFilter(
 
   while i >= 0 {
     let action: ref<PuppetAction> = Deref(puppetActions)[i];
+
 
     if IsDefined(action as AccessBreach) {
       ArrayErase(Deref(puppetActions), i);
@@ -85,19 +115,26 @@ private final func ApplyBetterNetrunningQuickhackFilter(
 
 }
 
+
+
+
 @addMethod(ScriptedPuppetPS)
 private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
   let permissions: NPCHackPermissions;
   let gameInstance: GameInstance = this.GetGameInstance();
   let npc: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
 
+
   permissions.isBreached = this.m_quickHacksExposed;
 
+
   let isConnectedToNetwork: Bool = this.IsConnectedToAccessPoint();
+
 
   if !isConnectedToNetwork {
     permissions.isBreached = true;
   }
+
 
   permissions.allowCovert = ShouldUnlockHackNPC(gameInstance, npc, BetterNetrunningSettings.AlwaysNPCsCovert(), BetterNetrunningSettings.ProgressionCyberdeckNPCsCovert(), BetterNetrunningSettings.ProgressionIntelligenceNPCsCovert(), BetterNetrunningSettings.ProgressionEnemyRarityNPCsCovert());
   permissions.allowCombat = ShouldUnlockHackNPC(gameInstance, npc, BetterNetrunningSettings.AlwaysNPCsCombat(), BetterNetrunningSettings.ProgressionCyberdeckNPCsCombat(), BetterNetrunningSettings.ProgressionIntelligenceNPCsCombat(), BetterNetrunningSettings.ProgressionEnemyRarityNPCsCombat());
@@ -109,12 +146,16 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
   return permissions;
 }
 
+
+
+
 @addMethod(ScriptedPuppetPS)
 private final func ShouldQuickhackBeInactive(puppetAction: ref<PuppetAction>, permissions: NPCHackPermissions) -> Bool {
 
   if permissions.isBreached || this.IsWhiteListedForHacks() {
     return false;
   }
+
 
   let actionRecord: ref<ObjectAction_Record> = puppetAction.GetObjectActionRecord();
   if !IsDefined(actionRecord) { return true; }
@@ -134,6 +175,7 @@ private final func ShouldQuickhackBeInactive(puppetAction: ref<PuppetAction>, pe
     return false;
   }
 
+
   if IsDefined(puppetAction as PingSquad) && permissions.allowPing {
     return false;
   }
@@ -144,10 +186,13 @@ private final func ShouldQuickhackBeInactive(puppetAction: ref<PuppetAction>, pe
   return true;
 }
 
+
 @addMethod(ScriptedPuppetPS)
 private final func SetQuickhackInactiveReason(puppetAction: ref<PuppetAction>, attiudeTowardsPlayer: EAIAttitude) -> Void {
 
   let isRemoteBreachLocked: Bool = BreachLockUtils.IsNPCLockedByRemoteBreachFailure(this);
+
+
 
   if isRemoteBreachLocked {
     puppetAction.SetInactiveWithReason(false, BNConstants.LOCKEY_NO_NETWORK_ACCESS());  // "No network access rights"
@@ -155,6 +200,9 @@ private final func SetQuickhackInactiveReason(puppetAction: ref<PuppetAction>, a
     puppetAction.SetInactiveWithReason(false, LocKeyToString(BNConstants.LOCKEY_QUICKHACKS_LOCKED()));
   }
 }
+
+
+
 
 @addMethod(ScriptedPuppetPS)
 protected final func IsWhiteListedForHacks() -> Bool {

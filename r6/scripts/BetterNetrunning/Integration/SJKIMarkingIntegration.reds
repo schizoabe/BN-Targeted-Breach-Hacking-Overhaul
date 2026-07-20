@@ -1,5 +1,16 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Integration
 
 import BetterNetrunning.Marking.*
@@ -20,11 +31,18 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
   BNInfo("SJKIIntegration", "BN_SJKIHandleSuccess — ActivePrograms count="
     + ToString(ArraySize(activePrograms)));
 
+
+
   NetworkStateUtils.OnDaemonsCompleted(activePrograms, this, gi);
+
+
+
 
   let iceState: NetworkState = NetworkStateUtils.GetNetworkState(this, gi);
 
   let unlockFlags: BreachUnlockFlags = DaemonFilterUtils.ExtractUnlockFlags(activePrograms);
+
+
 
   let noSubnetDaemons: Bool = !unlockFlags.unlockBasic && !unlockFlags.unlockNPCs
       && !unlockFlags.unlockCameras && !unlockFlags.unlockTurrets;
@@ -40,6 +58,7 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
     + " Camera=" + ToString(unlockFlags.unlockCameras)
     + " Turret=" + ToString(unlockFlags.unlockTurrets));
 
+
   let markingSystem: ref<MarkingStateSystem> =
     GameInstance.GetScriptableSystemsContainer(gi)
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
@@ -49,6 +68,8 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
 
   if !IsDefined(markingSystem) || !markingSystem.HasAnyMarked() {
     BNInfo("SJKIIntegration", "No marks — propagation skipped");
+
+
 
     if IsDefined(markingSystem) {
       let deviceName: String = "DEVICE";
@@ -68,6 +89,7 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
     return;
   }
 
+
   let markedCount: Int32 = markingSystem.GetTotalCount();
   let player: ref<PlayerPuppet> = GetPlayer(gi);
   if IsDefined(player) && markedCount > 0 {
@@ -82,8 +104,10 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
     BNInfo("SJKIIntegration", "RAM cost: -" + ToString(markedCount));
   }
 
+
   TargetedBreachUtils.UnlockMarkedEntities(markingSystem, unlockFlags, gi);
   BNInfo("SJKIIntegration", "Targeted unlock complete");
+
 
   let ms: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;

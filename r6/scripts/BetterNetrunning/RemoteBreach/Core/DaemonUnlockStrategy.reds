@@ -1,5 +1,22 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Core
 
 import BetterNetrunning.*
@@ -7,6 +24,7 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Integration.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Utils.*
+
 
 public abstract class IDaemonUnlockStrategy {
 
@@ -18,9 +36,12 @@ public abstract class IDaemonUnlockStrategy {
     gameInstance: GameInstance
   ) -> Void {}
 
+
   public func GetStateSystem(gameInstance: GameInstance) -> ref<IScriptable> {
     return null;
   }
+
+
 
   public func MarkBreached(stateSystem: ref<IScriptable>, deviceID: PersistentID, gameInstance: GameInstance) -> Void {}
 
@@ -45,6 +66,11 @@ public abstract class IDaemonUnlockStrategy {
       return;
     }
 
+
+
+
+
+
     this.UnlockNetwork(sourcePS, flags, gameInstance);
   }
 
@@ -55,6 +81,10 @@ public abstract class IDaemonUnlockStrategy {
     gameInstance: GameInstance
   ) -> Void {}
 }
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public class ComputerUnlockStrategy extends IDaemonUnlockStrategy {
@@ -121,6 +151,10 @@ public class ComputerUnlockStrategy extends IDaemonUnlockStrategy {
   }
 }
 
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
 
@@ -148,6 +182,8 @@ public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
     );
   }
 
+
+
   protected func UnlockNetwork(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,
@@ -161,6 +197,10 @@ public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
       flags.unlockCameras,
       flags.unlockTurrets
     );
+
+
+
+
 
     let persistency: ref<GamePersistencySystem> = GameInstance.GetPersistencySystem(gameInstance);
     let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
@@ -188,6 +228,10 @@ public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
     return new DeviceUnlockStrategy();
   }
 }
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public class VehicleUnlockStrategy extends IDaemonUnlockStrategy {

@@ -1,10 +1,29 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Utils
 
 import BetterNetrunningConfig.*
 import BetterNetrunning.Breach.*
 import BetterNetrunning.RemoteBreach.Core.*
+
+
+
 
 public abstract class BreachLockUtils {
 
@@ -15,6 +34,7 @@ public abstract class BreachLockUtils {
     if !BetterNetrunningSettings.BreachFailurePenaltyEnabled() {
       return false;
     }
+
 
     return RemoteBreachLockSystem.IsRemoteBreachLockedByTimestamp(devicePS, devicePS.GetGameInstance());
   }
@@ -36,6 +56,8 @@ public abstract class BreachLockUtils {
     if !IsDefined(player) {
       return false;
     }
+
+
 
     return false;
   }

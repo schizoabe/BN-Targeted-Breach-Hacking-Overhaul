@@ -1,5 +1,29 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.NPCs
 
 import BetterNetrunning.Core.*
@@ -14,6 +38,13 @@ import BetterNetrunning.Perks.*
 
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.*
+
+
+
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
@@ -34,6 +65,10 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
       BNWarn("NPCRemoteBreach", "No NPC in state system after ICE board success");
       return;
     }
+
+
+
+
 
     let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi)
       .Get(GetAllBlackboardDefs().HackingMinigame);
@@ -66,6 +101,9 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
       }
     }
 
+
+
+
     if IsDefined(markingSystem) && heatThisRound != 0.0 {
       markingSystem.AddSessionHeat(heatThisRound);
       BNInfo("NPCRemoteBreach", "ICE board heat delta: " + ToString(heatThisRound));
@@ -83,6 +121,9 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
       + " effective=" + ToString(effectiveRequired)
       + " iceFullyBroken=" + ToString(iceFullyBroken));
 
+
+
+
     let npcEntity: wref<GameObject> = npcPS.GetOwnerEntityWeak() as GameObject;
     let npcName: String = "TARGET";
     if IsDefined(npcEntity) {
@@ -97,6 +138,8 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
     if iceFullyBroken {
       npcPS.m_bnNPCIceDefeated = true;
 
+
+
       if npcPS.IsConnectedToAccessPoint() {
         let deviceLink: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
         if IsDefined(deviceLink) {
@@ -104,6 +147,8 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
         }
       }
       npcPS.m_quickHacksExposed = true;
+
+
 
       npcPS.BN_StampSJKIBreached();
       let exposeEvent: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
@@ -129,6 +174,12 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
   }
 }
 
+
+
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
   public func Execute() -> Void {
@@ -153,6 +204,10 @@ public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
       return;
     }
 
+
+
+
+
     if npcPS.IsConnectedToAccessPoint() {
       let deviceLink: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
       if IsDefined(deviceLink) {
@@ -160,9 +215,16 @@ public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
       }
     }
 
+
+
     npcPS.m_quickHacksExposed = true;
 
+
     npcPS.BN_StampSJKIBreached();
+
+
+
+
 
     let exposeEvent: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
     exposeEvent.isRemote = true;
@@ -170,6 +232,7 @@ public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
       PersistentID.ExtractEntityID(npcPS.GetID()), exposeEvent);
 
     BNInfo("NPCRemoteBreach", "NPC subnet breached — quickhacks exposed (single NPC only)");
+
 
     let npcEntity: wref<GameObject> = npcPS.GetOwnerEntityWeak() as GameObject;
     if IsDefined(npcEntity) {
@@ -180,6 +243,10 @@ public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
     stateSystem.ClearCurrentNPC();
   }
 }
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 public class OnNPCRemoteBreachFailed extends OnCustomHackingFailed {
@@ -192,6 +259,12 @@ public class OnNPCRemoteBreachFailed extends OnCustomHackingFailed {
   }
 }
 
+
+
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public class NPCRemoteBreachAction extends CustomAccessBreach {
   private let m_npcPS: ref<ScriptedPuppetPS>;
@@ -203,6 +276,8 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
   public func SetNPC(npcPS: ref<ScriptedPuppetPS>) -> Void {
     this.m_npcPS = npcPS;
   }
+
+
 
   public func GetCost() -> Int32 { return this.m_calculatedRAMCost; }
 
@@ -231,17 +306,23 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
     return true;
   }
 
+
+
   private func CompleteAction(gameInstance: GameInstance) -> Void {
     if !IsDefined(this.m_npcPS) {
       BNError("NPCRemoteBreach", "No NPC PS on action — cannot complete");
       return;
     }
 
+
     if this.m_npcPS.m_bnNPCIceHitsRequired == 0 {
       this.m_npcPS.m_bnNPCIceHitsRequired = StateSystemUtils.GetHeatScaledICEHits(gameInstance);
       BNInfo("NPCRemoteBreach",
         "NPC ICE initialized: " + ToString(this.m_npcPS.m_bnNPCIceHitsRequired) + " hits required");
     }
+
+
+
 
     let ms: ref<MarkingStateSystem> =
       GameInstance.GetScriptableSystemsContainer(gameInstance)
@@ -267,18 +348,24 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
       BNInfo("NPCRemoteBreach", "ICE compromised — showing NPC subnet board");
     }
 
+
+
     let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
+
+
 
     let nullDevPS: ref<ScriptableDeviceComponentPS>;
     let devSS: ref<DeviceRemoteBreachStateSystem> =
       container.Get(BNConstants.CLASS_DEVICE_REMOTE_BREACH_STATE_SYSTEM()) as DeviceRemoteBreachStateSystem;
     if IsDefined(devSS) { devSS.SetCurrentDevice(nullDevPS, ""); }
 
+
     let npcStateSystem: ref<NPCRemoteBreachStateSystem> =
       container.Get(BNConstants.CLASS_NPC_REMOTE_BREACH_STATE_SYSTEM()) as NPCRemoteBreachStateSystem;
     if IsDefined(npcStateSystem) {
       npcStateSystem.SetCurrentNPC(this.m_npcPS);
     }
+
 
     let customHackSystem: ref<CustomHackingSystem> =
       container.Get(BNConstants.CLASS_CUSTOM_HACKING_SYSTEM()) as CustomHackingSystem;
@@ -292,6 +379,7 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
         onSucceed = new OnNPCRemoteBreachSucceeded();
       }
       let onFailed: ref<OnNPCRemoteBreachFailed> = new OnNPCRemoteBreachFailed();
+
 
       BNInfo("NPCRemoteBreach", "StartNewQuickhackInstance args:"
         + " networkName=" + this.m_networkName
@@ -318,6 +406,7 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
       BNError("NPCRemoteBreach", "CustomHackingSystem not found");
     }
 
+
     let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gameInstance)
       .Get(GetAllBlackboardDefs().NetworkBlackboard);
     bb.SetInt   (GetAllBlackboardDefs().NetworkBlackboard.DevicesCount,  1);
@@ -331,12 +420,23 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
       GetPlayer(gameInstance).GetEntityID(), true);
     bb.SetInt   (GetAllBlackboardDefs().NetworkBlackboard.Attempt, this.m_attempt);
 
+
     let psmEvent: ref<PSMPostponedParameterBool> = new PSMPostponedParameterBool();
     psmEvent.id = n"NanoWireRemoteBreach";
     psmEvent.value = true;
     GameInstance.GetPlayerSystem(gameInstance).GetLocalPlayerMainGameObject().QueueEvent(psmEvent);
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptedPuppet)
@@ -352,6 +452,7 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   if !BetterNetrunningSettings.RemoteBreachEnabledNPC() { return; }
   if this.IsDead() { return; }               // dead NPC gate
   if npcPS.m_quickHacksExposed { return; }          // already breached
+
 
   let perkSysNRB: ref<BNPerkSystem> = BNPerkSystem.GetInstance(this.GetGame());
   if !IsDefined(perkSysNRB) || perkSysNRB.GetPerkLevel(BNPerk.IntrusionSuite) <= 0 { return; }
@@ -393,6 +494,10 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   ArrayPush(Deref(commands), entry);
 }
 
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 public abstract class NPCRemoteBreachUtils {
 
@@ -404,6 +509,7 @@ public abstract class NPCRemoteBreachUtils {
 
     let gi: GameInstance = npcPS.GetGameInstance();
 
+
     let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(gi);
     let statPoolSystem: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gi);
     let playerID: StatsObjectID = Cast<StatsObjectID>(player.GetEntityID());
@@ -411,6 +517,7 @@ public abstract class NPCRemoteBreachUtils {
     let costPercent: Int32 = BetterNetrunningSettings.RemoteBreachRAMCostPercent();
     let ramCost: Int32 = Cast<Int32>(maxRAM * Cast<Float>(costPercent) / 100.0 + 0.5);
     if ramCost < 1 { ramCost = 1; }
+
 
     let npcEntity: wref<GameObject> = npcPS.GetOwnerEntityWeak() as GameObject;
     let npcName: String = IsDefined(npcEntity)
@@ -425,6 +532,8 @@ public abstract class NPCRemoteBreachUtils {
     action.m_npcCount          = 1;
     action.m_attempt           = 0;
     action.actionName          = n"NPCRemoteBreachAction";
+
+
 
     let currentRAM: Float = statPoolSystem.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
     if currentRAM < Cast<Float>(ramCost) {

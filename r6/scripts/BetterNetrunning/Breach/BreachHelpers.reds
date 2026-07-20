@@ -8,6 +8,25 @@ import BetterNetrunning.Breach.*
 import BetterNetrunning.Marking.*
 import BetterNetrunning.Perks.*
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @addMethod(AccessPointControllerPS)
 public func GetMainframe() -> ref<AccessPointControllerPS> {
   let parents: array<ref<DeviceComponentPS>>;
@@ -22,6 +41,7 @@ public func GetMainframe() -> ref<AccessPointControllerPS> {
   return this;
 }
 
+
 @replaceMethod(AccessPointControllerPS)
 public final const func CheckConnectedClassTypes() -> ConnectedClassTypes {
   let data: ConnectedClassTypes;
@@ -34,12 +54,14 @@ public final const func CheckConnectedClassTypes() -> ConnectedClassTypes {
       break;
     }
 
+
     this.UpdateDeviceTypeData(slaves[i], data);
     i += 1;
   }
 
   return data;
 }
+
 
 @addMethod(AccessPointControllerPS)
 private final func UpdateDeviceTypeData(slave: ref<DeviceComponentPS>, out data: ConnectedClassTypes) -> Void {
@@ -56,6 +78,7 @@ private final func UpdateDeviceTypeData(slave: ref<DeviceComponentPS>, out data:
     }
   }
 
+
   if data.puppet {
     return;  // Already found
   }
@@ -71,6 +94,7 @@ private final func UpdateDeviceTypeData(slave: ref<DeviceComponentPS>, out data:
   }
 }
 
+
 @replaceMethod(ScriptedPuppet)
 protected cb func OnAccessPointMiniGameStatus(evt: ref<AccessPointMiniGameStatus>) -> Bool {
   let deviceLink: ref<PuppetDeviceLinkPS> = this.GetDeviceLink();
@@ -80,10 +104,14 @@ protected cb func OnAccessPointMiniGameStatus(evt: ref<AccessPointMiniGameStatus
 
   let gi: GameInstance = this.GetGame();
 
+
+
+
   if this.IsIncapacitated() {
     if Equals(evt.minigameState, HackingMinigameState.Succeeded) {
       this.HandleUnconsciousBreachSuccess(gi);
     }
+
 
     let player: ref<PlayerPuppet> = GetPlayer(gi);
     if IsDefined(player) {
@@ -99,6 +127,7 @@ protected cb func OnAccessPointMiniGameStatus(evt: ref<AccessPointMiniGameStatus
     }
   }
 
+
   if Equals(evt.minigameState, HackingMinigameState.Failed) && ShouldApplyBreachPenalty(BreachType.UnconsciousNPC) {
     let player: ref<PlayerPuppet> = GetPlayer(gi);
     if IsDefined(player) && IsDefined(this) {
@@ -106,6 +135,7 @@ protected cb func OnAccessPointMiniGameStatus(evt: ref<AccessPointMiniGameStatus
       BNInfo("UnconsciousBreach", "Breach failed — penalty applied");
     }
   }
+
 
   this.ClearNetworkBlackboardState();
   this.RestoreTimeDilation();
@@ -118,12 +148,15 @@ private final func HandleUnconsciousBreachSuccess(gi: GameInstance) -> Void {
   let markingSystem: ref<MarkingStateSystem> =
     container.Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
 
+
   let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi)
     .Get(GetAllBlackboardDefs().HackingMinigame);
   let activePrograms: array<TweakDBID> = FromVariant<array<TweakDBID>>(
     minigameBB.GetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms));
 
+
   let unlockFlags: BreachUnlockFlags = DaemonFilterUtils.ExtractUnlockFlags(activePrograms);
+
 
   let k: Int32 = 0;
   while k < ArraySize(activePrograms) {
@@ -138,6 +171,7 @@ private final func HandleUnconsciousBreachSuccess(gi: GameInstance) -> Void {
     k += 1;
   }
 
+
   if IsDefined(markingSystem) && markingSystem.HasAnyMarked() {
     TargetedBreachUtils.UnlockMarkedEntities(markingSystem, unlockFlags, gi);
     BNInfo("UnconsciousBreach", "Propagated to marked targets — Basic="
@@ -147,6 +181,7 @@ private final func HandleUnconsciousBreachSuccess(gi: GameInstance) -> Void {
     BNInfo("UnconsciousBreach", "No marks — nothing propagated");
   }
 
+
   if IsDefined(markingSystem) {
     let raw: String = GetLocalizedText(this.GetDisplayName());
     let npcName: String = NotEquals(raw, s"") ? raw : "OPERATIVE";
@@ -155,8 +190,10 @@ private final func HandleUnconsciousBreachSuccess(gi: GameInstance) -> Void {
     markingSystem.ShowRemoteBreachStatus();
   }
 
+
   RPGManager.GiveReward(gi, t"RPGActionRewards.Hacking", Cast<StatsObjectID>(this.GetEntityID()));
 }
+
 
 @addMethod(ScriptedPuppet)
 private final func ClearNetworkBlackboardState() -> Void {
@@ -164,6 +201,7 @@ private final func ClearNetworkBlackboardState() -> Void {
   this.GetNetworkBlackboard().SetString(this.GetNetworkBlackboardDef().NetworkName, "");
   this.GetNetworkBlackboard().SetEntityID(this.GetNetworkBlackboardDef().DeviceID, emptyID);
 }
+
 
 @addMethod(ScriptedPuppet)
 private final func RestoreTimeDilation() -> Void {

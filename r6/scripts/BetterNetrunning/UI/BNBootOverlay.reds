@@ -1,5 +1,21 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.UI
 
 import BetterNetrunning.Core.*
@@ -46,6 +62,7 @@ public class BNBootOverlay {
         title.Reparent(canvas);
         this.m_title = title;
 
+
         let barBg = new inkImage();
         barBg.SetAnchor(inkEAnchor.TopLeft);
         barBg.SetMargin(new inkMargin(txtX, 65.0, 0.0, 0.0));
@@ -57,6 +74,7 @@ public class BNBootOverlay {
         barBg.SetTintColor(new HDRColor(0.06, 0.05, 0.02, 1.0));
         barBg.SetOpacity(0.9);
         barBg.Reparent(canvas);
+
 
         let barFill = new inkImage();
         barFill.SetAnchor(inkEAnchor.TopLeft);
@@ -71,6 +89,7 @@ public class BNBootOverlay {
         barFill.Reparent(canvas);
         this.m_progressFill = barFill;
     }
+
 
     public func Show(gi: GameInstance) -> Void {
         if !IsDefined(this.m_canvas) { return; }
@@ -87,6 +106,7 @@ public class BNBootOverlay {
 
         this.m_canvas.SetOpacity(0.0);
         this.m_canvas.SetVisible(true);
+
 
         let def = new inkAnimDef();
 
@@ -124,6 +144,7 @@ public class BNBootOverlay {
 
         this.m_animProxy = this.m_canvas.PlayAnimation(def);
 
+
         let barDef = new inkAnimDef();
         let barScale = new inkAnimScale();
         barScale.SetStartScale(new Vector2(0.0, 1.0));
@@ -135,6 +156,7 @@ public class BNBootOverlay {
         this.m_progressFill.PlayAnimation(barDef);
     }
 
+
     public func Abort() -> Void {
         if !IsDefined(this.m_canvas) { return; }
         if IsDefined(this.m_animProxy) && this.m_animProxy.IsPlaying() {
@@ -143,6 +165,10 @@ public class BNBootOverlay {
         this.m_canvas.SetVisible(false);
     }
 }
+
+
+
+
 
 public class BNBootSystem extends ScriptableSystem {
     private let m_overlay: ref<BNBootOverlay>;
@@ -161,6 +187,10 @@ public class BNBootSystem extends ScriptableSystem {
         if IsDefined(this.m_overlay) { this.m_overlay.Abort(); }
     }
 }
+
+
+
+
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {

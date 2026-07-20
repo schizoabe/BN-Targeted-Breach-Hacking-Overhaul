@@ -1,5 +1,27 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.RemoteBreach.Core
 
 import BetterNetrunning.Logging.*
@@ -8,17 +30,23 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Integration.*
 import BetterNetrunning.Breach.*
 
-public class RemoteBreachLockSystem {
 
+
+
+
+public class RemoteBreachLockSystem {
+  
   public static func GetNetworkDevices(
     sourceDevicePS: ref<ScriptableDeviceComponentPS>,
     excludeSource: Bool
   ) -> array<ref<ScriptableDeviceComponentPS>> {
     let result: array<ref<ScriptableDeviceComponentPS>>;
 
+
     if !IsDefined(sourceDevicePS) {
       return result;
     }
+
 
     let sharedPS: ref<SharedGameplayPS> = sourceDevicePS;
 
@@ -34,9 +62,11 @@ public class RemoteBreachLockSystem {
             let networkDevices: array<ref<DeviceComponentPS>>;
             apPS.GetChildren(networkDevices);
 
+
             let j: Int32 = 0;
             while j < ArraySize(networkDevices) {
               let devicePS: ref<ScriptableDeviceComponentPS> = networkDevices[j] as ScriptableDeviceComponentPS;
+
 
               if !IsDefined(devicePS) {
                 j += 1;
@@ -59,9 +89,11 @@ public class RemoteBreachLockSystem {
           let networkDevices: array<ref<DeviceComponentPS>>;
           masterPS.GetChildren(networkDevices);
 
+
           let k: Int32 = 0;
           while k < ArraySize(networkDevices) {
             let devicePS: ref<ScriptableDeviceComponentPS> = networkDevices[k] as ScriptableDeviceComponentPS;
+
 
             if IsDefined(devicePS) {
               ArrayPush(result, devicePS);
@@ -76,6 +108,11 @@ public class RemoteBreachLockSystem {
     return result;
   }
 
+
+
+
+
+
   
   public static func IsRemoteBreachLockedByTimestamp(
     devicePS: ref<ScriptableDeviceComponentPS>,
@@ -84,6 +121,7 @@ public class RemoteBreachLockSystem {
     if !IsDefined(devicePS) {
       return false;
     }
+
 
     let shouldClear: Bool;
     let isLocked: Bool = BreachLockSystem.IsLockedByTimestamp(
@@ -115,6 +153,7 @@ public class RemoteBreachLockSystem {
     let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
     let failedDeviceID: PersistentID = failedDevicePS.GetID();
 
+
     if IsDefined(failedDevicePS) {
       failedDevicePS.m_betterNetrunningRemoteBreachFailedTimestamp = currentTime;
       let entityID: EntityID = PersistentID.ExtractEntityID(failedDeviceID);
@@ -127,6 +166,9 @@ public class RemoteBreachLockSystem {
     let radiusMeters: Float = GetRadialBreachRange(gameInstance);
     let networkLockedCount: Int32 = 0;
     let standaloneLockedCount: Int32 = 0;
+
+
+
 
     let networkDevices: array<ref<ScriptableDeviceComponentPS>> = RemoteBreachLockSystem.GetNetworkDevices(
       failedDevicePS,
@@ -144,6 +186,8 @@ public class RemoteBreachLockSystem {
 
       i += 1;
     }
+
+
 
     let targetingSystem: ref<TargetingSystem> = GameInstance.GetTargetingSystem(gameInstance);
     if IsDefined(targetingSystem) {
@@ -176,6 +220,7 @@ public class RemoteBreachLockSystem {
       }
     }
 
+
     let vehicleLockedCount: Int32 = 0;
     if IsDefined(targetingSystem) {
       let nearbyVehicles: array<ref<VehicleComponentPS>> = player.FindNearbyVehicles(targetingSystem);
@@ -195,6 +240,10 @@ public class RemoteBreachLockSystem {
         k += 1;
       }
     }
+
+
+
+
 
     let totalLocked: Int32 = 1 + networkLockedCount + standaloneLockedCount + vehicleLockedCount; // 1 = failed device
     BNInfo("RemoteBreachLock", "Locked " + IntToString(totalLocked) + " devices " +

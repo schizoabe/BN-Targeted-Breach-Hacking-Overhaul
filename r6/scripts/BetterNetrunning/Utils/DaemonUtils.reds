@@ -1,10 +1,18 @@
 ﻿
 
+
+
+
+
 module BetterNetrunning.Utils
 
 import BetterNetrunning.Core.*
 
 public abstract class DaemonFilterUtils {
+
+
+
+
 
     
     public static func IsCamera(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
@@ -28,6 +36,10 @@ public abstract class DaemonFilterUtils {
             && !IsDefined((entity as Device).GetDevicePS() as ComputerControllerPS);
     }
 
+
+
+
+
     
     public static func IsConnectedToNetwork(entity: wref<GameObject>) -> Bool {
 
@@ -41,6 +53,10 @@ public abstract class DaemonFilterUtils {
     public static func IsConnectedToPhysicalAccessPoint(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
         return devicePS.IsConnectedToPhysicalAccessPoint();
     }
+
+
+
+
 
     
     public static func IsCameraDaemon(actionID: TweakDBID) -> Bool {
@@ -70,6 +86,10 @@ public abstract class DaemonFilterUtils {
             || DaemonFilterUtils.IsBasicDaemon(actionID);
     }
 
+
+
+
+
     
     public static func ExtractUnlockFlags(minigamePrograms: array<TweakDBID>) -> BreachUnlockFlags {
         let flags: BreachUnlockFlags;
@@ -77,6 +97,7 @@ public abstract class DaemonFilterUtils {
         let i: Int32 = 0;
         while i < ArraySize(minigamePrograms) {
             let programID: TweakDBID = minigamePrograms[i];
+
 
             if Equals(programID, BNConstants.PROGRAM_UNLOCK_QUICKHACKS()) {
                 flags.unlockBasic = true;
@@ -104,6 +125,10 @@ public abstract class DaemonFilterUtils {
         return flags;
     }
 
+
+
+
+
     
     public static func ShouldShowCameraDaemon(
         devicePS: ref<ScriptableDeviceComponentPS>,
@@ -124,6 +149,10 @@ public abstract class DaemonFilterUtils {
     public static func ShouldShowNPCDaemon(data: ConnectedClassTypes) -> Bool {
         return data.puppet;
     }
+
+
+
+
 
     
     public static func GetDeviceTypeName(devicePS: ref<ScriptableDeviceComponentPS>) -> String {
@@ -152,6 +181,10 @@ public abstract class DaemonFilterUtils {
             return "Unknown";
         }
     }
+
+
+
+
 
     
     public static func IsSubnetDaemon(programID: TweakDBID) -> Bool {

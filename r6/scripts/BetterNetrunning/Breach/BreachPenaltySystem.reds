@@ -1,5 +1,24 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Breach
 import BetterNetrunning.Logging.*
 import BetterNetrunningConfig.*
@@ -10,12 +29,14 @@ import BetterNetrunning.RemoteBreach.Common.*
 import BetterNetrunning.RemoteBreach.Core.*
 import BetterNetrunning.Network.*
 
+
 public enum BreachType {
   Unknown = 0,
   AccessPoint = 1,
   UnconsciousNPC = 2,
   RemoteBreach = 3
 }
+
 
 @wrapMethod(ScriptableDeviceComponentPS)
 public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
@@ -25,12 +46,15 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     return;
   }
 
+
   let breachType: BreachType = this.DetectBreachType();
+
 
   if !ShouldApplyBreachPenalty(breachType) {
     wrappedMethod(state);
     return;
   }
+
 
   let gameInstance: GameInstance = this.GetGameInstance();
   let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
@@ -40,13 +64,17 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     return;
   }
 
+
   ApplyFailurePenalty(player, this, gameInstance, breachType);
+
 
   NetworkStateUtils.OnBreachFailed(this, gameInstance);
   BNDebug("NetworkState", "Breach failed — Heat spiked, Vulnerability reduced");
 
+
   wrappedMethod(state);
 }
+
 
 @wrapMethod(AccessPointControllerPS)
 public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
@@ -56,23 +84,31 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     return;
   }
 
+
   if Equals(state, HackingMinigameState.Failed) {
 
+
+
+
     this.m_minigameAttempt += 1;
+
 
     let player: ref<GameObject> = this.GetPlayerMainObject();
     let toggleAction: ref<ToggleNetrunnerDive> = this.ActionToggleNetrunnerDive(true);
     toggleAction.SetExecutor(player);
     this.ExecutePSAction(toggleAction);
 
+
     let playerPuppet: ref<PlayerPuppet> = player as PlayerPuppet;
     if IsDefined(playerPuppet) {
       let gameInstance: GameInstance = this.GetGameInstance();
       let breachType: BreachType = this.DetectBreachType();
 
+
       if ShouldApplyBreachPenalty(breachType) {
         ApplyFailurePenalty(playerPuppet, this, gameInstance, breachType);
       }
+
 
       NetworkStateUtils.OnBreachFailed(this, gameInstance);
       BNDebug("NetworkState", "AP breach failed — Heat spiked, Vulnerability reduced");
@@ -82,8 +118,10 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     return;
   }
 
+
   wrappedMethod(state);
 }
+
 
 @wrapMethod(AccessPointControllerPS)
 public func OnNPCBreachEvent(evt: ref<NPCBreachEvent>) -> EntityNotificationType {
@@ -94,31 +132,48 @@ public func OnNPCBreachEvent(evt: ref<NPCBreachEvent>) -> EntityNotificationType
     return EntityNotificationType.DoNotNotifyEntity;
   }
 
+
   if Equals(evt.state, HackingMinigameState.Failed) {
 
     this.m_minigameAttempt += 1;
+
+
+
+
+
 
     BNInfo("BreachPenalty", "Unconscious NPC breach failed - NPC alert suppressed (SendMinigameFailedToAllNPCs skipped)");
     return EntityNotificationType.DoNotNotifyEntity;
   }
 
+
   return wrappedMethod(evt);
 }
+
 
 @addMethod(ScriptableDeviceComponentPS)
 private func DetectBreachType() -> BreachType {
 
+
+
+
+
   if this.IsRemoteBreachingAnyDevice() {
     return BreachType.RemoteBreach;
   }
+
+
 
   if this.HasPersonalLinkSlot() {
 
     return BreachType.AccessPoint;
   }
 
+
+
   return BreachType.RemoteBreach;
 }
+
 
 @addMethod(ScriptableDeviceComponentPS)
 private func IsRemoteBreachingAnyDevice() -> Bool {
@@ -140,6 +195,7 @@ private func IsRemoteBreachingAnyDevice() -> Bool {
   return false;
 }
 
+
 @addMethod(ScriptableDeviceComponentPS)
 private func IsBreachPenaltyEnabledForType(breachType: BreachType) -> Bool {
   if Equals(breachType, BreachType.AccessPoint) {
@@ -155,11 +211,13 @@ private func IsBreachPenaltyEnabledForType(breachType: BreachType) -> Bool {
   return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
 }
 
+
 private static func ShouldApplyBreachPenalty(breachType: BreachType) -> Bool {
 
   if !BetterNetrunningSettings.BreachFailurePenaltyEnabled() {
     return false;
   }
+
 
   if Equals(breachType, BreachType.AccessPoint) {
     return BetterNetrunningSettings.APBreachFailurePenaltyEnabled();
@@ -171,8 +229,10 @@ private static func ShouldApplyBreachPenalty(breachType: BreachType) -> Bool {
     return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
   }
 
+
   return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
 }
+
 
 public static func ApplyFailurePenalty(
   player: ref<PlayerPuppet>,
@@ -182,6 +242,7 @@ public static func ApplyFailurePenalty(
 ) -> Void {
 
   ApplyBreachFailurePenaltyVFX(player, gameInstance);
+
 
   let deviceEntity: wref<GameObject> = devicePS.GetOwnerEntityWeak() as GameObject;
   if !IsDefined(deviceEntity) {
@@ -202,8 +263,12 @@ public static func ApplyFailurePenalty(
     }
   }
 
+
+
+
   TriggerTraceAttempt(player, gameInstance);
 }
+
 
 public static func ApplyFailurePenalty(
   player: ref<PlayerPuppet>,
@@ -213,9 +278,12 @@ public static func ApplyFailurePenalty(
 
   ApplyBreachFailurePenaltyVFX(player, gameInstance);
 
+
   if IsDefined(npcPuppet) {
     let npcPS: ref<ScriptedPuppetPS> = npcPuppet.GetPuppetPS();
     if RecordBreachFailureTimestamp(npcPS, gameInstance) {
+
+
 
       npcPuppet.DetermineInteractionStateByTask();
       BNDebug("BreachPenalty", "Queued interaction state refresh for NPC");
@@ -224,8 +292,10 @@ public static func ApplyFailurePenalty(
     BNDebug("BreachPenalty", "ApplyFailurePenalty(NPC overload): npcPuppet not defined");
   }
 
+
   TriggerTraceAttempt(player, gameInstance);
 }
+
 
 private static func ApplyBreachFailurePenaltyVFX(
   player: ref<PlayerPuppet>,
@@ -237,6 +307,7 @@ private static func ApplyBreachFailurePenaltyVFX(
     false  // Not looping
   );
 }
+
 
 private static func RecordBreachFailureTimestamp(
   devicePS: ref<ScriptableDeviceComponentPS>,
@@ -254,6 +325,7 @@ private static func RecordBreachFailureTimestamp(
   return true;
 }
 
+
 private static func RecordBreachFailureTimestamp(
   npcPS: ref<ScriptedPuppetPS>,
   gameInstance: GameInstance
@@ -269,6 +341,7 @@ private static func RecordBreachFailureTimestamp(
   return true;
 }
 
+
 private static func RecordBreachFailureByType(
   player: ref<PlayerPuppet>,
   devicePS: ref<ScriptableDeviceComponentPS>,
@@ -282,14 +355,17 @@ private static func RecordBreachFailureByType(
     return;
   }
 
+
   if Equals(breachType, BreachType.AccessPoint) || Equals(breachType, BreachType.UnconsciousNPC) {
     BNError("BreachPenalty", "AP/NPC breach incorrectly routed to position recording");
     return;
   }
 
+
   BNWarn("BreachPenalty", "Unknown breach type - fallback to RemoteBreach recording");
   RemoteBreachLockSystem.RecordRemoteBreachFailure(player, devicePS, failedPosition, gameInstance);
 }
+
 
 private static func TriggerTraceAttempt(
   player: ref<PlayerPuppet>,
@@ -311,6 +387,8 @@ private static func TriggerTraceAttempt(
     return;
   }
 
+
+
   let searchRadius: Float = GetRadialBreachRange(gameInstance);
   let netrunner: wref<NPCPuppet> = TracePositionOverhaulGating.FindNearestValidTraceSource(player, gameInstance, searchRadius);
   if IsDefined(netrunner) {
@@ -326,8 +404,11 @@ private static func TriggerTraceAttempt(
     }
   }
 
+
+
   BNDebug("BreachPenalty", "No netrunner found - trace penalty skipped");
 }
+
 
 @wrapMethod(ScriptableDeviceComponentPS)
 public func SetHasPersonalLinkSlot(isPersonalLinkSlotPresent: Bool) -> Void {
@@ -336,6 +417,7 @@ public func SetHasPersonalLinkSlot(isPersonalLinkSlotPresent: Bool) -> Void {
     wrappedMethod(isPersonalLinkSlotPresent);
     return;
   }
+
 
   let isLocked: Bool = BreachLockUtils.IsJackInLockedByAPBreachFailure(this);
   BNDebug("BreachPenalty", "SetHasPersonalLinkSlot(true) called - Lock status: " + ToString(isLocked));
@@ -346,6 +428,7 @@ public func SetHasPersonalLinkSlot(isPersonalLinkSlotPresent: Bool) -> Void {
     BNInfo("BreachPenalty", "Prevented JackIn restoration on load (device locked by AP breach failure)");
     return;
   }
+
 
   wrappedMethod(isPersonalLinkSlotPresent);
 }

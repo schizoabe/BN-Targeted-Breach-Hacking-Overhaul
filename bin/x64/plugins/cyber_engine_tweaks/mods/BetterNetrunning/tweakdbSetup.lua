@@ -1,6 +1,11 @@
 ﻿
 
+
+
+
+
 local TweakDBSetup = {}
+
 
 function TweakDBSetup.SetupAccessPrograms()
     TweakDBSetup.CreateAccessProgram(
@@ -42,12 +47,14 @@ function TweakDBSetup.SetupAccessPrograms()
     print("[Better Netrunning] Access Programs configured")
 end
 
+
 function TweakDBSetup.CreateAccessProgram(interactionName, actionName, caption, description, icon, complexity)
 
     TweakDB:CloneRecord("Interactions."..interactionName, "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions."..interactionName..".caption", caption)
     TweakDB:SetFlat("Interactions."..interactionName..".captionIcon", icon)
     TweakDB:SetFlat("Interactions."..interactionName..".description", description)
+
 
     TweakDB:CloneRecord("MinigameAction."..actionName, "MinigameAction.NetworkLowerICEMajor")
     TweakDB:SetFlat("MinigameAction."..actionName..".objectActionType", "ObjectActionType.MinigameUpload")
@@ -56,6 +63,8 @@ function TweakDBSetup.CreateAccessProgram(interactionName, actionName, caption, 
     TweakDB:SetFlat("MinigameAction."..actionName..".complexity", complexity)
     TweakDB:SetFlat("MinigameAction."..actionName..".type", "MinigameAction.Both")
 end
+
+
 
 function TweakDBSetup.SetupUnconsciousBreach()
     TweakDB:SetFlat("Takedown.BreachUnconsciousOfficer.instigatorPrereqs", {
@@ -71,6 +80,7 @@ function TweakDBSetup.SetupUnconsciousBreach()
         "Takedown.BreachUnconsciousOfficer_inline2"
     })
 
+
     TweakDB:SetFlat("Takedown.BreachUnconsciousOfficer.targetActivePrereqs", {
         "Prereqs.QuickHackUploadingPrereq"
     })
@@ -84,6 +94,9 @@ function TweakDBSetup.SetupUnconsciousBreach()
         "QuickHack.QuickHack_inline13"
     })
 
+
+
+
     TweakDB:SetFlat("Takedown.BreachUnconsciousOfficer.completionEffects", {})
 
     TweakDB:SetFlat("Takedown.BreachUnconsciousOfficer.actionName", "RemoteBreach")
@@ -92,12 +105,15 @@ function TweakDBSetup.SetupUnconsciousBreach()
     print("[Better Netrunning] Unconscious Breach configured (no network gate)")
 end
 
+
 function TweakDBSetup.ApplyBreachingHotkey(hotkey)
     local map = {[1] = "Choice1", [2] = "Choice2", [3] = "Choice3", [4] = "Choice4"}
     local idx = hotkey or 3
     if map[idx] == nil then idx = 3 end
     TweakDB:SetFlat("Interactions.BreachUnconsciousOfficer.action", map[idx])
 end
+
+
 
 function TweakDBSetup.SetupCounterBreachMinigame()
 
@@ -107,13 +123,16 @@ function TweakDBSetup.SetupCounterBreachMinigame()
     TweakDB:SetFlat("Interactions.NetworkCounterBreachICE.description",
         LocKey("Better-Netrunning-Counter-Breach-ICE-Description"))
 
+
     TweakDB:CloneRecord("MinigameAction.BNCounterBreachICE", "MinigameAction.NetworkLowerICEMajor")
     TweakDB:SetFlat("MinigameAction.BNCounterBreachICE.objectActionUI", "Interactions.NetworkCounterBreachICE")
     TweakDB:SetFlat("MinigameAction.BNCounterBreachICE.completionEffects", {})
 
+
     TweakDB:CloneRecord("MinigameProgram.BNCounterBreach", "minigame_v2.DefaultItemMinigame_inline0")
     TweakDB:SetFlat("MinigameProgram.BNCounterBreach.program", "MinigameAction.BNCounterBreachICE")
     TweakDB:SetFlat("MinigameProgram.BNCounterBreach.charactersChain", {-1, -1, -1, -1, -1})
+
 
     TweakDB:CloneRecord("CustomHackingSystemMinigame.BNCounterBreach", "minigame_v2.DefaultMinigame")
     TweakDB:SetFlat("CustomHackingSystemMinigame.BNCounterBreach.timeLimit", 12.0)
@@ -126,6 +145,13 @@ function TweakDBSetup.SetupCounterBreachMinigame()
 
     print("[Better Netrunning] Counter-Breach minigame configured")
 end
+
+
+
+
+
+
+
 
 function TweakDBSetup.SetupIcepickVariants()
 
@@ -141,6 +167,7 @@ function TweakDBSetup.SetupIcepickVariants()
     TweakDB:SetFlat("MinigameAction.BNIcepickV1.type",            "MinigameAction.Both")
     TweakDB:SetFlat("MinigameAction.BNIcepickV1.complexity",      20.0)
 
+
     TweakDB:CloneRecord("Interactions.BNIcepickV2", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.BNIcepickV2.caption",
         LocKey("Better-Netrunning-Icepick-V2-Name"))
@@ -152,6 +179,7 @@ function TweakDBSetup.SetupIcepickVariants()
     TweakDB:SetFlat("MinigameAction.BNIcepickV2.completionEffects", {})
     TweakDB:SetFlat("MinigameAction.BNIcepickV2.type",            "MinigameAction.Both")
     TweakDB:SetFlat("MinigameAction.BNIcepickV2.complexity",      40.0)
+
 
     TweakDB:CloneRecord("Interactions.BNIcepickV3", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.BNIcepickV3.caption",
@@ -168,6 +196,12 @@ function TweakDBSetup.SetupIcepickVariants()
     print("[Better Netrunning] Icepick variants configured (V1/V2/V3)")
 end
 
+
+
+
+
+
+
 function TweakDBSetup.SetupAPDaemons()
 
     TweakDB:CloneRecord("Interactions.BNHidePresence", "Interactions.NetworkGainAccessProgram")
@@ -181,6 +215,7 @@ function TweakDBSetup.SetupAPDaemons()
     TweakDB:SetFlat("MinigameAction.BNHidePresence.completionEffects", {})
     TweakDB:SetFlat("MinigameAction.BNHidePresence.type",            "MinigameAction.AccessPoint")
     TweakDB:SetFlat("MinigameAction.BNHidePresence.complexity",      70.0)
+
 
     TweakDB:CloneRecord("Interactions.BNDisarmICE", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.BNDisarmICE.caption",
@@ -197,6 +232,11 @@ function TweakDBSetup.SetupAPDaemons()
     print("[Better Netrunning] AP daemons configured (HidePresence/DisarmICE)")
 end
 
+
+
+
+
+
 function TweakDBSetup.SetupSignalNoiseDaemon()
     TweakDB:CloneRecord("Interactions.BNSignalNoise", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.BNSignalNoise.caption",
@@ -212,6 +252,10 @@ function TweakDBSetup.SetupSignalNoiseDaemon()
 
     print("[Better Netrunning] Signal Noise daemon configured")
 end
+
+
+
+
 
 local BN_MINIGAME_ATLAS = "base\\gameplay\\gui\\fullscreen\\hacking_minigame\\atlas_minigame_programs.inkatlas"
 
@@ -235,6 +279,7 @@ function TweakDBSetup.SetupDaemonIcons()
         TweakDB:SetFlat(uiIconPath .. ".atlasPartName",     CName.new(entry.part))
         TweakDB:SetFlat(uiIconPath .. ".atlasResourcePath", BN_MINIGAME_ATLAS)
 
+
         local captionIconPath = "UICaptionIcon." .. entry.name
         if TweakDB:GetRecord(captionIconPath) == nil then
             TweakDB:CreateRecord(captionIconPath, "gamedataChoiceCaptionIconPart_Record")
@@ -243,6 +288,7 @@ function TweakDBSetup.SetupDaemonIcons()
         TweakDB:SetFlat(captionIconPath .. ".partType",      "ChoiceCaptionPartType.Icon")
         TweakDB:SetFlat(captionIconPath .. ".texturePartID", uiIconPath)
         TweakDB:SetFlat(captionIconPath .. ".enumName",      CName.new(entry.name))
+
 
         TweakDB:SetFlat(entry.record .. ".captionIcon", captionIconPath)
     end

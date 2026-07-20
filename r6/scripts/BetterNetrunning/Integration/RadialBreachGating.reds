@@ -1,29 +1,66 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Integration
 
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 
+
 @if(ModuleExists("RadialBreach"))
 import RadialBreach.Config.*
+
+
+
+
+
 
 @if(ModuleExists("RadialBreach"))
 public static func GetRadialBreachRange(gameInstance: GameInstance) -> Float {
   let config: ref<RadialBreachSettings> = new RadialBreachSettings();
 
+
   if config.enabled && config.breachRange > 0.0 {
     return config.breachRange;
   }
 
+
   return 50.0;
 }
+
 
 @if(!ModuleExists("RadialBreach"))
 public static func GetRadialBreachRange(gameInstance: GameInstance) -> Float {
   return 50.0;
 }
+
+
+
+
+
 
 @addMethod(AccessPointControllerPS)
 public final func GetBreachPosition() -> Vector4 {
@@ -33,14 +70,21 @@ public final func GetBreachPosition() -> Vector4 {
     return apEntity.GetWorldPosition();
   }
 
+
   let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
   if IsDefined(player) {
     return player.GetWorldPosition();
   }
 
+
   BNError("RadialBreach", "Could not get breach position - returning error signal");
   return Vector4(-999999.0, -999999.0, -999999.0, 1.0);
 }
+
+
+
+
+
 
 @if(ModuleExists("RadialBreach"))
 @addMethod(AccessPointControllerPS)
@@ -54,6 +98,7 @@ public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref
   while i < ArraySize(Deref(devices)) {
     let device: ref<DeviceComponentPS> = Deref(devices)[i];
 
+
     let withinRadius: Bool = !shouldUseRadialFiltering ||
                              DeviceDistanceUtils.IsDeviceWithinRadius(device, breachPosition, maxDistance, this.GetGameInstance());
 
@@ -64,6 +109,7 @@ public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref
     i += 1;
   }
 }
+
 
 @if(!ModuleExists("RadialBreach"))
 @addMethod(AccessPointControllerPS)
@@ -77,10 +123,17 @@ public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref
   }
 }
 
+
 @addMethod(AccessPointControllerPS)
 private final func ProcessSingleDeviceUnlock(device: ref<DeviceComponentPS>, unlockFlags: BreachUnlockFlags) -> Void {
 
   this.ApplyDeviceTypeUnlock(device, unlockFlags);
+
+
+
+
+
+
 
   let currentTime: Float = TimeUtils.GetCurrentTimestamp(this.GetGameInstance());
 
@@ -91,6 +144,11 @@ private final func ProcessSingleDeviceUnlock(device: ref<DeviceComponentPS>, unl
   evt.unlockTimestampTurrets = unlockFlags.unlockTurrets ? currentTime : 0.0;
   this.GetPersistencySystem().QueuePSEvent(device.GetID(), device.GetClassName(), evt);
 }
+
+
+
+
+
 
 @addMethod(PlayerPuppet)
 private final func ApplyRemoteBreachDeviceUnlockInternal(
@@ -104,15 +162,19 @@ private final func ApplyRemoteBreachDeviceUnlockInternal(
 
   let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
 
+
   if !DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags) {
     return false;
   }
 
+
   let dummyAPPS: ref<AccessPointControllerPS> = new AccessPointControllerPS();
   dummyAPPS.QueuePSEvent(device, dummyAPPS.ActionSetExposeQuickHacks());
 
+
   let currentTime: Float = TimeUtils.GetCurrentTimestamp(this.GetGame());
   TimeUtils.SetDeviceUnlockTimestamp(sharedPS, TargetType, currentTime);
+
 
   let setBreachedSubnetEvent: ref<SetBreachedSubnet> = new SetBreachedSubnet();
   setBreachedSubnetEvent.unlockTimestampBasic = unlockFlags.unlockBasic ? currentTime : 0.0;
@@ -124,6 +186,7 @@ private final func ApplyRemoteBreachDeviceUnlockInternal(
   return true;
 }
 
+
 @if(ModuleExists("RadialBreach"))
 @addMethod(PlayerPuppet)
 public final func ApplyRemoteBreachNetworkUnlock(
@@ -134,6 +197,7 @@ public final func ApplyRemoteBreachNetworkUnlock(
   let unlockedCount: Int32 = 0;
   let skippedCount: Int32 = 0;
   let filteredCount: Int32 = 0;
+
 
   let targetEntity: wref<GameObject> = targetDevice.GetOwnerEntityWeak() as GameObject;
   if !IsDefined(targetEntity) {
@@ -169,6 +233,7 @@ public final func ApplyRemoteBreachNetworkUnlock(
     i += 1;
   }
 }
+
 
 @if(!ModuleExists("RadialBreach"))
 @addMethod(PlayerPuppet)

@@ -1,10 +1,16 @@
 ﻿
 
+
+
+
+
+
 local SettingsManager = require("settingsManager")
 local TweakDBSetup = require("tweakdbSetup")
 local NativeSettingsUI = require("nativeSettingsUI")
 local RemoteBreach = require("remoteBreach")
 local MarkingSystem = require("markingSystem")
+
 
 registerHotkey("BN_ClearMarks",              "[BN] Clear All Marks",                              function() MarkingSystem.HK_ClearMarks() end)
 registerHotkey("BN_HideWidgets",             "[BN] Hide HUD Widgets",                             function() MarkingSystem.HK_HideWidgets() end)
@@ -16,12 +22,16 @@ registerHotkey("BN_DEV_PrintICEState",       "[BN DEV] Print ICE state",        
 registerHotkey("BN_DEV_CheckCyberdeck",      "[BN DEV] Check cyberdeck slot",                     function() MarkingSystem.HK_DEV_CheckCyberdeck() end)
 registerHotkey("BN_DEV_ShowTestPanel",       "[BN DEV] Toggle HUD Panels (Network Status + ICE Log)", function() MarkingSystem.HK_DEV_ShowTestPanel() end)
 
+
 registerForEvent("onInit", function()
     print("[Better Netrunning] Initializing...")
 
+
     SettingsManager.Load()
 
+
     SettingsManager.OverrideConfigFunctions()
+
 
     local nativeSettings = GetMod("nativeSettings")
     if nativeSettings then
@@ -29,6 +39,7 @@ registerForEvent("onInit", function()
     else
         print("[Better Netrunning] NativeSettings not found")
     end
+
 
     TweakDBSetup.SetupAccessPrograms()
     TweakDBSetup.SetupUnconsciousBreach()
@@ -41,6 +52,7 @@ registerForEvent("onInit", function()
 
     MarkingSystem.Init()
 
+
     local GameplayState = GetMod('GameplayState')
     if GameplayState then
         GameplayState.OnStateChange(function(inControl)
@@ -51,6 +63,7 @@ registerForEvent("onInit", function()
         MarkingSystem.SetPlayerInControl(true)
     end
 
+
     if RemoteBreach and RemoteBreach.Setup then
         local success = RemoteBreach.Setup()
         if success then
@@ -60,9 +73,14 @@ registerForEvent("onInit", function()
     print("[Better Netrunning] Initialization complete")
 end)
 
+
 registerForEvent("onUpdate", function(deltaTime)
     MarkingSystem.Update(deltaTime)
 end)
+
+
+
+
 
 return true
 

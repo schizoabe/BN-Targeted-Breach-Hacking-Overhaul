@@ -1,5 +1,29 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @addMethod(ScriptableDeviceComponentPS)
 public final func IsDeviceAlreadyUnlocked() -> Bool {
   let sharedPS: ref<SharedGameplayPS> = this;
@@ -7,21 +31,26 @@ public final func IsDeviceAlreadyUnlocked() -> Bool {
     return false;
   }
 
+
   if IsDefined(this as VehicleComponentPS) {
     return BreachStatusUtils.IsBasicBreached(sharedPS);
   }
+
 
   if DaemonFilterUtils.IsCamera(this) {
     return BreachStatusUtils.IsCamerasBreached(sharedPS);
   }
 
+
   if DaemonFilterUtils.IsTurret(this) {
     return BreachStatusUtils.IsTurretsBreached(sharedPS);
   }
 
+
   if BreachStatusUtils.IsBasicBreached(sharedPS) {
     return true;
   }
+
 
   let deviceEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
   if IsDefined(deviceEntity) {
@@ -37,19 +66,24 @@ public final func IsDeviceAlreadyUnlocked() -> Bool {
   return false;
 }
 
+
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
 
   if IsDefined(this as AccessPointControllerPS) { return; }
 
+
+
   if this.IsDeviceAlreadyUnlocked() {
     return;
   }
 
+
   if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
     return;
   }
+
 
   let gi: GameInstance = this.GetGameInstance();
   if GameInstance.IsValid(gi) {
@@ -58,6 +92,7 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
       return;
     }
   }
+
 
   let hasCustomRemoteBreach: Bool = false;
   let i: Int32 = 0;
@@ -69,6 +104,7 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
     }
     i += 1;
   }
+
 
   if !hasCustomRemoteBreach {
     let isCamera: Bool = DeviceTypeUtils.IsCameraDevice(this);
@@ -87,15 +123,19 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
   }
 }
 
+
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
 
   if IsDefined(this as AccessPointControllerPS) { return; }
 
+
+
   if this.IsDeviceAlreadyUnlocked() {
     return;
   }
+
 
   if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
 
@@ -111,6 +151,7 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
     return;  // Don't show minigame entry when unlocked
   }
 
+
   let gi2: GameInstance = this.GetGameInstance();
   if GameInstance.IsValid(gi2) {
     let perkSys2: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi2);
@@ -118,6 +159,7 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
       return;
     }
   }
+
 
   let isCamera: Bool = DeviceTypeUtils.IsCameraDevice(this);
   let isTurret: Bool = DeviceTypeUtils.IsTurretDevice(this);
@@ -134,24 +176,29 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
   ArrayPush(Deref(outActions), breachAction);
 }
 
+
 @addMethod(ScriptableDeviceComponentPS)
 public final func RemoveCustomRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
 
   let expirationResult: UnlockExpirationResult = UnlockExpirationUtils.CheckUnlockExpiration(this);
 
+
   if expirationResult.wasExpired {
     DeviceInteractionUtils.EnableJackInInteractionForAccessPoint(this);
   }
+
 
   let isUnlocked: Bool = expirationResult.isUnlocked;
   if !isUnlocked && !expirationResult.wasExpired && !DaemonFilterUtils.IsCamera(this) && !DaemonFilterUtils.IsTurret(this) && !IsDefined(this as VehicleComponentPS) {
     isUnlocked = this.IsBasicDeviceBreachedByCustomHackingSystem();
   }
 
+
   if isUnlocked {
     this.RemoveCustomRemoteBreachAction(outActions);
   }
 }
+
 
 @addMethod(ScriptableDeviceComponentPS)
 private final func IsBasicDeviceBreachedByCustomHackingSystem() -> Bool {
@@ -167,6 +214,7 @@ private final func IsBasicDeviceBreachedByCustomHackingSystem() -> Bool {
   return stateSystem.IsDeviceBreached(deviceID);
 }
 
+
 @addMethod(ScriptableDeviceComponentPS)
 private final func RemoveCustomRemoteBreachAction(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
   let i: Int32 = 0;
@@ -180,11 +228,17 @@ private final func RemoveCustomRemoteBreachAction(outActions: script_ref<array<r
   }
 }
 
+
+
+
+
+
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(QuickHackableHelper)
 public static func TranslateActionsIntoQuickSlotCommands(const actions: array<ref<DeviceAction>>, commands: script_ref<array<ref<QuickhackData>>>, gameObject: ref<GameObject>, scriptableComponentPS: ref<ScriptableDeviceComponentPS>) -> Void {
 
   wrappedMethod(actions, commands, gameObject, scriptableComponentPS);
+
 
   let playerRef: ref<PlayerPuppet> = GetPlayer(gameObject.GetGame());
   if !IsDefined(playerRef) {
@@ -192,10 +246,12 @@ public static func TranslateActionsIntoQuickSlotCommands(const actions: array<re
     return; // Early return if player not available
   }
 
+
   let i: Int32 = 0;
   let commandsSize: Int32 = ArraySize(Deref(commands));
   while i < commandsSize {
     let action: ref<ScriptableDeviceAction> = Deref(commands)[i].m_action as ScriptableDeviceAction;
+
 
     if IsDefined(action) && BNConstants.IsRemoteBreachAction(action.GetClassName()) {
 
@@ -203,6 +259,7 @@ public static func TranslateActionsIntoQuickSlotCommands(const actions: array<re
       if IsDefined(remoteBreachAction) {
 
         let canPay: Bool = remoteBreachAction.CanPayCost(playerRef, true);
+
 
         let playerStatPoolSystem: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(playerRef.GetGame());
         if IsDefined(playerStatPoolSystem) {
@@ -225,6 +282,7 @@ public static func TranslateActionsIntoQuickSlotCommands(const actions: array<re
         BNDebug("RemoteBreachVisibility", "Failed to cast to BaseRemoteBreachAction - skipping");
       }
     }
+
 
     if !Deref(commands)[i].m_isLocked && IsDefined(Deref(commands)[i].m_action) {
       let linkedAction: ref<ScriptableDeviceAction> = Deref(commands)[i].m_action as ScriptableDeviceAction;

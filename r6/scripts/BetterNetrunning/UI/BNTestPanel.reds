@@ -59,6 +59,7 @@ public class BNTestPanel {
         canvas.Reparent(parent);
         this.m_canvas = canvas;
 
+
         let bg = new inkImage();
         bg.SetAnchor(inkEAnchor.TopLeft);
         bg.SetSize(new Vector2(w, h));
@@ -71,6 +72,7 @@ public class BNTestPanel {
         bg.Reparent(canvas);
         this.m_bg = bg;
 
+
         let frame = new inkImage();
         frame.SetAnchor(inkEAnchor.TopLeft);
         frame.SetSize(new Vector2(w, h));
@@ -81,6 +83,7 @@ public class BNTestPanel {
         frame.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 1.0));
         frame.Reparent(canvas);
         this.m_frame = frame;
+
 
         let sidebar = new inkImage();
         sidebar.SetAnchor(inkEAnchor.TopLeft);
@@ -94,6 +97,7 @@ public class BNTestPanel {
         sidebar.Reparent(canvas);
         this.m_sidebar = sidebar;
 
+
         let title = new inkText();
         title.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
         title.SetFontSize(20);
@@ -103,6 +107,7 @@ public class BNTestPanel {
         title.SetTintColor(new HDRColor(1.2, 0.78, 0.12, 1.0));
         title.SetText("Network Status  //  Daemon Feed");
         title.Reparent(canvas);
+
 
         let deckLine = new inkText();
         deckLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -115,12 +120,14 @@ public class BNTestPanel {
         deckLine.Reparent(canvas);
         this.m_deckLine = deckLine;
 
+
         let div1 = new inkRectangle();
         div1.SetAnchor(inkEAnchor.TopLeft);
         div1.SetMargin(new inkMargin(txtX, 50.0, 0.0, 0.0));
         div1.SetSize(new Vector2(trackW, 1.0));
         div1.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.5));
         div1.Reparent(canvas);
+
 
         let marksLine = new inkText();
         marksLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -133,12 +140,14 @@ public class BNTestPanel {
         marksLine.Reparent(canvas);
         this.m_marksLine = marksLine;
 
+
         let div2 = new inkRectangle();
         div2.SetAnchor(inkEAnchor.TopLeft);
         div2.SetMargin(new inkMargin(txtX, 82.0, 0.0, 0.0));
         div2.SetSize(new Vector2(trackW, 1.0));
         div2.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.3));
         div2.Reparent(canvas);
+
 
         let heatLabel = new inkText();
         heatLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -165,6 +174,7 @@ public class BNTestPanel {
         heatFill.SetTintColor(new HDRColor(0.15, 1.1, 0.15, 1.0));
         heatFill.Reparent(canvas);
         this.m_heatFill = heatFill;
+
 
         let signalLabel = new inkText();
         signalLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -195,6 +205,7 @@ public class BNTestPanel {
         signalFill.Reparent(canvas);
         this.m_signalFill = signalFill;
 
+
         let hideLabel = new inkText();
         hideLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
         hideLabel.SetFontSize(14);
@@ -223,6 +234,7 @@ public class BNTestPanel {
         hideFill.SetVisible(false);
         hideFill.Reparent(canvas);
         this.m_hideFill = hideFill;
+
 
         let disarmLabel = new inkText();
         disarmLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -253,6 +265,7 @@ public class BNTestPanel {
         disarmFill.Reparent(canvas);
         this.m_disarmFill = disarmFill;
 
+
         let div3 = new inkRectangle();
         div3.SetAnchor(inkEAnchor.TopLeft);
         div3.SetMargin(new inkMargin(txtX, 196.0, 0.0, 0.0));
@@ -260,6 +273,7 @@ public class BNTestPanel {
         div3.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.5));
         div3.Reparent(canvas);
         this.m_div3 = div3;
+
 
         let counterLabel = new inkText();
         counterLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
@@ -290,6 +304,7 @@ public class BNTestPanel {
         counterFill.Reparent(canvas);
         this.m_counterFill = counterFill;
 
+
         let footerFluff = new inkImage();
         footerFluff.SetAnchor(inkEAnchor.TopLeft);
         footerFluff.SetSize(new Vector2(trackW, 18.0));
@@ -303,6 +318,10 @@ public class BNTestPanel {
         footerFluff.Reparent(canvas);
         this.m_footerFluff = footerFluff;
     }
+
+
+
+
 
     private static func HeatFillColor(heat: Float) -> HDRColor {
         let h: Float = ClampF(heat, 0.0, 1.0);
@@ -323,6 +342,10 @@ public class BNTestPanel {
         return new HDRColor(r, g, b, 1.0);
     }
 
+
+
+
+
     private func UpdateContent(
         gi:                GameInstance,
         heat:              Float,
@@ -338,13 +361,16 @@ public class BNTestPanel {
         let txtX:   Float = 70.0;
         let trackW: Float = 438.0;
 
+
         let deckMss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
             .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
         if IsDefined(deckMss) && IsDefined(this.m_deckLine) {
             this.m_deckLine.SetText(deckMss.GetEquippedCyberdeckName());
         }
 
+
         this.m_marksLine.SetText("ACTIVE MARKS ... " + ToString(marks));
+
 
         let heatStr: String;
         if      heat < 0.2  { heatStr = "COLD"; }
@@ -360,14 +386,17 @@ public class BNTestPanel {
         this.m_heatFill.SetSize(new Vector2(heatW, 10.0));
         this.m_heatFill.SetTintColor(BNTestPanel.HeatFillColor(heat));
 
+
         let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
         let hasHidePresence: Bool = !IsDefined(perkSys) || perkSys.GetPerkLevel(BNPerk.HidePresence) > 0;
         let hasDisarmICE: Bool    = !IsDefined(perkSys) || perkSys.GetPerkLevel(BNPerk.DisarmICE) > 0;
+
 
         let showSignalBar:  Bool = signalTimer > 0.0;
         let showHideBar:    Bool = hideTimer > 0.0;
         let showDisarmBar:  Bool = disarmTimer > 0.0;
         let showCounterBar: Bool = counterBreachTime > 0.0;
+
 
         if showSignalBar {
             this.m_signalLabel.SetText("RAVEN ... " + ToString(Cast<Int32>(signalTimer)) + "s");
@@ -381,6 +410,7 @@ public class BNTestPanel {
         }
         this.m_signalTrack.SetVisible(showSignalBar);
         this.m_signalFill.SetVisible(showSignalBar);
+
 
         if showHideBar {
             this.m_hideLabel.SetText("GHOST ... " + ToString(Cast<Int32>(hideTimer)) + "s");
@@ -398,6 +428,7 @@ public class BNTestPanel {
         this.m_hideTrack.SetVisible(showHideBar);
         this.m_hideFill.SetVisible(showHideBar);
 
+
         if showDisarmBar {
             this.m_disarmLabel.SetText("NULL ... " + ToString(Cast<Int32>(disarmTimer)) + "s");
             this.m_disarmLabel.SetTintColor(new HDRColor(1.20, 1.00, 0.10, 1.0));
@@ -414,6 +445,7 @@ public class BNTestPanel {
         this.m_disarmTrack.SetVisible(showDisarmBar);
         this.m_disarmFill.SetVisible(showDisarmBar);
 
+
         if showCounterBar {
             this.m_counterLabel.SetText("ICE BREACH ... INCOMING " + ToString(Cast<Int32>(counterBreachTime)) + "s");
             this.m_counterLabel.SetTintColor(new HDRColor(1.50, 0.20, 0.05, 1.0));
@@ -427,6 +459,9 @@ public class BNTestPanel {
         }
         this.m_counterTrack.SetVisible(showCounterBar);
         this.m_counterFill.SetVisible(showCounterBar);
+
+
+
 
         let curY: Float = 120.0; // bottom of heat bar (Y=110 + height=10)
 
@@ -487,6 +522,11 @@ public class BNTestPanel {
         this.m_sidebar.SetSize(new Vector2(sideW, newH - 20.0));
     }
 
+
+
+
+
+
     public func Show(gi: GameInstance, counterBreachTime: Float) -> Void {
         if !IsDefined(this.m_canvas) { return; }
         this.m_isVisible = true;
@@ -534,6 +574,7 @@ public class BNTestPanel {
         this.m_animProxy = this.m_canvas.PlayAnimation(def);
     }
 
+
     public func Refresh(gi: GameInstance, counterBreachTime: Float) -> Void {
         if !IsDefined(this.m_canvas) || !this.m_isVisible { return; }
 
@@ -560,6 +601,7 @@ public class BNTestPanel {
         if wasAnimating { this.m_animProxy.Stop(); }
 
         if !this.m_canvas.IsVisible() { return; }
+
 
         if wasAnimating {
             this.m_canvas.SetVisible(false);

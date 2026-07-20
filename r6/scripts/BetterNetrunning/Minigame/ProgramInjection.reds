@@ -1,5 +1,30 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Minigame
 
 import BetterNetrunningConfig.*
@@ -18,6 +43,8 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     return;
   }
 
+
+
   let device: ref<SharedGameplayPS>;
   let devicePS: ref<ScriptableDeviceComponentPS>;
   let gameInstance: GameInstance;
@@ -34,6 +61,8 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     }
     devicePS     = gameDevice.GetDevicePS();
 
+
+
     let implicitCast: ref<SharedGameplayPS> = devicePS;
     device       = implicitCast;
     gameInstance = gameDevice.GetGame();
@@ -44,6 +73,8 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     return;
   }
 
+
+
   let markingSystem: ref<MarkingStateSystem> =
     GameInstance.GetScriptableSystemsContainer(gameInstance).Get(
       BNConstants.CLASS_MARKING_STATE_SYSTEM()
@@ -51,6 +82,10 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
 
   let hasMarks: Bool = IsDefined(markingSystem) && markingSystem.HasAnyMarked();
   let sessionHeat: Float = IsDefined(markingSystem) ? markingSystem.GetSessionHeat() : 0.0;
+
+
+
+
 
   if IsDefined(this.m_entity as AccessPoint) {
     let perkSysAP: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
@@ -79,24 +114,37 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
       + (!IsDefined(perkSysAP) || perkSysAP.GetPerkLevel(BNPerk.DisarmICE) > 0 ? " + DisarmICE" : ""));
   }
 
+
   if !hasMarks {
     BNDebug("ProgramInjection", "No marks — deferring to post-filter Icepick injection");
     return;
   }
+
+
+
+
+
+
+
 
   let networkState: NetworkState;
   if IsDefined(devicePS) {
     networkState = NetworkStateUtils.GetNetworkState(devicePS, gameInstance);
   }
 
+
+
   let subnetOpen: Bool = IsDefined(this.m_entity as AccessPoint)
     || NetworkStateUtils.IsSubnetAccessible(networkState)
     || (IsDefined(markingSystem) && markingSystem.GetDisarmICETimer() > 0.0);
+
+
 
   let turretAdded: Bool = false;
   let cameraAdded: Bool = false;
   let npcAdded:    Bool = false;
   let basicAdded:  Bool = false;
+
 
   if markingSystem.HasMarkedDefense() && subnetOpen {
     let prog: MinigameProgramData;
@@ -106,6 +154,7 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     turretAdded = true;
   }
 
+
   if markingSystem.HasMarkedCameras() && subnetOpen {
     let prog: MinigameProgramData;
     prog.actionID    = BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS();
@@ -114,6 +163,7 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     cameraAdded = true;
   }
 
+
   if markingSystem.HasMarkedNPCs() && subnetOpen {
     let prog: MinigameProgramData;
     prog.actionID    = BNConstants.PROGRAM_UNLOCK_NPC_QUICKHACKS();
@@ -121,6 +171,7 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     ArrayInsert(Deref(programs), 0, prog);
     npcAdded = true;
   }
+
 
   if markingSystem.HasMarkedRoot() && subnetOpen {
     let prog: MinigameProgramData;

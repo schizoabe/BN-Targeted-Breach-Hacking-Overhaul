@@ -9,6 +9,7 @@ import BetterNetrunning.RemoteBreach.Core.*
 import BetterNetrunning.RemoteBreach.Actions.*
 import BetterNetrunning.RadialUnlock.*
 
+
 @replaceMethod(ScriptableDeviceComponentPS)
 public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, const context: script_ref<GetActionsContext>) -> Void {
 
@@ -16,7 +17,11 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
     return;
   }
 
+
   this.GetQuickHackActions(outActions, context);
+
+
+
 
   let i: Int32 = ArraySize(outActions) - 1;
   let hasCustomRemoteBreach: Bool = false;
@@ -36,11 +41,16 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
     i -= 1;
   }
 
+
+
   if !hasCustomRemoteBreach && !BetterNetrunningSettings.UnlockIfNoAccessPoint() {
     this.TryAddMissingCustomRemoteBreachWrapper(outActions);
   }
 
+
+
   this.RemoveCustomRemoteBreachIfUnlocked(outActions);
+
 
   let sharedPS: ref<SharedGameplayPS> = this;
   let hasAccessPoint: Bool = true;
@@ -51,11 +61,17 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
     hasAccessPoint = apCount > 0;
   }
 
+
+
+
   let isUnsecuredNetwork: Bool = !hasAccessPoint && BetterNetrunningSettings.UnlockIfNoAccessPoint();
+
 
   let isRemoteBreachLocked: Bool = BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this);
 
+
   if this.IsLockedViaSequencer() {
+
 
     if isRemoteBreachLocked {
       ScriptableDeviceComponentPS.SetActionsInactiveAll(outActions, BNConstants.LOCKEY_NO_NETWORK_ACCESS(), BNConstants.ACTION_REMOTE_BREACH());
@@ -69,7 +85,9 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
     this.SetActionsInactiveUnbreached(outActions);
   }
 
+
 }
+
 
 @replaceMethod(Device)
 public const func CanRevealRemoteActionsWheel() -> Bool {

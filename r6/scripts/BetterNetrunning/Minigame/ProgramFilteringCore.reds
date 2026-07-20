@@ -1,5 +1,25 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Minigame
 
 import BetterNetrunningConfig.*
@@ -7,12 +27,18 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Integration.*
 
+
+
+
+
+
 public func ShouldRemoveNetworkPrograms(actionID: TweakDBID, connectedToNetwork: Bool) -> Bool {
   if connectedToNetwork {
     return false;
   }
   return IsUnlockQuickhackAction(actionID);
 }
+
 
 public func ShouldRemoveDeviceBackdoorPrograms(actionID: TweakDBID, entity: wref<GameObject>) -> Bool {
 
@@ -24,6 +50,11 @@ public func ShouldRemoveDeviceBackdoorPrograms(actionID: TweakDBID, entity: wref
       || actionID == BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS();
 }
 
+
+
+
+
+
 public func ShouldRemoveAccessPointPrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, isRemoteBreach: Bool) -> Bool {
 
   if isRemoteBreach {
@@ -33,6 +64,9 @@ public func ShouldRemoveAccessPointPrograms(actionID: TweakDBID, miniGameActionR
   return NotEquals(miniGameActionRecord.Type().Type(), gamedataMinigameActionType.AccessPoint)
       && !IsUnlockQuickhackAction(actionID);
 }
+
+
+
 
 public func ShouldRemoveNonNetrunnerPrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, isRemoteBreach: Bool, entity: wref<GameObject>) -> Bool {
 
@@ -45,6 +79,7 @@ public func ShouldRemoveNonNetrunnerPrograms(actionID: TweakDBID, miniGameAction
       || actionID == BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS();
 }
 
+
 public func IsRemoteNonNetrunner(isRemoteBreach: Bool, entity: wref<GameObject>) -> Bool {
   if !isRemoteBreach {
     return false;
@@ -52,6 +87,10 @@ public func IsRemoteNonNetrunner(isRemoteBreach: Bool, entity: wref<GameObject>)
   let puppet: wref<ScriptedPuppet> = entity as ScriptedPuppet;
   return IsDefined(puppet) && !puppet.IsNetrunnerPuppet();
 }
+
+
+
+
 
 private func IsUnlockQuickhackAction(actionID: TweakDBID) -> Bool {
   return actionID == BNConstants.PROGRAM_UNLOCK_QUICKHACKS()

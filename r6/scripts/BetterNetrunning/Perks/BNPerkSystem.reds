@@ -1,9 +1,48 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Perks
 
 import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
+
+
+
+
 
 public enum BNPerk {
 
@@ -23,6 +62,10 @@ public enum BNPerk {
   TrackingProtocol = 12,
   IceBreaker       = 13,
 }
+
+
+
+
 
 public abstract class BNPerkData {
 
@@ -66,6 +109,8 @@ public abstract class BNPerkData {
     }
   }
 
+
+
   public static func GetRemoteBreachICEBoard(gi: GameInstance) -> TweakDBID {
     let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
     if !IsDefined(perkSys) { return t"Minigame.BNRemoteBreachICEBoard_FPS"; }
@@ -78,8 +123,16 @@ public abstract class BNPerkData {
   }
 }
 
+
+
+
+
 @addField(PlayerPuppetPS)
 public persistent let bnPerkLevels: array<Int32>;
+
+
+
+
 
 @addMethod(PlayerPuppet)
 public func GetBNPerkLevel(perk: BNPerk) -> Int32 {
@@ -101,6 +154,7 @@ public func SetBNPerkLevel(perk: BNPerk, level: Int32) -> Void {
   ps.bnPerkLevels[idx] = level;
 }
 
+
 @addMethod(PlayerPuppet)
 public func GetBNPerkLevelInt(idx: Int32) -> Int32 {
   return this.GetBNPerkLevel(IntEnum<BNPerk>(idx));
@@ -111,6 +165,10 @@ public func SetBNPerkLevelInt(idx: Int32, level: Int32) -> Void {
   this.SetBNPerkLevel(IntEnum<BNPerk>(idx), level);
 }
 
+
+
+
+
 public class BNPerkSystem extends ScriptableSystem {
 
   public static func GetInstance(gameInstance: GameInstance) -> ref<BNPerkSystem> {
@@ -118,11 +176,13 @@ public class BNPerkSystem extends ScriptableSystem {
       .Get(n"BetterNetrunning.Perks.BNPerkSystem") as BNPerkSystem;
   }
 
+
   public func GetPerkLevel(perk: BNPerk) -> Int32 {
     let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
     if !IsDefined(player) { return 0; }
     return player.GetBNPerkLevel(perk);
   }
+
 
   public func GetPerkLevelInt(idx: Int32) -> Int32 {
     return this.GetPerkLevel(IntEnum<BNPerk>(idx));

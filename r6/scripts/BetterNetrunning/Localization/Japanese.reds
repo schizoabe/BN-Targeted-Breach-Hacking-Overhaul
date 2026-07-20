@@ -1,5 +1,27 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Localization
 import Codeware.Localization.*
 
@@ -9,6 +31,7 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("Category-Controls", "操作");
     this.Text("DisplayName-BetterNetrunning-BreachingHotkey", "気絶NPCに対するブリーチホットキー");
     this.Text("Description-BetterNetrunning-BreachingHotkey", "どのホットキーに気絶NPCに対するブリーチを割り当てるか選択します");
+
 
     this.Text("Category-Breaching", "ブリーチ");
     this.Text("DisplayName-BetterNetrunning-EnableClassicMode", "クラシックモードを有効化");
@@ -23,6 +46,7 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("DisplayName-BetterNetrunning-QuickhackUnlockDurationHours", "クイックハック アンロック持続期間（時）");
     this.Text("Description-BetterNetrunning-QuickhackUnlockDurationHours",
               "ブリーチ成功後、クイックハックのアンロック状態が持続する時間を設定します（ゲーム内時間）。\n0に設定すると、一度ブリーチした対象は期限切れなしで永続的にアンロック状態を維持します。\n1以上に設定すると、指定時間経過後に再ロックされ、再度ブリーチが必要になります");
+
 
     this.Text("Category-RemoteBreach", "リモートブリーチ");
     this.Text("DisplayName-BetterNetrunning-RemoteBreachEnabledDevice", "リモートブリーチ - 一般デバイス");
@@ -49,6 +73,7 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("Description-BetterNetrunning-RemoteBreachRAMCostPercent",
               "リモートブリーチが消費するRAM最大値の割合 (初期値: 50% = 1/2. 100% = 全RAM)。\nリモートブリーチのコストバランスを調整できます");
 
+
     this.Text("Category-BreachPenalty", "ブリーチ失敗ペナルティ");
     this.Text("DisplayName-BetterNetrunning-BreachFailurePenaltyEnabled", "ブリーチ失敗ペナルティを有効化");
     this.Text("Description-BetterNetrunning-BreachFailurePenaltyEnabled", "ブリーチプロトコルの失敗時にペナルティを適用します");
@@ -69,10 +94,12 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("Description-BetterNetrunning-BreachPenaltyDurationMinutes",
               "ブリーチ失敗後、ペナルティが持続する時間（ゲーム内時間）。\nAPブリーチ: 失敗した対象に対する「接続」操作をロック\n気絶NPCブリーチ: 失敗したNPCに対する「ブリーチ」操作をロック\nリモートブリーチ: 接続先ネットワーク全体（ネットワーク接続時）または範囲内スタンドアロン/車両（スタンドアロン時）の「ブリーチプロトコル」クイックハックをロック");
 
+
     this.Text("Category-AccessPoints", "アクセスポイント");
     this.Text("DisplayName-BetterNetrunning-UnlockIfNoAccessPoint", "アクセスポイントが無いネットワークをアンロック");
     this.Text("Description-BetterNetrunning-UnlockIfNoAccessPoint",
               "有効の場合、アクセスポイントがない対象は常にアンロックされます（ブリーチ不要）。\n無効の場合、スタンドアロン対象は範囲アンロックシステム（Radial Unlock System）によって制御されます。\n（ブリーチ済みネットワークの中心からブリーチ範囲内で自動アンロック。範囲は“Radial Breach”設定で変更可能）");
+
 
     this.Text("Category-UnlockedQuickhacks", "常時アンロックされるクイックハック");
     this.Text("DisplayName-BetterNetrunning-AlwaysAllowPing", "PING");
@@ -105,9 +132,11 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("DisplayName-BetterNetrunning-AlwaysNPCsUltimate", "NPC - アルティメット");
     this.Text("Description-BetterNetrunning-AlwaysNPCsUltimate", "有効の場合、未ブリーチのネットワークでもアルティメットクイックハックが常に利用可能になります");
 
+
     this.Text("Category-Progression", "進行状況");
     this.Text("DisplayName-BetterNetrunning-ProgressionRequireAll", "全て必須");
     this.Text("Description-BetterNetrunning-ProgressionRequireAll", "有効の場合、無効化されていない全ての進行状況カテゴリを満たす必要があります。無効の場合は、いずれか1つを満たせばアンロックされます");
+
 
     this.Text("Category-BetterNetrunning-ProgressionCyberdeck", "進行状況 - サイバーデッキクラス");
     this.Text("DisplayName-BetterNetrunning-ProgressionCyberdeckEnabled", "サイバーデッキ進行機能を有効化");
@@ -146,6 +175,7 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("DisplayValues-BetterNetrunning-cyberdeckQuality-LegendaryPlus", "クラス5+");
     this.Text("DisplayValues-BetterNetrunning-cyberdeckQuality-LegendaryPlusPlus", "クラス5++");
 
+
     this.Text("Category-BetterNetrunning-ProgressionIntelligence", "進行状況 - 知力");
     this.Text("DisplayName-BetterNetrunning-ProgressionIntelligenceEnabled", "知力進行機能を有効化");
     this.Text("Description-BetterNetrunning-ProgressionIntelligenceEnabled", "有効の場合、クイックハックへのアクセスに知力の要件が適用されます。無効にすると知力の制限を無視します");
@@ -171,6 +201,7 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("DisplayName-BetterNetrunning-ProgressionIntelligenceNPCsUltimate", "NPC - アルティメット");
     this.Text("Description-BetterNetrunning-ProgressionIntelligenceNPCsUltimate", "NPCに対するアルティメットクイックハックに必要な最小知力");
 
+
     this.Text("Category-BetterNetrunning-ProgressionEnemyRarity", "進行状況 - NPCランク");
     this.Text("DisplayName-BetterNetrunning-ProgressionEnemyRarityEnabled", "NPCランク進行機能を有効化");
     this.Text("Description-BetterNetrunning-ProgressionEnemyRarityEnabled", "有効の場合、クイックハックへのアクセスにNPCランクの要件が適用されます。無効にするとNPCランクの制限を無視します");
@@ -195,6 +226,7 @@ public class Japanese extends ModLocalizationPackage {
     this.Text("DisplayValues-BetterNetrunning-NPCRarity-Elite", "エリート");
     this.Text("DisplayValues-BetterNetrunning-NPCRarity-Boss", "ボス");
     this.Text("DisplayValues-BetterNetrunning-NPCRarity-MaxTac", "マックスタック");
+
 
     this.Text("Category-Debug", "デバッグ");
     this.Text("DisplayName-BetterNetrunning-EnableDebugLog", "デバッグログを有効化");

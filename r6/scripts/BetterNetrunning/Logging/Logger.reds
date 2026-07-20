@@ -1,8 +1,30 @@
 ﻿
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module BetterNetrunning.Logging
 
 import BetterNetrunningConfig.*
+
+
+
+
 
 public enum LogLevel {
   ERROR = 0,    // Critical errors only
@@ -11,6 +33,10 @@ public enum LogLevel {
   DEBUG = 3,    // Detailed debugging
   TRACE = 4     // Very detailed (performance impact)
 }
+
+
+
+
 
 public class LoggerStateSystem extends ScriptableSystem {
   private let m_lastLogMessage: String;
@@ -37,6 +63,11 @@ public class LoggerStateSystem extends ScriptableSystem {
   public func IncrementDuplicateCount() { this.m_duplicateCount += 1; }
 }
 
+
+
+
+
+
 private static func GetCurrentLogLevel() -> LogLevel {
   if !BetterNetrunningSettings.EnableDebugLog() {
     return LogLevel.ERROR; // Only errors when debug disabled
@@ -57,9 +88,15 @@ private static func GetCurrentLogLevel() -> LogLevel {
   }
 }
 
+
+
+
+
+
 public static func BNError(context: String, message: String) -> Void {
   LogWithLevel(LogLevel.ERROR, context, message);
 }
+
 
 public static func BNWarn(context: String, message: String) -> Void {
   if EnumInt(GetCurrentLogLevel()) >= EnumInt(LogLevel.WARNING) {
@@ -67,11 +104,13 @@ public static func BNWarn(context: String, message: String) -> Void {
   }
 }
 
+
 public static func BNInfo(context: String, message: String) -> Void {
   if EnumInt(GetCurrentLogLevel()) >= EnumInt(LogLevel.INFO) {
     LogWithLevel(LogLevel.INFO, context, message);
   }
 }
+
 
 public static func BNDebug(context: String, message: String) -> Void {
   if EnumInt(GetCurrentLogLevel()) >= EnumInt(LogLevel.DEBUG) {
@@ -79,11 +118,16 @@ public static func BNDebug(context: String, message: String) -> Void {
   }
 }
 
+
 public static func BNTrace(context: String, message: String) -> Void {
   if EnumInt(GetCurrentLogLevel()) >= EnumInt(LogLevel.TRACE) {
     LogWithLevel(LogLevel.TRACE, context, message);
   }
 }
+
+
+
+
 
 private static func LogWithLevel(level: LogLevel, context: String, message: String) -> Void {
   let gameInstance: GameInstance = GetGameInstance();
@@ -100,10 +144,12 @@ private static func LogWithLevel(level: LogLevel, context: String, message: Stri
   let currentTime: Float = EngineTime.ToFloat(GameInstance.GetSimTime(gameInstance));
   let timeSinceLastLog: Float = currentTime - loggerState.GetLastTimestamp();
 
+
   if timeSinceLastLog < 5.0 && Equals(loggerState.GetLastContext(), context) && Equals(loggerState.GetLastMessage(), message) {
     loggerState.IncrementDuplicateCount();
     return; // Suppress duplicate
   }
+
 
   if loggerState.GetDuplicateCount() > 0 {
     let levelPrefix: String = GetLevelPrefix(level);
@@ -112,14 +158,17 @@ private static func LogWithLevel(level: LogLevel, context: String, message: Stri
     loggerState.SetDuplicateCount(0);
   }
 
+
   let levelPrefix: String = GetLevelPrefix(level);
   let fullMessage: String = levelPrefix + " [" + context + "] " + message;
   ModLog(n"BetterNetrunning", fullMessage);
+
 
   loggerState.SetLastMessage(message);
   loggerState.SetLastContext(context);
   loggerState.SetLastTimestamp(currentTime);
 }
+
 
 private static func GetLevelPrefix(level: LogLevel) -> String {
   switch level {
