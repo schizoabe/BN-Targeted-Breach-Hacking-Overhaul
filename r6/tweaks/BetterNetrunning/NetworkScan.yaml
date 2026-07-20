@@ -1,0 +1,50 @@
+﻿
+
+QuickHack.BNNetworkScanBaseRAM:
+  $base: QuickHack.MemoryMod
+  value: 2
+
+QuickHack.BNNetworkScanCost:
+  $type: gamedataStatPoolCost_Record
+  statPool: BaseStatPools.Memory
+  costMods:
+    - QuickHack.MemoryCostReductionMod
+    - QuickHack.ConsumableCostReduction
+    - QuickHack.TargetResistanceCovert
+    - QuickHack.NetworkMemoryCostReductionMod
+    - QuickHack.BNNetworkScanBaseRAM
+
+Interactions.BNMark:
+  $base: Interactions.PingHack
+  caption: LocKey#4820034
+  description: LocKey#4820035
+
+Interactions.BNUnmark:
+  $base: Interactions.PingHack
+  caption: LocKey#4820036
+  description: LocKey#4820037
+
+QuickHack.BNMark:
+  $base: QuickHack.CovertHack
+  actionName: BNMark
+  gameplayCategory: ActionCategories.Ping
+  objectActionUI: Interactions.BNMark
+  costs: []
+  activationTime: []
+  instigatorPrereqs: []
+  targetActivePrereqs: []
+  startEffects: []
+  completionEffects: []
+
+QuickHack.BNUnmark:
+  $base: QuickHack.CovertHack
+  actionName: BNUnmark
+  gameplayCategory: ActionCategories.Ping
+  objectActionUI: Interactions.BNUnmark
+  costs: []
+  activationTime: []
+  instigatorPrereqs: []
+  targetActivePrereqs: []
+  startEffects: []
+  completionEffects: []
+

@@ -1,0 +1,16 @@
+﻿
+
+Interactions.BNNPCRemoteBreach:
+  $base: Interactions.RemoteBreach
+  caption: LocKey#4820001
+  description: LocKey#4820002
+
+QuickHack.BNNPCRemoteBreach:
+  $base: QuickHack.RemoteBreach
+  objectActionUI: Interactions.BNNPCRemoteBreach
+  instigatorPrereqs: []
+  targetActivePrereqs:
+    - Prereqs.QuickHackUploadingPrereq
+    - Prereqs.ChimeraNoQuickHackPrereq
+  startEffects: []
+

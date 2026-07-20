@@ -1,0 +1,230 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.17.4-nightly.2026-03-09",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-06-26T00:04:55.1333517Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\Pierre\\Documents\\betternetrunningfixtargetedbreachedition\\source\\archive\\user\\pierre\\betternetrunningfixtargetedbreachedition\\localization\\en-us.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Breach Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820001",
+              "secondaryKey": "Better-Netrunning-Remote-Breach-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Break through enemy ICE, making all nearby enemies and devices connected to the network more vulnerable to quickhacks.",
+              "maleVariant": "",
+              "primaryKey": "4820002",
+              "secondaryKey": "Better-Netrunning-Remote-Breach-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Breach Root Network",
+              "maleVariant": "",
+              "primaryKey": "4820003",
+              "secondaryKey": "Better-Netrunning-Basic-Access-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Unlocks quickhacks on marked basic devices.",
+              "maleVariant": "",
+              "primaryKey": "4820004",
+              "secondaryKey": "Better-Netrunning-Basic-Access-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Breach Personnel System",
+              "maleVariant": "",
+              "primaryKey": "4820005",
+              "secondaryKey": "Better-Netrunning-NPC-Access-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Unlocks quickhacks on marked personnel.",
+              "maleVariant": "",
+              "primaryKey": "4820006",
+              "secondaryKey": "Better-Netrunning-NPC-Access-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Breach Surveillance System",
+              "maleVariant": "",
+              "primaryKey": "4820007",
+              "secondaryKey": "Better-Netrunning-Camera-Access-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Unlocks quickhacks on marked surveillance cameras.",
+              "maleVariant": "",
+              "primaryKey": "4820008",
+              "secondaryKey": "Better-Netrunning-Camera-Access-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Breach Defense System",
+              "maleVariant": "",
+              "primaryKey": "4820009",
+              "secondaryKey": "Better-Netrunning-Turret-Access-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Unlocks quickhacks on marked turrets.",
+              "maleVariant": "",
+              "primaryKey": "4820010",
+              "secondaryKey": "Better-Netrunning-Turret-Access-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "No Network access rights",
+              "maleVariant": "",
+              "primaryKey": "4820011",
+              "secondaryKey": "Better-Netrunning-Quickhacks-Locked"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Deadlock Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820012",
+              "secondaryKey": "Better-Netrunning-Counter-Breach-ICE-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Counter the ICE. Lowers heat.",
+              "maleVariant": "",
+              "primaryKey": "4820013",
+              "secondaryKey": "Better-Netrunning-Counter-Breach-ICE-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Fracture Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820014",
+              "secondaryKey": "Better-Netrunning-Icepick-V1-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Deals weak hits to device ICE. Raises network heat.",
+              "maleVariant": "",
+              "primaryKey": "4820015",
+              "secondaryKey": "Better-Netrunning-Icepick-V1-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Purge Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820016",
+              "secondaryKey": "Better-Netrunning-Icepick-V2-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Reduces network heat. Does not damage ICE.",
+              "maleVariant": "",
+              "primaryKey": "4820017",
+              "secondaryKey": "Better-Netrunning-Icepick-V2-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Sunder Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820018",
+              "secondaryKey": "Better-Netrunning-Icepick-V3-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Deals severe hits to device ICE. No heat penalty.",
+              "maleVariant": "",
+              "primaryKey": "4820019",
+              "secondaryKey": "Better-Netrunning-Icepick-V3-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Ghost Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820020",
+              "secondaryKey": "Better-Netrunning-HidePresence-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Masks all network activity. Heat generation is suppressed.",
+              "maleVariant": "",
+              "primaryKey": "4820021",
+              "secondaryKey": "Better-Netrunning-HidePresence-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Null Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820022",
+              "secondaryKey": "Better-Netrunning-DisarmICE-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Disables ICE across the network.",
+              "maleVariant": "",
+              "primaryKey": "4820023",
+              "secondaryKey": "Better-Netrunning-DisarmICE-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Raven Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820024",
+              "secondaryKey": "Better-Netrunning-SignalNoise-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Halves Heat generation of any quickhack interaction.",
+              "maleVariant": "",
+              "primaryKey": "4820025",
+              "secondaryKey": "Better-Netrunning-SignalNoise-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Mark",
+              "maleVariant": "",
+              "primaryKey": "4820034",
+              "secondaryKey": "Better-Netrunning-Mark-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tag this target for Network Diagnostics.",
+              "maleVariant": "",
+              "primaryKey": "4820035",
+              "secondaryKey": "Better-Netrunning-Mark-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Unmark",
+              "maleVariant": "",
+              "primaryKey": "4820036",
+              "secondaryKey": "Better-Netrunning-Unmark-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Remove Network Diagnostics tag from this target.",
+              "maleVariant": "",
+              "primaryKey": "4820037",
+              "secondaryKey": "Better-Netrunning-Unmark-Description"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}
