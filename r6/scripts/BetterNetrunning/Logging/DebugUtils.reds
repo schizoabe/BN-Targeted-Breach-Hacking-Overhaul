@@ -1,26 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Logging
 
@@ -31,26 +8,16 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.Logging.*
 
 
-
-
-
 public abstract class DebugUtils {
-
-
-
-
-
 
 
   public static func CleanDeviceName(rawName: String) -> String {
     let prefix: String = BNConstants.DEVICE_NAME_PREFIX();
     let cleaned: String = rawName;
 
-
     if StrBeginsWith(rawName, prefix) {
       cleaned = StrMid(rawName, StrLen(prefix));
     }
-
 
     if StrBeginsWith(cleaned, "LocKey#") {
       return GetLocalizedText(cleaned);
@@ -60,10 +27,6 @@ public abstract class DebugUtils {
   }
 
 
-
-
-
-  
   private static func LogQuickhackListFromDeviceActions(
     actions: array<ref<DeviceAction>>,
     logContext: String
@@ -93,10 +56,6 @@ public abstract class DebugUtils {
   }
 
 
-
-
-
-  
   public static func LogDeviceQuickhackStateOnScan(devicePS: ref<ScriptableDeviceComponentPS>, actions: array<ref<DeviceAction>>) -> Void {
     if !BetterNetrunningSettings.EnableDebugLog() {
       return;
@@ -108,7 +67,6 @@ public abstract class DebugUtils {
       return;
     }
 
-
     let deviceType: String = DaemonFilterUtils.GetDeviceTypeName(devicePS);
     let rawDeviceName: String = devicePS.GetDeviceName();
     let deviceName: String = DebugUtils.CleanDeviceName(rawDeviceName);
@@ -116,13 +74,11 @@ public abstract class DebugUtils {
     BNInfo("[SCAN]", "===== DEVICE SCANNED =====");
     BNInfo("[SCAN]", "Device: " + deviceName + " (" + deviceType + ")");
 
-
     let deviceEntity: ref<GameObject> = devicePS.GetOwnerEntityWeak() as GameObject;
     if IsDefined(deviceEntity) {
       let position: Vector4 = deviceEntity.GetWorldPosition();
       BNDebug("[SCAN]", "Location: X=" + ToString(position.X) + " Y=" + ToString(position.Y) + " Z=" + ToString(position.Z));
     }
-
 
     BNDebug("[SCAN]", "--- Breach State ---");
     BNDebug("[SCAN]", "Basic Breached: " + ToString(BreachStatusUtils.IsBasicBreached(sharedPS)));
@@ -130,12 +86,10 @@ public abstract class DebugUtils {
     BNDebug("[SCAN]", "Turret Breached: " + ToString(BreachStatusUtils.IsTurretsBreached(sharedPS)));
     BNDebug("[SCAN]", "NPC Breached: " + ToString(BreachStatusUtils.IsNPCsBreached(sharedPS)));
 
-
     let isConnected: Bool = sharedPS.IsConnectedToPhysicalAccessPoint();
     let hasBackdoor: Bool = sharedPS.HasNetworkBackdoor();
     let isStandalone: Bool = !isConnected && !hasBackdoor;
     BNDebug("[SCAN]", "Network: " + (isConnected ? "Connected" : (hasBackdoor ? "Backdoor" : "Standalone")));
-
 
     DebugUtils.LogQuickhackListFromDeviceActions(actions, "[SCAN]");
 
@@ -143,10 +97,6 @@ public abstract class DebugUtils {
   }
 
 
-
-
-
-  
   public static func LogNPCQuickhackState(
     npcPS: ref<ScriptedPuppetPS>,
     puppetActions: script_ref<array<ref<PuppetAction>>>,
@@ -158,22 +108,18 @@ public abstract class DebugUtils {
 
     let context: String = NotEquals(logContext, "") ? logContext : "[Debug]";
 
-
-
     if !npcPS.IsConnectedToAccessPoint() {
-      return;  // Normal state - no warning needed
+      return;
     }
 
     let deviceLinkPS: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
 
     if !IsDefined(deviceLinkPS) {
-
       BNWarn(context, "NPC is connected to AP but DeviceLink is null (unexpected timing issue)");
       return;
     }
 
     BNInfo(context, "===== NPC QUICKHACK STATE =====");
-
 
     let npcEntity: ref<GameObject> = npcPS.GetOwnerEntityWeak() as GameObject;
     if IsDefined(npcEntity) {
@@ -182,19 +128,15 @@ public abstract class DebugUtils {
       BNDebug(context, "x = " + ToString(position.X) + ", y = " + ToString(position.Y) + ", z = " + ToString(position.Z));
     }
 
-
     BNDebug(context, "--- Breach State (Timestamp) ---");
     BNDebug(context, "NPC Subnet Breached: " + ToString(BreachStatusUtils.IsNPCsBreached(deviceLinkPS)) + " (ts: " + ToString(deviceLinkPS.m_betterNetrunningUnlockTimestampNPCs) + ")");
-
 
     BNDebug(context, "--- Network State ---");
     BNDebug(context, "Connected to Network: " + ToString(npcPS.IsConnectedToAccessPoint()));
     BNDebug(context, "Connected to AP: " + ToString(deviceLinkPS.IsConnectedToPhysicalAccessPoint()));
 
-
     let isStandaloneNPC: Bool = !npcPS.IsConnectedToAccessPoint() && !deviceLinkPS.IsConnectedToPhysicalAccessPoint() && !deviceLinkPS.HasNetworkBackdoor();
     BNDebug(context, "Is Standalone: " + ToString(isStandaloneNPC));
-
 
     let deviceActions: array<ref<DeviceAction>>;
     let i: Int32 = 0;
@@ -210,10 +152,6 @@ public abstract class DebugUtils {
 
     BNInfo(context, "===============================");
   }
-
-
-
-
 
 
   public static func LogAccessPointBreachTarget(apPS: ref<AccessPointControllerPS>, opt logContext: String) -> Void {
@@ -245,7 +183,6 @@ public abstract class DebugUtils {
     BNInfo(context, "=====================================");
   }
 
-
   public static func LogRemoteBreachTarget(devicePS: ref<ScriptableDeviceComponentPS>, opt logContext: String) -> Void {
     if !BetterNetrunningSettings.EnableDebugLog() {
       return;
@@ -264,7 +201,6 @@ public abstract class DebugUtils {
       BNDebug(context, "x = " + ToString(devicePosition.X) + ", y = " + ToString(devicePosition.Y) + ", z = " + ToString(devicePosition.Z));
     }
 
-
     let sharedPS: ref<SharedGameplayPS> = devicePS;
     if IsDefined(sharedPS) {
       BNDebug(context, "Network Name: " + sharedPS.GetNetworkName());
@@ -272,7 +208,6 @@ public abstract class DebugUtils {
     }
     BNInfo(context, "=====================================");
   }
-
 
   public static func LogUnconsciousNPCBreachTarget(npc: ref<ScriptedPuppet>, npcPS: ref<ScriptedPuppetPS>, opt logContext: String) -> Void {
     if !BetterNetrunningSettings.EnableDebugLog() {
@@ -305,10 +240,6 @@ public abstract class DebugUtils {
   }
 
 
-
-
-
-
   public static func LogProgramFilteringStep(
     filterName: String,
     programsBefore: Int32,
@@ -328,7 +259,6 @@ public abstract class DebugUtils {
             " (" + ToString(programsBefore) + " → " + ToString(programsAfter) + " programs)");
     }
   }
-
 
   public static func LogFilteringSummary(
     initialCount: Int32,
@@ -363,10 +293,6 @@ public abstract class DebugUtils {
   }
 
 
-
-
-
-  
   public static func LogRemoteBreachRAMCheck(
     actionClassName: CName,
     ramCost: Int32,
@@ -394,21 +320,15 @@ public abstract class DebugUtils {
 }
 
 
-
-
-
-
 @wrapMethod(Device)
 protected cb func OnScanningActionFinishedEvent(evt: ref<ScanningActionFinishedEvent>) -> Void {
   wrappedMethod(evt);
-
 
   if BetterNetrunningSettings.EnableDebugLog() {
     let devicePS: ref<ScriptableDeviceComponentPS> = this.GetDevicePS();
     if !IsDefined(devicePS) {
       return;
     }
-
 
     let player: ref<GameObject> = GetPlayer(this.GetGame());
     if !IsDefined(player) {
@@ -422,12 +342,9 @@ protected cb func OnScanningActionFinishedEvent(evt: ref<ScanningActionFinishedE
       player.GetEntityID()
     );
 
-
     let actions: array<ref<DeviceAction>>;
     devicePS.GetQuickHackActions(actions, context);
-
 
     DebugUtils.LogDeviceQuickhackStateOnScan(devicePS, actions);
   }
 }
-

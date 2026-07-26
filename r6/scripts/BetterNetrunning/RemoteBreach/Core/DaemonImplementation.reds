@@ -1,23 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.RemoteBreach.Core
 
@@ -35,47 +15,34 @@ import HackingExtensions.*
 import HackingExtensions.Programs.*
 
 
-
-
-
 @if(ModuleExists("HackingExtensions"))
 public abstract class DaemonExecutionUtils {
 
-    
     public static func ProcessDaemonWithStrategy(
         sourcePS: ref<DeviceComponentPS>,
         gameInstance: GameInstance,
         strategy: ref<IDaemonUnlockStrategy>,
         daemonTypeStr: String
     ) -> Void {
-
         let sharedPS: ref<SharedGameplayPS> = sourcePS as SharedGameplayPS;
         if !IsDefined(sharedPS) {
             BNError("ProcessDaemonWithStrategy", "Cannot cast to SharedGameplayPS");
             return;
         }
 
-
-
-
-
         let TargetType: TargetType = DaemonExecutionUtils.GetDeviceTypeFromDaemonType(daemonTypeStr);
-
 
         let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
         TimeUtils.SetDeviceUnlockTimestamp(sharedPS, TargetType, currentTime);
-
 
         let stateSystem: ref<IScriptable> = strategy.GetStateSystem(gameInstance);
         if IsDefined(stateSystem) {
             strategy.MarkBreached(stateSystem, sourcePS.GetID(), gameInstance);
         }
 
-
         strategy.ExecuteUnlock(daemonTypeStr, TargetType, sourcePS, gameInstance);
     }
 
-    
     public static func GetDeviceTypeFromDaemonType(daemonTypeStr: String) -> TargetType {
         let TargetType: TargetType;
 
@@ -86,7 +53,6 @@ public abstract class DaemonExecutionUtils {
         } else if Equals(daemonTypeStr, DaemonTypes.Turret()) {
             TargetType = TargetType.Turret;
         } else {
-
             TargetType = TargetType.Basic;
         }
 
@@ -96,19 +62,14 @@ public abstract class DaemonExecutionUtils {
 }
 
 
-
-
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public class DeviceDaemonAction extends HackProgramAction {
     private let m_daemonTypeStr: String;
 
-    
     public func SetDaemonType(daemonTypeStr: String) -> Void {
         this.m_daemonTypeStr = daemonTypeStr;
     }
 
-    
     protected func ExecuteProgramSuccess() -> Void {
         let player: ref<PlayerPuppet> = this.GetPlayer();
         if !IsDefined(player) {
@@ -155,14 +116,6 @@ public class DeviceDaemonAction extends HackProgramAction {
 public class BetterNetrunningDaemonAction extends DeviceDaemonAction {}
 
 
-
-
-
-
-
-
-
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
 
@@ -174,7 +127,6 @@ public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
     if !IsDefined(player) { return; }
     let gi: GameInstance = player.GetGame();
 
-
     let devicePS: ref<ScriptableDeviceComponentPS>;
     let stateSystem: ref<DeviceRemoteBreachStateSystem> = StateSystemUtils.GetDeviceStateSystem(gi);
     if IsDefined(stateSystem) {
@@ -182,16 +134,9 @@ public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
     }
 
     if IsDefined(devicePS) {
-
-
-
       this.ApplyHeatDelta(gi);
       return;
     }
-
-
-
-
 
     let npcStateSystem: ref<NPCRemoteBreachStateSystem> = StateSystemUtils.GetNPCStateSystem(gi);
     if IsDefined(npcStateSystem) {
@@ -214,13 +159,11 @@ public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
   protected func ExecuteProgramFailure() -> Void {}
 }
 
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachIcepickV1Action extends RemoteBreachIcepickActionBase {
   protected func GetHits() -> Int32 { return 2; }
   protected func GetHeatDelta() -> Float { return 0.2; }
 }
-
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachIcepickV2Action extends RemoteBreachIcepickActionBase {
@@ -228,11 +171,9 @@ public class RemoteBreachIcepickV2Action extends RemoteBreachIcepickActionBase {
   protected func GetHeatDelta() -> Float { return -0.3; }
 }
 
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachIcepickV3Action extends RemoteBreachIcepickActionBase {
   protected func GetHits() -> Int32 { return 5; }
   protected func GetHeatDelta() -> Float { return 0.0; }
 }
-
 

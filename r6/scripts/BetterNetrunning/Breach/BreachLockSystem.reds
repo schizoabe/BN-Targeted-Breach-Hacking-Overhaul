@@ -1,30 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Breach
 import BetterNetrunningConfig.*
@@ -33,48 +6,7 @@ import BetterNetrunning.Utils.*
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public class BreachLockSystem {
-
-
-
-
-  
   public static func IsLockedByTimestamp(
     timestamp: Float,
     gameInstance: GameInstance,
@@ -94,9 +26,6 @@ public class BreachLockSystem {
 
     return true;
   }
-
-
-
 
   public static func IsAPBreachLockedByTimestamp(
     devicePS: ref<SharedGameplayPS>,
@@ -120,9 +49,6 @@ public class BreachLockSystem {
     return isLocked;
   }
 
-
-
-
   public static func IsNPCBreachLockedByTimestamp(
     npcPS: ref<ScriptedPuppetPS>,
     gameInstance: GameInstance
@@ -145,4 +71,3 @@ public class BreachLockSystem {
     return isLocked;
   }
 }
-

@@ -1,9 +1,3 @@
-﻿
-
-
-
-
-
 
 module BetterNetrunning.RemoteBreach.Core
 
@@ -14,9 +8,6 @@ import BetterNetrunning.Logging.*
 
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.*
-
-
-
 
 
 @if(ModuleExists("HackingExtensions"))
@@ -43,7 +34,6 @@ public class DeviceRemoteBreachStateSystem extends ScriptableSystem {
         this.m_availableDaemons = "";
     }
 
-
     public func MarkDeviceBreached(deviceID: EntityID) -> Void {
         if !ArrayContains(this.m_breachedDevices, deviceID) {
             ArrayPush(this.m_breachedDevices, deviceID);
@@ -54,5 +44,4 @@ public class DeviceRemoteBreachStateSystem extends ScriptableSystem {
         return ArrayContains(this.m_breachedDevices, deviceID);
     }
 }
-
 

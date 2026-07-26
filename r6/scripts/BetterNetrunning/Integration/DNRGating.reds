@@ -1,21 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Integration
 
@@ -28,8 +10,6 @@ import DNR.Core.*
 @if(ModuleExists("DNR.Replace"))
 import DNR.Settings.*
 
-
-
 @if(ModuleExists("DNR.Replace"))
 public func ApplyDNRDaemonGating(
   programs: script_ref<array<MinigameProgramData>>,
@@ -38,7 +18,6 @@ public func ApplyDNRDaemonGating(
   player: wref<PlayerPuppet>,
   entity: wref<Entity>
 ) -> Void {
-
   let dnrSubnetsBreached: Bool = IsDefined(devPS)
     && BreachStatusUtils.IsBasicBreached(devPS)
     && BreachStatusUtils.IsNPCsBreached(devPS);
@@ -48,15 +27,12 @@ public func ApplyDNRDaemonGating(
     return;
   }
 
-
   let s: ref<DNR_Settings> = DNR_Svc();
-
 
   if IsDefined(s) && s.bpdeviceRequiresQueueMastery && !DNR_PlayerHasQueueMastery(player) {
     DNR_BP_RemoveAllDNRPrograms(programs);
     return;
   }
-
 
   if IsDefined(s) && s.bpdeviceRequiresNetworkBreached {
     if !DNR_BP_CheckNetworkBreached(entity, isRemoteBreach) {
@@ -65,13 +41,10 @@ public func ApplyDNRDaemonGating(
     }
   }
 
-
   DNR_BP_AddQualifiedPrograms(player, programs, isRemoteBreach);
-
 
   DNR_BP_RemoveWrongVariant(programs, isRemoteBreach);
 }
-
 
 @if(!ModuleExists("DNR.Replace"))
 public func ApplyDNRDaemonGating(
@@ -81,6 +54,4 @@ public func ApplyDNRDaemonGating(
   player: wref<PlayerPuppet>,
   entity: wref<Entity>
 ) -> Void {
-
 }
-

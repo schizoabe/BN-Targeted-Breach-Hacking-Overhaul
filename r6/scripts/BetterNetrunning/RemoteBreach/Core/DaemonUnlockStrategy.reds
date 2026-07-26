@@ -1,22 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module BetterNetrunning.RemoteBreach.Core
 
 import BetterNetrunning.*
@@ -25,10 +6,8 @@ import BetterNetrunning.Integration.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Utils.*
 
-
 public abstract class IDaemonUnlockStrategy {
 
-  
   public func ExecuteUnlock(
     daemonType: String,
     TargetType: TargetType,
@@ -36,16 +15,12 @@ public abstract class IDaemonUnlockStrategy {
     gameInstance: GameInstance
   ) -> Void {}
 
-
   public func GetStateSystem(gameInstance: GameInstance) -> ref<IScriptable> {
     return null;
   }
 
-
-
   public func MarkBreached(stateSystem: ref<IScriptable>, deviceID: PersistentID, gameInstance: GameInstance) -> Void {}
 
-  
   public static func BuildUnlockFlags(unlockBasic: Bool, unlockNPCs: Bool, unlockCameras: Bool, unlockTurrets: Bool) -> BreachUnlockFlags {
     let flags: BreachUnlockFlags;
     flags.unlockBasic = unlockBasic;
@@ -55,7 +30,6 @@ public abstract class IDaemonUnlockStrategy {
     return flags;
   }
 
-  
   protected func ExecuteUnlockBase(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,
@@ -66,24 +40,15 @@ public abstract class IDaemonUnlockStrategy {
       return;
     }
 
-
-
-
-
-
     this.UnlockNetwork(sourcePS, flags, gameInstance);
   }
 
-  
   protected func UnlockNetwork(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,
     gameInstance: GameInstance
   ) -> Void {}
 }
-
-
-
 
 
 @if(ModuleExists("HackingExtensions"))
@@ -111,7 +76,7 @@ public class ComputerUnlockStrategy extends IDaemonUnlockStrategy {
       ),
       gameInstance
     );
-  }  // Override network unlock hook for Computer-specific logic
+  }
   protected func UnlockNetwork(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,
@@ -152,9 +117,6 @@ public class ComputerUnlockStrategy extends IDaemonUnlockStrategy {
 }
 
 
-
-
-
 @if(ModuleExists("HackingExtensions"))
 public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
 
@@ -182,8 +144,6 @@ public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
     );
   }
 
-
-
   protected func UnlockNetwork(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,
@@ -197,10 +157,6 @@ public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
       flags.unlockCameras,
       flags.unlockTurrets
     );
-
-
-
-
 
     let persistency: ref<GamePersistencySystem> = GameInstance.GetPersistencySystem(gameInstance);
     let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
@@ -228,9 +184,6 @@ public class DeviceUnlockStrategy extends IDaemonUnlockStrategy {
     return new DeviceUnlockStrategy();
   }
 }
-
-
-
 
 
 @if(ModuleExists("HackingExtensions"))
@@ -264,7 +217,7 @@ public class VehicleUnlockStrategy extends IDaemonUnlockStrategy {
       ),
       gameInstance
     );
-  }  // Override network unlock hook for Vehicle-specific logic
+  }
   protected func UnlockNetwork(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,
@@ -310,4 +263,3 @@ public class VehicleUnlockStrategy extends IDaemonUnlockStrategy {
     return new VehicleUnlockStrategy();
   }
 }
-

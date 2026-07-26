@@ -1,28 +1,16 @@
-﻿
 
+module BetterNetrunning.RemoteBreach.UI
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import BetterNetrunning.Logging.*
+import BetterNetrunning.Core.*
+import BetterNetrunning.RemoteBreach.Core.*
+import BetterNetrunning.RemoteBreach.Common.*
+import BetterNetrunning.RemoteBreach.Actions.*
+import BetterNetrunning.Utils.*
+import BetterNetrunning.Breach.*
+import BetterNetrunning.*
+import BetterNetrunningConfig.*
+import BetterNetrunning.Perks.*
 
 @addMethod(ScriptableDeviceComponentPS)
 public final func IsDeviceAlreadyUnlocked() -> Bool {
@@ -31,26 +19,21 @@ public final func IsDeviceAlreadyUnlocked() -> Bool {
     return false;
   }
 
-
   if IsDefined(this as VehicleComponentPS) {
     return BreachStatusUtils.IsBasicBreached(sharedPS);
   }
-
 
   if DaemonFilterUtils.IsCamera(this) {
     return BreachStatusUtils.IsCamerasBreached(sharedPS);
   }
 
-
   if DaemonFilterUtils.IsTurret(this) {
     return BreachStatusUtils.IsTurretsBreached(sharedPS);
   }
 
-
   if BreachStatusUtils.IsBasicBreached(sharedPS) {
     return true;
   }
-
 
   let deviceEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
   if IsDefined(deviceEntity) {
@@ -66,24 +49,18 @@ public final func IsDeviceAlreadyUnlocked() -> Bool {
   return false;
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
   if IsDefined(this as AccessPointControllerPS) { return; }
-
-
 
   if this.IsDeviceAlreadyUnlocked() {
     return;
   }
 
-
   if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
     return;
   }
-
 
   let gi: GameInstance = this.GetGameInstance();
   if GameInstance.IsValid(gi) {
@@ -92,7 +69,6 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
       return;
     }
   }
-
 
   let hasCustomRemoteBreach: Bool = false;
   let i: Int32 = 0;
@@ -104,7 +80,6 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
     }
     i += 1;
   }
-
 
   if !hasCustomRemoteBreach {
     let isCamera: Bool = DeviceTypeUtils.IsCameraDevice(this);
@@ -123,22 +98,16 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
   }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
   if IsDefined(this as AccessPointControllerPS) { return; }
-
-
 
   if this.IsDeviceAlreadyUnlocked() {
     return;
   }
 
-
   if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
-
     let i: Int32 = ArraySize(Deref(outActions)) - 1;
     while i >= 0 {
       let action: ref<DeviceAction> = Deref(outActions)[i];
@@ -148,9 +117,8 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
       }
       i -= 1;
     }
-    return;  // Don't show minigame entry when unlocked
+    return;
   }
-
 
   let gi2: GameInstance = this.GetGameInstance();
   if GameInstance.IsValid(gi2) {
@@ -159,7 +127,6 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
       return;
     }
   }
-
 
   let isCamera: Bool = DeviceTypeUtils.IsCameraDevice(this);
   let isTurret: Bool = DeviceTypeUtils.IsTurretDevice(this);
@@ -176,29 +143,23 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
   ArrayPush(Deref(outActions), breachAction);
 }
 
-
 @addMethod(ScriptableDeviceComponentPS)
 public final func RemoveCustomRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
   let expirationResult: UnlockExpirationResult = UnlockExpirationUtils.CheckUnlockExpiration(this);
-
 
   if expirationResult.wasExpired {
     DeviceInteractionUtils.EnableJackInInteractionForAccessPoint(this);
   }
-
 
   let isUnlocked: Bool = expirationResult.isUnlocked;
   if !isUnlocked && !expirationResult.wasExpired && !DaemonFilterUtils.IsCamera(this) && !DaemonFilterUtils.IsTurret(this) && !IsDefined(this as VehicleComponentPS) {
     isUnlocked = this.IsBasicDeviceBreachedByCustomHackingSystem();
   }
 
-
   if isUnlocked {
     this.RemoveCustomRemoteBreachAction(outActions);
   }
 }
-
 
 @addMethod(ScriptableDeviceComponentPS)
 private final func IsBasicDeviceBreachedByCustomHackingSystem() -> Bool {
@@ -214,7 +175,6 @@ private final func IsBasicDeviceBreachedByCustomHackingSystem() -> Bool {
   return stateSystem.IsDeviceBreached(deviceID);
 }
 
-
 @addMethod(ScriptableDeviceComponentPS)
 private final func RemoveCustomRemoteBreachAction(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
   let i: Int32 = 0;
@@ -229,37 +189,26 @@ private final func RemoveCustomRemoteBreachAction(outActions: script_ref<array<r
 }
 
 
-
-
-
-
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(QuickHackableHelper)
 public static func TranslateActionsIntoQuickSlotCommands(const actions: array<ref<DeviceAction>>, commands: script_ref<array<ref<QuickhackData>>>, gameObject: ref<GameObject>, scriptableComponentPS: ref<ScriptableDeviceComponentPS>) -> Void {
-
   wrappedMethod(actions, commands, gameObject, scriptableComponentPS);
-
 
   let playerRef: ref<PlayerPuppet> = GetPlayer(gameObject.GetGame());
   if !IsDefined(playerRef) {
     BNDebug("RemoteBreachVisibility", "Player not defined - EXIT");
-    return; // Early return if player not available
+    return;
   }
-
 
   let i: Int32 = 0;
   let commandsSize: Int32 = ArraySize(Deref(commands));
   while i < commandsSize {
     let action: ref<ScriptableDeviceAction> = Deref(commands)[i].m_action as ScriptableDeviceAction;
 
-
     if IsDefined(action) && BNConstants.IsRemoteBreachAction(action.GetClassName()) {
-
       let remoteBreachAction: ref<BaseRemoteBreachAction> = action as BaseRemoteBreachAction;
       if IsDefined(remoteBreachAction) {
-
         let canPay: Bool = remoteBreachAction.CanPayCost(playerRef, true);
-
 
         let playerStatPoolSystem: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(playerRef.GetGame());
         if IsDefined(playerStatPoolSystem) {
@@ -282,7 +231,6 @@ public static func TranslateActionsIntoQuickSlotCommands(const actions: array<re
         BNDebug("RemoteBreachVisibility", "Failed to cast to BaseRemoteBreachAction - skipping");
       }
     }
-
 
     if !Deref(commands)[i].m_isLocked && IsDefined(Deref(commands)[i].m_action) {
       let linkedAction: ref<ScriptableDeviceAction> = Deref(commands)[i].m_action as ScriptableDeviceAction;

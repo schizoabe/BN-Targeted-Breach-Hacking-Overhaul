@@ -1,15 +1,15 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
+# Better Netrunning — NPC Remote Breach quickhack
+# Replaces the CHS api.CreateQuickhack("NPCRemoteBreach", ...) call in remoteBreach.lua.
+#
+# This record is referenced in TranslateChoicesIntoQuickSlotCommands (NPCRemoteBreachAction.reds)
+# to read the UI caption and description. It does NOT drive action execution — that is handled
+# entirely by NPCRemoteBreachAction injected directly into the quickhack slot in REDscript.
+#
+# Based on QuickHack.RemoteBreach (vanilla). Key overrides:
+#   objectActionUI   → our Interactions record (custom caption/description)
+#   instigatorPrereqs → cleared (REDscript handles all gating via IntrusionSuite perk check)
+#   targetActivePrereqs → vanilla upload-in-progress + Chimera boss block only
+#   startEffects     → cleared (no vanilla RemoteBreachCooldown applied here)
 
 Interactions.BNNPCRemoteBreach:
   $base: Interactions.RemoteBreach
@@ -24,4 +24,3 @@ QuickHack.BNNPCRemoteBreach:
     - Prereqs.QuickHackUploadingPrereq
     - Prereqs.ChimeraNoQuickHackPrereq
   startEffects: []
-

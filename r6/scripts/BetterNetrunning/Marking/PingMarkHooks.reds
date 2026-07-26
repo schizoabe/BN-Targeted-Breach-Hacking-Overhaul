@@ -1,49 +1,9 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Marking
 
 import BetterNetrunning.Core.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Logging.*
-
-
-
-
 
 
 @wrapMethod(Device)
@@ -69,13 +29,11 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
   let logSys: ref<ICEScoutLogSystem> = GameInstance.GetScriptableSystemsContainer(gi)
       .Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
 
-
   if mss.IsMark(this.GetEntityID(), subnetType) {
     mss.RemoveMarkAny(this.GetEntityID());
     if IsDefined(logSys) { logSys.Refresh(); }
     return result;
   }
-
 
   let sharedPS: ref<SharedGameplayPS> = this.GetDevicePS() as SharedGameplayPS;
   if IsDefined(sharedPS) && sharedPS.m_bnIceHitsRequired == 0 {
@@ -83,7 +41,6 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
     BNInfo("PingMark", "Device ICE initialized: " + ToString(sharedPS.m_bnIceHitsRequired) + " hits required");
   }
   let iceHitsRequired: Int32 = IsDefined(sharedPS) ? sharedPS.m_bnIceHitsRequired : 0;
-
 
   let displayName: String = GetLocalizedText(this.GetDisplayName());
   if Equals(displayName, s"") {
@@ -99,10 +56,6 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
 }
 
 
-
-
-
-
 @addMethod(VehicleObject)
 protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
   let gi: GameInstance = this.GetGame();
@@ -112,7 +65,6 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
 
   let logSys: ref<ICEScoutLogSystem> = GameInstance.GetScriptableSystemsContainer(gi)
       .Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
-
 
   if mss.IsMark(this.GetEntityID(), MarkedSubnetType.Root) {
     mss.RemoveMarkAny(this.GetEntityID());
@@ -129,9 +81,6 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
 }
 
 
-
-
-
 func BNUnmarkEntity(gi: GameInstance, entityID: EntityID, reason: String) -> Void {
   let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
@@ -144,14 +93,12 @@ func BNUnmarkEntity(gi: GameInstance, entityID: EntityID, reason: String) -> Voi
   if IsDefined(logSys) { logSys.Refresh(); }
 }
 
-
 @wrapMethod(ScriptedPuppet)
 protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   let result: Bool = wrappedMethod(evt);
   BNUnmarkEntity(this.GetGame(), this.GetEntityID(), "NPC death");
   return result;
 }
-
 
 @wrapMethod(ScriptedPuppet)
 protected cb func OnDefeated(evt: ref<DefeatedEvent>) -> Bool {
@@ -160,7 +107,6 @@ protected cb func OnDefeated(evt: ref<DefeatedEvent>) -> Bool {
   return result;
 }
 
-
 @wrapMethod(Device)
 protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   let result: Bool = wrappedMethod(evt);
@@ -168,10 +114,8 @@ protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   return result;
 }
 
-
 @addMethod(VehicleObject)
 protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   BNUnmarkEntity(this.GetGame(), this.GetEntityID(), "Vehicle destroyed");
   return false;
 }
-

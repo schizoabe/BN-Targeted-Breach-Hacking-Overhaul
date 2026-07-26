@@ -1,2 +1,1 @@
-﻿module BetterNetrunning.NPCs
-
+module BetterNetrunning.NPCs

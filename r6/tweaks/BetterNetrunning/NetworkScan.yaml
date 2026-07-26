@@ -1,28 +1,28 @@
-﻿
+# Better Netrunning — Network Scan quickhacks (Mark / Unmark)
+#
+# Replaces the Ping hook approach for NPCs (PingMarkHooks.reds OnPingSquad wrap).
+# The Mark/Unmark actions are INJECTED into the NPC quickhack wheel at runtime
+# via NetworkScanAction.reds — they do NOT go through the standard cyberdeck
+# quickhack flow. These TweakDB records exist ONLY for UI metadata (caption,
+# description, icon). Execution, RAM deduction, and prereq checks all happen
+# inside BNMarkNPCAction / BNUnmarkNPCAction.CompleteAction.
+#
+# Device and vehicle marking also works via Ping hooks in PingMarkHooks.reds
+# (Device.OnActionPing, VehicleObject.OnActionPing) as an alternative.
+#
+# COST: 2 RAM, deducted manually in CompleteAction (not via TweakDB costs).
+# Shared cost records below are kept for the RAM UI display calculation.
+#
+# Localization keys needed in archive en-us.json:
+#   4820034 — "Mark"
+#   4820035 — "Tag this target for Network Diagnostics."
+#   4820036 — "Unmark"
+#   4820037 — "Remove Network Diagnostics tag from this target."
+#
+# Keys 4820020–4820025 = BN daemon names (HidePresence, DisarmICE, SignalNoise).
+# Keys 4820026–4820033 = GhostNET. Mark/Unmark assigned 4820034–4820037.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ── Shared 2 RAM cost records (used for UI cost display only) ────────────────
 QuickHack.BNNetworkScanBaseRAM:
   $base: QuickHack.MemoryMod
   value: 2
@@ -37,7 +37,7 @@ QuickHack.BNNetworkScanCost:
     - QuickHack.NetworkMemoryCostReductionMod
     - QuickHack.BNNetworkScanBaseRAM
 
-
+# ── UI records ───────────────────────────────────────────────────────────────
 Interactions.BNMark:
   $base: Interactions.PingHack
   caption: LocKey#4820034
@@ -48,9 +48,9 @@ Interactions.BNUnmark:
   caption: LocKey#4820036
   description: LocKey#4820037
 
-
-
-
+# ── NPC quickhack records (for ObjectActionUI lookup in REDscript) ────────────
+# Note: costs/activationTime/startEffects all cleared so these records are
+# harmless if accidentally referenced outside the injection path.
 QuickHack.BNMark:
   $base: QuickHack.CovertHack
   actionName: BNMark
@@ -74,4 +74,3 @@ QuickHack.BNUnmark:
   targetActivePrereqs: []
   startEffects: []
   completionEffects: []
-

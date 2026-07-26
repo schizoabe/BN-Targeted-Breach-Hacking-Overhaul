@@ -1,15 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.RemoteBreach.Actions
 
@@ -26,24 +14,19 @@ import HackingExtensions.*
 import HackingExtensions.Programs.*
 
 
-
-
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
     private let m_devicePS: ref<ScriptableDeviceComponentPS>;
     private let m_lastBreachRange: Float;
 
-    
     protected func GetBreachRangeForDifficulty() -> Float {
         let player: ref<PlayerPuppet> = this.GetPlayer();
         if !IsDefined(player) {
-            return 50.0; // Fallback if player not available
+            return 50.0;
         }
         return GetRadialBreachRange(player.GetGame());
     }
 
-    
     protected func ExecuteProgramSuccess() -> Void {
 
         let player: ref<PlayerPuppet> = this.GetPlayer();
@@ -73,11 +56,9 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
             stateSystem.ClearCurrentDevice();
         }
 
-
         this.m_devicePS.FinalizeNetrunnerDive(HackingMinigameState.Succeeded);
     }
 
-    
     protected func ExecuteProgramFailure() -> Void {
         let player: ref<PlayerPuppet> = this.GetPlayer();
         if !IsDefined(player) {
@@ -92,11 +73,8 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
         let devicePS: ref<ScriptableDeviceComponentPS> = this.GetHackedDevice();
 
         if IsDefined(devicePS) {
-
-
             devicePS.FinalizeNetrunnerDive(HackingMinigameState.Failed);
         }
-
 
         let stateSystem: ref<DeviceRemoteBreachStateSystem> = StateSystemUtils.GetDeviceStateSystem(gameInstance);
         if IsDefined(stateSystem) {
@@ -105,10 +83,6 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
     }
 
 
-
-
-
-    
     protected func GetHackedDevice() -> ref<ScriptableDeviceComponentPS> {
         if IsDefined(this.m_devicePS) {
             return this.m_devicePS;
@@ -133,28 +107,17 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
 }
 
 
-
-
-
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachEasyProgramAction extends RemoteBreachProgramActionBase {
-
 }
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachMediumProgramAction extends RemoteBreachProgramActionBase {
-
 }
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachHardProgramAction extends RemoteBreachProgramActionBase {
-
 }
-
-
-
-
 
 
 @if(ModuleExists("HackingExtensions"))
@@ -211,4 +174,3 @@ protected cb func OnGameAttached() -> Bool {
 
     return true;
 }
-

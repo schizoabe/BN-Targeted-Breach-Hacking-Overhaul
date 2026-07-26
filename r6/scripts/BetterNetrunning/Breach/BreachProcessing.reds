@@ -1,23 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Breach
 
@@ -30,12 +10,8 @@ import BetterNetrunning.RadialUnlock.*
 import BetterNetrunning.Marking.*
 import BetterNetrunning.Network.*
 
-
 @wrapMethod(AccessPointControllerPS)
 private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceComponentPS>>>) -> Void {
-
-
-
   let isUnconsciousNPCBreach: Bool = this.IsUnconsciousNPCBreach();
 
   if !isUnconsciousNPCBreach {
@@ -52,11 +28,6 @@ private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceCompo
     this.MarkUnconsciousNPCAsDirectlyBreached();
   }
 
-
-
-
-
-
   let stateSystem: ref<DisplayedDaemonsStateSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance())
     .Get(BNConstants.CLASS_DISPLAYED_DAEMONS_STATE_SYSTEM()) as DisplayedDaemonsStateSystem;
   if IsDefined(stateSystem) {
@@ -64,12 +35,10 @@ private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceCompo
     BreachStatisticsCollector.CollectDisplayedDaemons(displayedDaemons, stats);
   }
 
-
   let minigamePrograms: array<TweakDBID> = FromVariant<array<TweakDBID>>(
     this.GetMinigameBlackboard().GetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms)
   );
   stats.programsInjected = ArraySize(minigamePrograms);
-
 
   let unlockFlags: BreachUnlockFlags = DaemonFilterUtils.ExtractUnlockFlags(minigamePrograms);
   stats.unlockBasic = unlockFlags.unlockBasic;
@@ -77,38 +46,20 @@ private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceCompo
   stats.unlockTurrets = unlockFlags.unlockTurrets;
   stats.unlockNPCs = unlockFlags.unlockNPCs;
 
-
-
-
-
-
   let ms: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance())
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
   if IsDefined(ms) { ms.SetApBreachFinalizing(true); }
   wrappedMethod(devices);
   if IsDefined(ms) { ms.SetApBreachFinalizing(false); }
-  stats.minigameSuccess = true; // RefreshSlaves only called on success
-
-
-
+  stats.minigameSuccess = true;
 
   this.ApplyBetterNetrunningExtensionsWithStats(devices, unlockFlags, stats, isUnconsciousNPCBreach, minigamePrograms);
-
-
-
 
   stats.Finalize();
   LogBreachSummary(stats);
 
-
-
-
   this.ShowBreachResultInWidget(unlockFlags, isUnconsciousNPCBreach);
 }
-
-
-
-
 
 
 
@@ -119,7 +70,6 @@ private final func IsUnconsciousNPCBreach() -> Bool {
   );
   return IsDefined(entity as ScriptedPuppet);
 }
-
 
 @addMethod(AccessPointControllerPS)
 private final func MarkUnconsciousNPCAsDirectlyBreached() -> Void {
@@ -136,10 +86,6 @@ private final func MarkUnconsciousNPCAsDirectlyBreached() -> Void {
 }
 
 
-
-
-
-
 @addMethod(AccessPointControllerPS)
 private final func ApplyBetterNetrunningExtensionsWithStats(
   const devices: script_ref<array<ref<DeviceComponentPS>>>,
@@ -150,19 +96,13 @@ private final func ApplyBetterNetrunningExtensionsWithStats(
 ) -> Void {
   BNTrace("BreachProcessing", s"ApplyBetterNetrunningExtensions - isUnconsciousNPCBreach: \(ToString(isUnconsciousNPCBreach))");
 
-
   BreachStatisticsCollector.CollectExecutedDaemons(minigamePrograms, stats);
-
-
 
   NetworkStateUtils.OnDaemonsCompleted(minigamePrograms, this, this.GetGameInstance());
 
-
   this.RollbackIncorrectVanillaUnlocks(devices, unlockFlags);
 
-
   this.ApplyBreachUnlockToDevicesWithStats(devices, unlockFlags, stats);
-
 
   this.ExecuteNPCBreachPingIfNeeded(minigamePrograms);
 
@@ -170,7 +110,6 @@ private final func ApplyBetterNetrunningExtensionsWithStats(
     .Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
   if IsDefined(logSys) { logSys.Refresh(); }
 }
-
 
 @addMethod(AccessPointControllerPS)
 private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<array<ref<DeviceComponentPS>>>, unlockFlags: BreachUnlockFlags) -> Void {
@@ -182,9 +121,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
     if IsDefined(sharedPS) {
       let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
 
-
       if !DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags) {
-
         let currentTimestamp: Float = 0.0;
         switch TargetType {
           case TargetType.NPC:
@@ -196,11 +133,10 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
           case TargetType.Turret:
             currentTimestamp = sharedPS.m_betterNetrunningUnlockTimestampTurrets;
             break;
-          default: // TargetType.Basic
+          default:
             currentTimestamp = sharedPS.m_betterNetrunningUnlockTimestampBasic;
             break;
         }
-
 
         if currentTimestamp == 0.0 {
           switch TargetType {
@@ -213,7 +149,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
             case TargetType.Turret:
               sharedPS.m_betterNetrunningUnlockTimestampTurrets = 0.0;
               break;
-            default: // TargetType.Basic
+            default:
               sharedPS.m_betterNetrunningUnlockTimestampBasic = 0.0;
               break;
           }
@@ -232,26 +168,15 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
   }
 }
 
-
 @addMethod(AccessPointControllerPS)
 private final func ExecuteNPCBreachPingIfNeeded(minigamePrograms: array<TweakDBID>) -> Void {
-
-
 }
-
-
-
-
 
 
 @addMethod(AccessPointControllerPS)
 private final func GetMinigameBlackboard() -> ref<IBlackboard> {
   return GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().HackingMinigame);
 }
-
-
-
-
 
 
 @addMethod(AccessPointControllerPS)
@@ -267,14 +192,10 @@ private final func ApplyBreachUnlockToDevicesWithStats(
         ) as MarkingStateSystem;
 
     if IsDefined(markingSystem) && markingSystem.HasAnyMarked() {
-
         BNInfo("BreachProcessing", "Targeted breach — propagating only to marked entities");
-
         this.DeductRAMForMarkedEntities(markingSystem, gameInstance);
         this.ApplyTargetedBreachUnlock(markingSystem, unlockFlags, gameInstance);
-
     } else {
-
         BreachStatisticsCollector.CollectNetworkDeviceStats(Deref(devices), unlockFlags, stats);
         let i: Int32 = 0;
         while i < ArraySize(Deref(devices)) {
@@ -287,7 +208,6 @@ private final func ApplyBreachUnlockToDevicesWithStats(
     }
 }
 
-
 @addMethod(AccessPointControllerPS)
 private final func ApplyTargetedBreachUnlock(
     markingSystem: ref<MarkingStateSystem>,
@@ -296,7 +216,6 @@ private final func ApplyTargetedBreachUnlock(
 ) -> Void {
     TargetedBreachUtils.UnlockMarkedEntities(markingSystem, unlockFlags, gameInstance);
 }
-
 
 @addMethod(AccessPointControllerPS)
 private final func UnlockDevice(
@@ -324,12 +243,10 @@ private final func UnlockDevice(
     unlockFlags.unlockTurrets
   );
 
-
   if sharedPS.m_bnIceHitsRequired <= 0 { sharedPS.m_bnIceHitsRequired = 1; }
   sharedPS.m_bnIceHitsApplied = sharedPS.m_bnIceHitsRequired;
   sharedPS.m_bnIceDefeated = true;
 }
-
 
 @addMethod(AccessPointControllerPS)
 public final func ApplyDeviceTypeUnlock(device: ref<DeviceComponentPS>, unlockFlags: BreachUnlockFlags) -> Void {
@@ -350,7 +267,6 @@ public final func ApplyDeviceTypeUnlock(device: ref<DeviceComponentPS>, unlockFl
   TimeUtils.SetDeviceUnlockTimestamp(sharedPS, TargetType, currentTime);
 }
 
-
 @addMethod(AccessPointControllerPS)
 private final func ShowBreachResultInWidget(unlockFlags: BreachUnlockFlags, isUnconsciousNPCBreach: Bool) -> Void {
   let gi: GameInstance = this.GetGameInstance();
@@ -358,14 +274,12 @@ private final func ShowBreachResultInWidget(unlockFlags: BreachUnlockFlags, isUn
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
   if !IsDefined(ms) { return; }
 
-
   let targetName: String = "ACCESS POINT";
   let apEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
   if IsDefined(apEntity) {
     let raw: String = GetLocalizedText(apEntity.GetDisplayName());
     if NotEquals(raw, s"") { targetName = raw; }
   }
-
 
   if isUnconsciousNPCBreach {
     let entity: wref<Entity> = FromVariant<wref<Entity>>(
@@ -377,17 +291,15 @@ private final func ShowBreachResultInWidget(unlockFlags: BreachUnlockFlags, isUn
     }
   }
 
-
   let targetType: String = "device";
   if isUnconsciousNPCBreach || unlockFlags.unlockNPCs { targetType = "personnel"; }
   else if unlockFlags.unlockCameras { targetType = "camera"; }
   else if unlockFlags.unlockTurrets { targetType = "turret"; }
 
   ms.RecordRemoteBreachTarget(targetName, targetType);
-  ms.RecordBreachICEState(1, 1);  // 1/1 = shows "FULLY COMPROMISED" for a successful breach
+  ms.RecordBreachICEState(1, 1);
   ms.ShowRemoteBreachStatus();
 }
-
 
 @addMethod(AccessPointControllerPS)
 private final func DeductRAMForMarkedEntities(markingSystem: ref<MarkingStateSystem>, gameInstance: GameInstance) -> Void {

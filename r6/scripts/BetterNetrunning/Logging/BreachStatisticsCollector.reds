@@ -1,19 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Logging
 
@@ -25,28 +9,20 @@ import BetterNetrunning.Logging.*
 
 public abstract class BreachStatisticsCollector {
 
-
-
-
-    
     public static func CollectNetworkDeviceStats(
         networkDevices: array<ref<DeviceComponentPS>>,
         unlockFlags: BreachUnlockFlags,
         stats: ref<BreachSessionStats>
     ) -> Void {
-
         stats.networkDeviceCount = ArraySize(networkDevices);
-
 
         if ArraySize(networkDevices) == 0 {
             return;
         }
 
-
         let i: Int32 = 0;
         while i < ArraySize(networkDevices) {
             let device: ref<DeviceComponentPS> = networkDevices[i];
-
 
             if IsDefined(device) {
                 BreachStatisticsCollector.ProcessNetworkDevice(device, unlockFlags, stats);
@@ -57,21 +33,14 @@ public abstract class BreachStatisticsCollector {
     }
 
 
-
-
-
-    
     private static func ProcessNetworkDevice(
         device: ref<DeviceComponentPS>,
         unlockFlags: BreachUnlockFlags,
         stats: ref<BreachSessionStats>
     ) -> Void {
-
         let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
 
-
         let shouldUnlock: Bool = DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags);
-
 
         if DeviceTypeUtils.IsCameraDevice(device) {
             stats.cameraCount += 1;
@@ -103,7 +72,6 @@ public abstract class BreachStatisticsCollector {
             }
         }
 
-
         if shouldUnlock {
             stats.devicesUnlocked += 1;
         } else {
@@ -112,10 +80,6 @@ public abstract class BreachStatisticsCollector {
     }
 
 
-
-
-
-    
     public static func CollectDisplayedDaemons(
         minigamePrograms: array<TweakDBID>,
         stats: ref<BreachSessionStats>
@@ -134,7 +98,6 @@ public abstract class BreachStatisticsCollector {
         }
     }
 
-    
     public static func CollectExecutedDaemons(
         minigamePrograms: array<TweakDBID>,
         stats: ref<BreachSessionStats>
@@ -142,7 +105,6 @@ public abstract class BreachStatisticsCollector {
         let i: Int32 = 0;
         while i < ArraySize(minigamePrograms) {
             let programID: TweakDBID = minigamePrograms[i];
-
 
             if BonusDaemonUtils.IsDatamineDaemon(programID) {
                 ArrayPush(stats.executedBonusDaemons, programID);
@@ -157,12 +119,6 @@ public abstract class BreachStatisticsCollector {
         }
     }
 }
-
-
-
-
-
-
 
 
 public class DisplayedDaemonsStateSystem extends ScriptableSystem {
@@ -185,4 +141,3 @@ public class DisplayedDaemonsStateSystem extends ScriptableSystem {
         ArrayClear(this.m_displayedDaemons);
     }
 }
-

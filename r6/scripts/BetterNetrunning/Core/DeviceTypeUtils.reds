@@ -1,27 +1,7 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Core
 
 import BetterNetrunning.Integration.*
-
 
 public enum TargetType {
   NPC = 0,
@@ -30,13 +10,11 @@ public enum TargetType {
   Basic = 3
 }
 
-
 public struct DeviceBreachInfo {
   public let isCamera: Bool;
   public let isTurret: Bool;
   public let isStandaloneDevice: Bool;
 }
-
 
 public struct DevicePermissions {
   public let allowCameras: Bool;
@@ -45,7 +23,6 @@ public struct DevicePermissions {
   public let allowPing: Bool;
   public let allowDistraction: Bool;
 }
-
 
 public struct NPCHackPermissions {
   public let isBreached: Bool;
@@ -57,7 +34,6 @@ public struct NPCHackPermissions {
   public let allowWhistle: Bool;
 }
 
-
 public struct BreachUnlockFlags {
   public let unlockBasic: Bool;
   public let unlockNPCs: Bool;
@@ -68,24 +44,16 @@ public struct BreachUnlockFlags {
 public abstract class DeviceTypeUtils {
 
 
-
-
-
-  
   public static func GetDeviceType(device: ref<DeviceComponentPS>) -> TargetType {
-
     if IsDefined(device as PuppetDeviceLinkPS) || IsDefined(device as CommunityProxyPS) {
       return TargetType.NPC;
     }
 
-
     let entity: wref<GameObject> = device.GetOwnerEntityWeak() as GameObject;
-
 
     if IsDefined(entity as SurveillanceCamera) {
       return TargetType.Camera;
     }
-
 
     if IsDefined(entity as SecurityTurret) {
       return TargetType.Turret;
@@ -94,7 +62,6 @@ public abstract class DeviceTypeUtils {
     return TargetType.Basic;
   }
 
-  
   public static func GetDeviceTypeFromEntity(entity: wref<GameObject>) -> TargetType {
     if IsDefined(entity as SurveillanceCamera) {
       return TargetType.Camera;
@@ -108,31 +75,23 @@ public abstract class DeviceTypeUtils {
     return TargetType.Basic;
   }
 
-  
   public static func IsCameraDevice(device: ref<DeviceComponentPS>) -> Bool {
     return Equals(DeviceTypeUtils.GetDeviceType(device), TargetType.Camera);
   }
 
-  
   public static func IsTurretDevice(device: ref<DeviceComponentPS>) -> Bool {
     return Equals(DeviceTypeUtils.GetDeviceType(device), TargetType.Turret);
   }
 
-  
   public static func IsNPCDevice(device: ref<DeviceComponentPS>) -> Bool {
     return Equals(DeviceTypeUtils.GetDeviceType(device), TargetType.NPC);
   }
 
-  
   public static func IsBasicDevice(device: ref<DeviceComponentPS>) -> Bool {
     return Equals(DeviceTypeUtils.GetDeviceType(device), TargetType.Basic);
   }
 
 
-
-
-
-  
   public static func IsBreached(TargetType: TargetType, sharedPS: ref<SharedGameplayPS>) -> Bool {
     if !IsDefined(sharedPS) {
       return false;
@@ -145,14 +104,12 @@ public abstract class DeviceTypeUtils {
         return BreachStatusUtils.IsCamerasBreached(sharedPS);
       case TargetType.Turret:
         return BreachStatusUtils.IsTurretsBreached(sharedPS);
-      default: // TargetType.Basic
+      default:
         return BreachStatusUtils.IsBasicBreached(sharedPS);
     }
   }
 
 
-
-  
   public static func ShouldUnlockByFlags(TargetType: TargetType, flags: BreachUnlockFlags) -> Bool {
     switch TargetType {
       case TargetType.NPC:
@@ -161,12 +118,10 @@ public abstract class DeviceTypeUtils {
         return flags.unlockCameras;
       case TargetType.Turret:
         return flags.unlockTurrets;
-      default: // TargetType.Basic
+      default:
         return flags.unlockBasic;
     }
   }
-
-
 
 
   public static func IsNPC(TargetType: TargetType) -> Bool {
@@ -186,8 +141,6 @@ public abstract class DeviceTypeUtils {
   }
 
 
-
-
   public static func DeviceTypeToString(TargetType: TargetType) -> String {
     switch TargetType {
       case TargetType.NPC: return "NPC";
@@ -197,4 +150,3 @@ public abstract class DeviceTypeUtils {
     }
   }
 }
-

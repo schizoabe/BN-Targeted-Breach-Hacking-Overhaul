@@ -1,38 +1,11 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Core
 import BetterNetrunning.Core.TimeUtils
 import BetterNetrunningConfig.*
 
 
-
-
-
-
 @addField(ScriptedPuppetPS)
 public persistent let m_betterNetrunningWasDirectlyBreached: Bool;
-
-
-
-
-
-
 
 
 @addField(SharedGameplayPS)
@@ -48,20 +21,11 @@ public persistent let m_betterNetrunningUnlockTimestampTurrets: Float;
 public persistent let m_betterNetrunningUnlockTimestampNPCs: Float;
 
 
-
-
-
-
-
-
-
 @addField(SharedGameplayPS)
 public persistent let m_betterNetrunningAPBreachFailedTimestamp: Float;
 
-
 @addField(ScriptedPuppetPS)
 public persistent let m_betterNetrunningNPCBreachFailedTimestamp: Float;
-
 
 @addField(SharedGameplayPS)
 public persistent let m_betterNetrunningRemoteBreachFailedTimestamp: Float;
@@ -71,23 +35,11 @@ public persistent let m_betterNetrunningRemoteBreachFailedTimestamp: Float;
 @addField(SharedGameplayPS)
 public persistent let m_bnNetworkVulnerability: Float;
 
-
-
-
-
 @addField(SharedGameplayPS)
 public persistent let m_bnNetworkHeat: Float;
 
-
-
-
 @addField(SharedGameplayPS)
 public persistent let m_bnNetworkLastActivityTimestamp: Float;
-
-
-
-
-
 
 @addField(SharedGameplayPS)
 public persistent let m_bnIceHitsRequired: Int32;
@@ -97,10 +49,6 @@ public persistent let m_bnIceHitsApplied: Int32;
 
 @addField(SharedGameplayPS)
 public persistent let m_bnIceDefeated: Bool;
-
-
-
-
 
 
 
@@ -147,12 +95,8 @@ public class SetBreachedSubnet extends ActionBool {
 
 }
 
-
 @addMethod(SharedGameplayPS)
 public func OnSetBreachedSubnet(evt: ref<SetBreachedSubnet>) -> EntityNotificationType {
-
-
-
 
   this.m_betterNetrunningUnlockTimestampBasic = evt.unlockTimestampBasic;
   this.m_betterNetrunningUnlockTimestampNPCs = evt.unlockTimestampNPCs;
@@ -164,34 +108,22 @@ public func OnSetBreachedSubnet(evt: ref<SetBreachedSubnet>) -> EntityNotificati
 
 
 
-
-
-
-
-
-
-
 public abstract class BreachStatusUtils {
 
   public static func IsBreached(unlockTimestamp: Float) -> Bool {
     return unlockTimestamp > 0.0;
   }
 
-  
   public static func IsBreachedWithExpiration(unlockTimestamp: Float, gameInstance: GameInstance) -> Bool {
-
     if unlockTimestamp <= 0.0 {
       return false;
     }
 
-
     let unlockDurationHours: Int32 = BetterNetrunningSettings.QuickhackUnlockDurationHours();
-
 
     if unlockDurationHours <= 0 {
       return true;
     }
-
 
     let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
     let elapsedTime: Float = currentTime - unlockTimestamp;
@@ -201,7 +133,6 @@ public abstract class BreachStatusUtils {
 
     return isStillValid;
   }
-
 
   public static func IsBasicBreached(sharedPS: ref<SharedGameplayPS>) -> Bool {
     return BreachStatusUtils.IsBreached(sharedPS.m_betterNetrunningUnlockTimestampBasic);
@@ -220,7 +151,6 @@ public abstract class BreachStatusUtils {
   }
 }
 
-
 public func IsCustomRemoteBreachAction(action: ref<DeviceAction>) -> Bool {
   if !IsDefined(action) {
     return false;
@@ -228,9 +158,7 @@ public func IsCustomRemoteBreachAction(action: ref<DeviceAction>) -> Bool {
   return BNConstants.IsRemoteBreachAction(action.GetClassName());
 }
 
-
 public func IsCustomRemoteBreachAction(className: CName) -> Bool {
   return BNConstants.IsRemoteBreachAction(className);
 }
-
 

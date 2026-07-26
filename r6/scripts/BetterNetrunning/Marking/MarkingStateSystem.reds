@@ -1,32 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Marking
 
@@ -39,22 +10,18 @@ import BetterNetrunning.Perks.*
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
 
-
-
-
 public struct MarkEntry {
   public let entityID:          EntityID;
-  public let creationTimestamp: Float;   // TimeSystem.GetGameTimeStamp() at mark time
-  public let displayName:       String;  // localized entity name, captured at first diagnostic
-  public let iceHitsRequired:   Int32;   // stamped by first diagnostic (Ping/jack-in/breach); 0 = unscanned
+  public let creationTimestamp: Float;
+  public let displayName:       String;
+  public let iceHitsRequired:   Int32;
 }
 
-
 public enum MarkedSubnetType {
-  Root     = 0,   // Basic devices: doors, terminals, vending, etc.
-  NPC      = 1,   // Human targets (UnlockNPCQuickhacks)
-  Camera   = 2,   // Surveillance cameras (UnlockCameraQuickhacks)
-  Defense  = 3    // Security turrets (UnlockTurretQuickhacks)
+  Root     = 0,
+  NPC      = 1,
+  Camera   = 2,
+  Defense  = 3
 }
 
 public class MarkingStateSystem extends ScriptableSystem {
@@ -64,31 +31,16 @@ public class MarkingStateSystem extends ScriptableSystem {
   private let m_markedCameras: array<MarkEntry>;
   private let m_markedDefense: array<MarkEntry>;
 
-
-
-
   private let m_sessionHeat: Float;
-
-
-
-
 
   private let m_hidePresenceTimer: Float;
   private let m_disarmICETimer: Float;
   private let m_signalNoiseTimer: Float;
 
-
-
-
   private let m_heatICEBonus:  Int32;
-  private let m_lastHeatBand:  Int32; // highest band reached so far (0-5)
-
-
+  private let m_lastHeatBand:  Int32;
 
   private let m_apBreachFinalizing: Bool;
-
-
-
 
 
   private func OnAttach() -> Void {
@@ -106,17 +58,13 @@ public class MarkingStateSystem extends ScriptableSystem {
   }
 
 
-
-
-
-  
   private func GetMarkDurationSeconds() -> Float {
     let gi: GameInstance = this.GetGameInstance();
     let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(gi);
     let player: ref<PlayerPuppet> = GetPlayer(gi);
 
     if !IsDefined(statsSystem) || !IsDefined(player) {
-      return 180.0; // Safe fallback: 3 minutes
+      return 180.0;
     }
 
     let intelligence: Float = statsSystem.GetStatValue(
@@ -129,7 +77,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     return intelligence * 60.0;
   }
 
-  
   private func GetMaxMarks() -> Int32 {
     let gi: GameInstance              = this.GetGameInstance();
     let player: ref<PlayerPuppet>     = GetPlayer(gi);
@@ -153,7 +100,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     return Max(1, baseMarks) + perkBonus;
   }
 
-  
   private func GetCurrentTimestamp() -> Float {
     let gi: GameInstance = this.GetGameInstance();
     let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(gi);
@@ -161,20 +107,14 @@ public class MarkingStateSystem extends ScriptableSystem {
     return timeSystem.GetGameTimeStamp();
   }
 
-  
   private func IsExpired(entry: MarkEntry, currentTime: Float, duration: Float) -> Bool {
-    if entry.creationTimestamp <= 0.0 { return false; } // 0 = never decays (legacy)
+    if entry.creationTimestamp <= 0.0 { return false; }
     return (currentTime - entry.creationTimestamp) > duration;
   }
 
 
-
-
-
   public func SetApBreachFinalizing(v: Bool) -> Void { this.m_apBreachFinalizing = v; }
   public func IsApBreachFinalizing() -> Bool { return this.m_apBreachFinalizing; }
-
-
 
   public func IsAPBreachActive() -> Bool {
     let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGameInstance())
@@ -189,16 +129,12 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func GetSessionHeat() -> Float { return this.m_sessionHeat; }
 
   public func AddSessionHeat(delta: Float) -> Void {
-
     if delta > 0.0 && this.m_hidePresenceTimer > 0.0 { return; }
     let wasMaxed = this.m_sessionHeat >= 1.0;
     this.m_sessionHeat += delta;
     if this.m_sessionHeat < 0.0 { this.m_sessionHeat = 0.0; }
     if this.m_sessionHeat > 1.0 { this.m_sessionHeat = 1.0; }
     if !wasMaxed && this.m_sessionHeat >= 1.0 { this.ReduceNerve(8.0); }
-
-
-
 
     let newBand: Int32 = MarkingStateSystem.HeatBand(this.m_sessionHeat);
     if newBand > this.m_lastHeatBand {
@@ -227,13 +163,12 @@ public class MarkingStateSystem extends ScriptableSystem {
     return 0;
   }
 
-
   private static func RollBonusForBand(band: Int32) -> Int32 {
-    if band == 5 { return RandRange(8, 11); } // 8-10
-    if band == 4 { return RandRange(7, 10); } // 7-9
-    if band == 3 { return RandRange(6,  9); } // 6-8  ← Critical
-    if band == 2 { return RandRange(2,  5); } // 2-4
-    if band == 1 { return RandRange(1,  4); } // 1-3
+    if band == 5 { return RandRange(8, 11); }
+    if band == 4 { return RandRange(7, 10); }
+    if band == 3 { return RandRange(6,  9); }
+    if band == 2 { return RandRange(2,  5); }
+    if band == 1 { return RandRange(1,  4); }
     return 0;
   }
 
@@ -245,9 +180,6 @@ public class MarkingStateSystem extends ScriptableSystem {
 
   @if(!ModuleExists("DarkFuture.Needs"))
   private func ReduceNerve(amount: Float) -> Void {}
-
-
-
 
 
   public func GetHidePresenceTimer() -> Float { return this.m_hidePresenceTimer; }
@@ -266,13 +198,9 @@ public class MarkingStateSystem extends ScriptableSystem {
   }
 
 
-
-
-
   private let m_debugLastICERequired: Int32;
   private let m_debugLastICEApplied:  Int32;
   private let m_debugLastDeviceName:  String;
-
   private let m_lastBreachTargetType: String;
 
   public func RecordBreachICEState(required: Int32, applied: Int32) -> Void {
@@ -324,10 +252,6 @@ public class MarkingStateSystem extends ScriptableSystem {
   }
 
 
-
-
-
-  
   public func PruneExpiredMarks() -> Int32 {
     let currentTime: Float = this.GetCurrentTimestamp();
     let duration: Float    = this.GetMarkDurationSeconds();
@@ -339,12 +263,10 @@ public class MarkingStateSystem extends ScriptableSystem {
     return removed;
   }
 
-
   public func PruneExpiredMarksWithHeat(maxHeat: Float) -> Int32 {
     return this.PruneExpiredMarks();
   }
 
-  
   public func GetOldestMarkRemainingSeconds() -> Float {
     let currentTime: Float = this.GetCurrentTimestamp();
     let duration: Float    = this.GetMarkDurationSeconds();
@@ -358,16 +280,11 @@ public class MarkingStateSystem extends ScriptableSystem {
     return oldest;
   }
 
-  
   public func GetMarkDurationSecondsPublic() -> Float {
     return this.GetMarkDurationSeconds();
   }
 
 
-
-
-
-  
   public func AddMark(entityID: EntityID, subnetType: MarkedSubnetType) -> Void {
     let maxMarks: Int32 = this.GetMaxMarks();
     if !this.ContainsInAny(entityID) && this.GetTotalCount() >= maxMarks {
@@ -409,7 +326,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     }
   }
 
-  
   public func AddMarkNamed(entityID: EntityID, subnetType: MarkedSubnetType, displayName: String, iceHitsRequired: Int32) -> Void {
     let maxMarks: Int32 = this.GetMaxMarks();
     if !this.ContainsInAny(entityID) && this.GetTotalCount() >= maxMarks {
@@ -453,7 +369,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     }
   }
 
-  
   public func AddMarkFromEntity(entityID: EntityID, subnetType: MarkedSubnetType) -> Void {
     let gi: GameInstance = this.GetGameInstance();
     let entity: ref<GameObject> = GameInstance.FindEntityByID(gi, entityID) as GameObject;
@@ -503,7 +418,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     this.AddMarkNamed(entityID, subnetType, displayName, iceHitsRequired);
   }
 
-  
   public func RemoveMark(entityID: EntityID, subnetType: MarkedSubnetType) -> Void {
     if Equals(subnetType, MarkedSubnetType.Root)    { this.RemoveID(this.m_markedRoot,    entityID); }
     if Equals(subnetType, MarkedSubnetType.NPC)     { this.RemoveID(this.m_markedNPCs,    entityID); }
@@ -511,16 +425,12 @@ public class MarkingStateSystem extends ScriptableSystem {
     if Equals(subnetType, MarkedSubnetType.Defense) { this.RemoveID(this.m_markedDefense, entityID); }
   }
 
-  
   public func RemoveMarkAny(entityID: EntityID) -> Void {
     this.RemoveID(this.m_markedRoot,    entityID);
     this.RemoveID(this.m_markedNPCs,    entityID);
     this.RemoveID(this.m_markedCameras, entityID);
     this.RemoveID(this.m_markedDefense, entityID);
   }
-
-
-
 
 
   public func IsMark(entityID: EntityID, subnetType: MarkedSubnetType) -> Bool {
@@ -555,12 +465,10 @@ public class MarkingStateSystem extends ScriptableSystem {
         + ArraySize(this.m_markedDefense);
   }
 
-
   public func GetMarkedRootEntries()    -> array<MarkEntry> { return this.m_markedRoot; }
   public func GetMarkedNPCEntries()     -> array<MarkEntry> { return this.m_markedNPCs; }
   public func GetMarkedCameraEntries()  -> array<MarkEntry> { return this.m_markedCameras; }
   public func GetMarkedDefenseEntries() -> array<MarkEntry> { return this.m_markedDefense; }
-
 
   public func GetMarkedRoot() -> array<EntityID> {
     return this.ExtractIDs(this.m_markedRoot);
@@ -574,9 +482,6 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func GetMarkedDefense() -> array<EntityID> {
     return this.ExtractIDs(this.m_markedDefense);
   }
-
-
-
 
 
   public func ClearAll() -> Void {
@@ -593,9 +498,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     if Equals(subnetType, MarkedSubnetType.Camera)  { ArrayClear(this.m_markedCameras); }
     if Equals(subnetType, MarkedSubnetType.Defense) { ArrayClear(this.m_markedDefense); }
   }
-
-
-
 
 
   private func RaiseMarkHeat(entityID: EntityID) -> Void {
@@ -673,7 +575,6 @@ public class MarkingStateSystem extends ScriptableSystem {
       let elapsed: Float   = currentTime - arr[i].creationTimestamp;
       let remaining: Float = duration - elapsed;
       if remaining < 0.0 { remaining = 0.0; }
-
       if currentOldest < 0.0 || remaining < currentOldest {
         currentOldest = remaining;
       }
@@ -692,4 +593,3 @@ public class MarkingStateSystem extends ScriptableSystem {
     return ids;
   }
 }
-

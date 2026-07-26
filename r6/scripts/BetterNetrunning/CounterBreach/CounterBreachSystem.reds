@@ -1,20 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.CounterBreach
 
@@ -26,9 +9,6 @@ import HackingExtensions.*
 
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
-
-
-
 
 
 public class CounterBreachSucceededEvent extends OnCustomHackingSucceeded {
@@ -54,8 +34,6 @@ public class CounterBreachSucceededEvent extends OnCustomHackingSucceeded {
   }
 }
 
-
-
 public class CounterBreachFailedEvent extends OnCustomHackingFailed {
 
   public func Execute() -> Void {
@@ -71,17 +49,11 @@ public class CounterBreachFailedEvent extends OnCustomHackingFailed {
 }
 
 
-
-
-
 public class CounterBreachSystem extends ScriptableSystem {
 
   private let m_isActive: Bool;
 
-
-
   private let m_lastBreachWasStandalone: Bool;
-
 
   private let m_abandonListener: ref<CallbackHandle>;
 
@@ -98,13 +70,10 @@ public class CounterBreachSystem extends ScriptableSystem {
     return this.m_isActive;
   }
 
-
   public func SetLastBreachWasStandalone(value: Bool) -> Void {
     this.m_lastBreachWasStandalone = value;
     BNDebug("CounterBreach", "LastBreachWasStandalone = " + ToString(value));
   }
-
-
 
   public func IsPersonalLinkDisconnecting() -> Bool {
     let gi: GameInstance = this.GetGameInstance();
@@ -120,9 +89,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     return devicePS.IsPersonalLinkDisconnecting();
   }
 
-
-
-
   public func IsMinigameActive() -> Bool {
     let gi: GameInstance = this.GetGameInstance();
     let player: ref<PlayerPuppet> = GetPlayer(gi);
@@ -137,10 +103,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     this.m_isActive = false;
     this.CleanupAbandonListener();
   }
-
-
-
-
 
   public func ForceJackOut() -> Void {
     let gi: GameInstance = this.GetGameInstance();
@@ -177,9 +139,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     BNWarn("CounterBreach", "ForceJackOut: DisconnectPersonalLink called — V was stuck");
   }
 
-
-
-
   public func ApplyFailConsequence() -> Void {
     BNInfo("CounterBreach", "Counter-breach failed — ICE retaliation incoming");
     this.ApplyRandomHack();
@@ -206,7 +165,6 @@ public class CounterBreachSystem extends ScriptableSystem {
 
   @if(!ModuleExists("DarkFuture.Needs"))
   private func ReduceNerve(amount: Float) -> Void {}
-
 
   public func ShowWarning(text: String) -> Void {
     let msg: SimpleScreenMessage;
@@ -240,9 +198,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     }
     ps.QueueRequest(req);
   }
-
-
-
 
   private func ApplyRandomHack() -> Void {
     let gi: GameInstance = this.GetGameInstance();
@@ -300,9 +255,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     this.ShowWarning("HOSTILE ICE SUCCESSFUL — " + hackLabel + " DEPLOYED");
   }
 
-
-
-
   private func AlertNearbyNPCs(radius: Float) -> Void {
     let gi: GameInstance = this.GetGameInstance();
     let player: ref<PlayerPuppet> = GetPlayer(gi);
@@ -351,8 +303,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     }
   }
 
-
-
   protected cb func OnCounterBreachStateChanged(state: Int32) -> Void {
     if state == 4 {
       BNInfo("CounterBreach", "Counter-breach abandoned — applying fail consequence");
@@ -363,7 +313,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     }
   }
 
-  
   public func Trigger() -> Void {
     if this.m_isActive {
       BNDebug("CounterBreach", "Already active — ignoring trigger");
@@ -380,8 +329,6 @@ public class CounterBreachSystem extends ScriptableSystem {
       return;
     }
 
-
-
     this.ForceJackOut();
 
     let launched: Bool = hackSystem.StartNewHackInstance(
@@ -397,7 +344,6 @@ public class CounterBreachSystem extends ScriptableSystem {
       this.m_isActive = true;
       BNInfo("CounterBreach", "Counter-breach triggered — defeat the ICE retaliation or face the consequences");
 
-
       let bbMinigame: ref<IBlackboard> =
         GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
       if IsDefined(bbMinigame) {
@@ -409,4 +355,3 @@ public class CounterBreachSystem extends ScriptableSystem {
     }
   }
 }
-

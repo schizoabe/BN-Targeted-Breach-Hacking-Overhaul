@@ -1,20 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.RemoteBreach.Actions
 
@@ -76,20 +59,12 @@ public class DeviceRemoteBreachAction extends BaseRemoteBreachAction {
 }
 
 
-
-
-
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAction> {
     let action: ref<DeviceRemoteBreachAction> = new DeviceRemoteBreachAction();
     action.SetDevicePS(this);
     RemoteBreachActionHelper.Initialize(action, this, n"DeviceRemoteBreach");
-
-
-
-
-
 
     let gi: GameInstance = this.GetGameInstance();
     let sharedPS: ref<SharedGameplayPS> = this;
@@ -106,10 +81,6 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
     }
 
     if !IsDefined(sharedPS) || !NetworkStateUtils.IsSubnetAccessible(netState) {
-
-
-
-
         action.m_isICEBoard = true;
         action.SetProperties(
             this.GetDeviceName(),
@@ -123,7 +94,6 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
         BNInfo("RemoteBreachDevice",
             "ICE intact (" + ToString(netState.hitsApplied) + "/" + ToString(netState.hitsRequired) + ") — showing ICE board");
     } else {
-
         let difficulty: GameplayDifficulty = RemoteBreachActionHelper.GetCurrentDifficulty();
         let targetType: MinigameTargetType;
         if IsDefined(this as ComputerControllerPS) { targetType = MinigameTargetType.Computer; }
@@ -133,31 +103,20 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
         BNInfo("RemoteBreachDevice", "ICE compromised — showing subnet board");
     }
 
-
-
-
     let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
     let canExecute: Bool;
     let inactiveReason: String = RemoteBreachLockUtils.GetRemoteBreachInactiveReason(action, this, player, canExecute);
-
-
-
 
     if !canExecute {
       action.SetInactiveWithReason(false, inactiveReason);
     }
 
-
     action.InitializePrograms();
-
 
     let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance());
     if IsDefined(container) {
         let hackSystem: ref<CustomHackingSystem> = container.Get(BNConstants.CLASS_CUSTOM_HACKING_SYSTEM()) as CustomHackingSystem;
         if IsDefined(hackSystem) {
-
-
-
             let scanBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
             let scanEntity: wref<Entity> = this.GetOwnerEntityWeak() as Entity;
             if IsDefined(scanBB) && IsDefined(scanEntity) {
@@ -170,25 +129,20 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
     return action;
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptableDeviceComponentPS)
 protected func GetQuickHackActions(out actions: array<ref<DeviceAction>>, const context: script_ref<GetActionsContext>) -> Void {
     let gi: GameInstance = this.GetGameInstance();
     wrappedMethod(actions, context);
-
     RemoteBreachActionHelper.RemoveTweakDBRemoteBreach(actions, n"DeviceRemoteBreachAction");
     RemoteBreachActionHelper.RemoveTweakDBRemoteBreach(actions, n"RemoteBreachAction");
     RemoteBreachActionHelper.RemoveTweakDBRemoteBreach(actions, n"VehicleRemoteBreachAction");
 
-
     if IsDefined(this as AccessPointControllerPS) { return; }
-
 
     if BetterNetrunningSettings.UnlockIfNoAccessPoint() {
         return;
     }
-
 
     let isCamera: Bool = DeviceTypeUtils.IsCameraDevice(this);
     let isTurret: Bool = DeviceTypeUtils.IsTurretDevice(this);
@@ -201,17 +155,14 @@ protected func GetQuickHackActions(out actions: array<ref<DeviceAction>>, const 
     else if isVehicle { if !BetterNetrunningSettings.RemoteBreachEnabledVehicle() { return; } }
     else { if !BetterNetrunningSettings.RemoteBreachEnabledDevice() { return; } }
 
-
     if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
         return;
     }
-
 
     let deviceEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
     if !IsDefined(deviceEntity) {
         return;
     }
-
 
     let deviceID: EntityID = deviceEntity.GetEntityID();
     let stateSystem: ref<DeviceRemoteBreachStateSystem> = StateSystemUtils.GetDeviceStateSystem(gi);
@@ -219,8 +170,6 @@ protected func GetQuickHackActions(out actions: array<ref<DeviceAction>>, const 
     if IsDefined(stateSystem) && stateSystem.IsDeviceBreached(deviceID) {
         return;
     }
-
-
 
     let perkSysD: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
     if !IsDefined(perkSysD) || perkSysD.GetPerkLevel(BNPerk.IntrusionSuite) <= 0 {
@@ -230,4 +179,3 @@ protected func GetQuickHackActions(out actions: array<ref<DeviceAction>>, const 
     let breachAction: ref<DeviceRemoteBreachAction> = this.ActionCustomDeviceRemoteBreach();
     ArrayPush(actions, breachAction);
 }
-

@@ -1,53 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Network
 
@@ -60,9 +10,6 @@ import BetterNetrunning.Perks.*
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
 
-
-
-
 public abstract class HeatThresholds {
   public static func Low() -> Float  { return 0.3; }
   public static func High() -> Float { return 0.7; }
@@ -70,27 +17,17 @@ public abstract class HeatThresholds {
 }
 
 
-
-
-
 public struct NetworkState {
-  public let hitsRequired: Int32;  // base ICE pool (2-6); 0 = uninitialized (AP)
-  public let hitsApplied:  Int32;  // ICE damage dealt so far
-  public let globalBonus:  Int32;  // heat bonus from MarkingStateSystem (added to base for effective)
-  public let isDefeated:   Bool;   // latched true once hitsApplied >= effective; never resets
+  public let hitsRequired: Int32;
+  public let hitsApplied:  Int32;
+  public let globalBonus:  Int32;
+  public let isDefeated:   Bool;
 }
-
-
-
 
 
 public abstract class NetworkStateUtils {
 
 
-
-
-
-  
   public static func GetNetworkState(
     devicePS:     ref<ScriptableDeviceComponentPS>,
     gameInstance: GameInstance
@@ -108,10 +45,6 @@ public abstract class NetworkStateUtils {
   }
 
 
-
-
-
-  
   public static func ResolveWriteTarget(
     devicePS: ref<ScriptableDeviceComponentPS>,
     gi:       GameInstance
@@ -131,18 +64,12 @@ public abstract class NetworkStateUtils {
   }
 
 
-
-
-
-  
   public static func OnEntityMarked(
     devicePS: ref<ScriptableDeviceComponentPS>,
     gameInstance: GameInstance
   ) -> Void {
-
   }
 
-  
   public static func OnBreachEntered(
     devicePS: ref<ScriptableDeviceComponentPS>,
     gameInstance: GameInstance
@@ -153,7 +80,6 @@ public abstract class NetworkStateUtils {
       BNInfo("NetworkState",
         "ICE health initialized: " + ToString(sharedPS.m_bnIceHitsRequired) + " hits required");
     }
-
     if IsDefined(sharedPS) {
       let ms: ref<MarkingStateSystem> = NetworkStateUtils.GetMarkingSystem(gameInstance);
       if IsDefined(ms) {
@@ -169,7 +95,6 @@ public abstract class NetworkStateUtils {
     }
   }
 
-  
   @if(ModuleExists("DarkFuture.Needs"))
   public static func OnBreachFailed(
     devicePS: ref<ScriptableDeviceComponentPS>,
@@ -196,7 +121,6 @@ public abstract class NetworkStateUtils {
     }
   }
 
-  
   public static func ApplyIcepickEffect(
     devicePS:     ref<ScriptableDeviceComponentPS>,
     gameInstance: GameInstance,
@@ -209,7 +133,6 @@ public abstract class NetworkStateUtils {
     let globalBonus: Int32 = IsDefined(ms) ? ms.GetHeatICEBonus() : 0;
 
     if hits > 0 {
-
       if sharedPS.m_bnIceHitsRequired <= 0 {
         sharedPS.m_bnIceHitsRequired = RandRange(2, 7);
       }
@@ -228,14 +151,12 @@ public abstract class NetworkStateUtils {
         + " +bonus=" + ToString(globalBonus) + ")"
         + (sharedPS.m_bnIceDefeated ? " [DEFEATED]" : ""));
     }
-
     if IsDefined(ms) {
       let effective: Int32 = sharedPS.m_bnIceHitsRequired + globalBonus;
       ms.RecordBreachICEState(effective, sharedPS.m_bnIceHitsApplied);
     }
   }
 
-  
   public static func OnDaemonsCompleted(
     activePrograms: array<TweakDBID>,
     devicePS:       ref<ScriptableDeviceComponentPS>,
@@ -246,11 +167,8 @@ public abstract class NetworkStateUtils {
 
     let ms: ref<MarkingStateSystem> = NetworkStateUtils.GetMarkingSystem(gameInstance);
 
-
     let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
     let iceAnalystBonus: Int32 = IsDefined(perkSys) ? perkSys.GetPerkLevel(BNPerk.ICEAnalyst) : 0;
-
-
 
     let hideWasActive: Bool = IsDefined(ms) && ms.GetHidePresenceTimer() > 0.0;
 
@@ -275,7 +193,6 @@ public abstract class NetworkStateUtils {
         BNInfo("NetworkState", "IcepickV3 (Sunder) — " + ToString(v3Hits) + " ICE hits, no heat change");
 
       } else if Equals(pid, t"MinigameAction.NetworkLowerICEMedium") {
-
         let legacyHits: Int32 = 2 + RandRange(0, 4);
         NetworkStateUtils.ApplyIcepickEffect(writeTarget, gameInstance, legacyHits);
         if IsDefined(ms) { ms.AddSessionHeat(0.2); }
@@ -288,7 +205,6 @@ public abstract class NetworkStateUtils {
         if IsDefined(ms) { ms.AddSessionHeat(0.05); }
 
       } else if Equals(pid, BNConstants.PROGRAM_HIDE_PRESENCE()) {
-
         let ghostRunRank: Int32 = IsDefined(perkSys) ? perkSys.GetPerkLevel(BNPerk.GhostRun) : 0;
         let ghostRunBonus: Float = ghostRunRank >= 2 ? 60.0 : (ghostRunRank >= 1 ? 30.0 : 0.0);
         if IsDefined(ms) {
@@ -298,7 +214,6 @@ public abstract class NetworkStateUtils {
         BNInfo("NetworkState", "Hide Presence — heat zeroed, suppressed for " + ToString(Cast<Int32>(60.0 + ghostRunBonus)) + "s");
 
       } else if Equals(pid, BNConstants.PROGRAM_DISARM_ICE()) {
-
         let iceBreakerRank: Int32 = IsDefined(perkSys) ? perkSys.GetPerkLevel(BNPerk.IceBreaker) : 0;
         let iceBreakerBonus: Float = iceBreakerRank >= 2 ? 60.0 : (iceBreakerRank >= 1 ? 30.0 : 0.0);
         if IsDefined(ms) { ms.SetDisarmICETimer(60.0 + iceBreakerBonus); }
@@ -312,17 +227,12 @@ public abstract class NetworkStateUtils {
       i += 1;
     }
 
-
-
     if hideWasActive
         && IsDefined(perkSys) && perkSys.GetPerkLevel(BNPerk.ZeroSignature) > 0
         && IsDefined(ms) {
       ms.AddSessionHeat(-1.0);
       BNInfo("NetworkState", "Zero Signature — Hide Presence was active, heat reset to 0");
     }
-
-
-
 
     let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gameInstance)
       .Get(GetAllBlackboardDefs().HackingMinigame);
@@ -331,7 +241,6 @@ public abstract class NetworkStateUtils {
     let breachPuppet: ref<ScriptedPuppet> = breachEntity as ScriptedPuppet;
     if IsDefined(breachPuppet) && breachPuppet.IsIncapacitated() {
       let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
-
       if IsDefined(player) {
         RPGManager.GiveReward(gameInstance, t"RPGActionRewards.Hacking",
           Cast<StatsObjectID>(breachPuppet.GetEntityID()));
@@ -351,17 +260,12 @@ public abstract class NetworkStateUtils {
   }
 
 
-
-
-
-  
   public static func IsSubnetAccessible(state: NetworkState) -> Bool {
     if state.hitsRequired == 0 { return true; }
     if state.isDefeated { return true; }
     return state.hitsApplied >= (state.hitsRequired + state.globalBonus);
   }
 
-  
   public static func GetPropagationFailureChance(
     markingSystem: ref<MarkingStateSystem>,
     gameInstance:  GameInstance
@@ -405,7 +309,6 @@ public abstract class NetworkStateUtils {
     let total: Float = heatBase + markPenalty;
     if total > 1.0 { total = 1.0; }
 
-
     let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
     if IsDefined(perkSys) {
       let ssRank: Int32 = perkSys.GetPerkLevel(BNPerk.SubnetSpecialist);
@@ -419,10 +322,6 @@ public abstract class NetworkStateUtils {
   }
 
 
-
-
-
-  
   public static func FormatVulnerabilityMessage(state: NetworkState, sessionHeat: Float) -> String {
     if state.hitsRequired <= 0 {
       return "ICE UNASSESSED — BREACH TO SCAN SUBNET";
@@ -438,10 +337,6 @@ public abstract class NetworkStateUtils {
   }
 
 
-
-
-
-  
   private static func GetIceBonusHits(sessionHeat: Float) -> Int32 {
     if sessionHeat >= 0.7 { return 5; }
     if sessionHeat >= 0.6 { return 4; }
@@ -451,12 +346,8 @@ public abstract class NetworkStateUtils {
     return 0;
   }
 
-
-
-
-
   public static func GetHeatScaledICEHits(gi: GameInstance) -> Int32 {
-    return RandRange(2, 7); // 2-6
+    return RandRange(2, 7);
   }
 
   private static func GetMarkingSystem(gi: GameInstance) -> ref<MarkingStateSystem> {
@@ -464,4 +355,3 @@ public abstract class NetworkStateUtils {
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
   }
 }
-

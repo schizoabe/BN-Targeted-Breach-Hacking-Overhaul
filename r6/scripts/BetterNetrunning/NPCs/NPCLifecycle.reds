@@ -1,33 +1,10 @@
-﻿module BetterNetrunning.NPCs
+module BetterNetrunning.NPCs
 
 import BetterNetrunningConfig.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Perks.*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -42,7 +19,6 @@ protected func OnIncapacitated() -> Void {
     GameInstance.GetDelaySystem(this.GetGame()).DelayEvent(this, incapacitatedEvent, 0.50);
   }
   this.m_securitySupportListener = null;
-
   this.EnableLootInteractionWithDelay(this);
   this.EnableInteraction(n"Grapple", false);
   this.EnableInteraction(n"TakedownLayer", false);
@@ -67,18 +43,11 @@ protected func OnIncapacitated() -> Void {
 }
 
 
-
-
-
-
-
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptedPuppetPS)
 public final const func GetValidChoices(const actions: script_ref<array<wref<ObjectAction_Record>>>, const context: script_ref<GetActionsContext>, objectActionsCallbackController: wref<gameObjectActionsCallbackController>, checkPlayerQuickHackList: Bool, choices: script_ref<array<InteractionChoice>>) -> Void {
   if BetterNetrunningSettings.AllowBreachingUnconsciousNPCs()
       && !this.m_betterNetrunningWasDirectlyBreached {
-
-
     let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
     let neuralTapOwned: Bool = true;
     if IsDefined(player) {
@@ -93,8 +62,6 @@ public final const func GetValidChoices(const actions: script_ref<array<wref<Obj
 }
 
 
-
-
 @addMethod(DeviceComponentPS)
 public final func IsConnectedToPhysicalAccessPoint() -> Bool {
   let sharedGameplayPS: ref<SharedGameplayPS> = this as SharedGameplayPS;
@@ -104,6 +71,5 @@ public final func IsConnectedToPhysicalAccessPoint() -> Bool {
   let apControllers: array<ref<AccessPointControllerPS>> = sharedGameplayPS.GetAccessPoints();
   return ArraySize(apControllers) > 0;
 }
-
 
 

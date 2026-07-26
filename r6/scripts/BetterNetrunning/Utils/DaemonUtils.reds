@@ -1,8 +1,3 @@
-﻿
-
-
-
-
 
 module BetterNetrunning.Utils
 
@@ -11,25 +6,18 @@ import BetterNetrunning.Core.*
 public abstract class DaemonFilterUtils {
 
 
-
-
-
-    
     public static func IsCamera(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
         return IsDefined(devicePS as SurveillanceCameraControllerPS);
     }
 
-    
     public static func IsTurret(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
         return IsDefined(devicePS as SecurityTurretControllerPS);
     }
 
-    
     public static func IsComputer(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
         return IsDefined(devicePS as ComputerControllerPS);
     }
 
-    
     public static func IsRegularDevice(entity: wref<GameObject>) -> Bool {
         return IsDefined(entity as Device)
             && !IsDefined(entity as AccessPoint)
@@ -37,48 +25,34 @@ public abstract class DaemonFilterUtils {
     }
 
 
-
-
-
-    
     public static func IsConnectedToNetwork(entity: wref<GameObject>) -> Bool {
-
         if DaemonFilterUtils.IsRegularDevice(entity) {
             return true;
         }
         return false;
     }
 
-    
     public static func IsConnectedToPhysicalAccessPoint(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
         return devicePS.IsConnectedToPhysicalAccessPoint();
     }
 
 
-
-
-
-    
     public static func IsCameraDaemon(actionID: TweakDBID) -> Bool {
         return Equals(actionID, BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS());
     }
 
-    
     public static func IsTurretDaemon(actionID: TweakDBID) -> Bool {
         return Equals(actionID, BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS());
     }
 
-    
     public static func IsNPCDaemon(actionID: TweakDBID) -> Bool {
         return Equals(actionID, BNConstants.PROGRAM_UNLOCK_NPC_QUICKHACKS());
     }
 
-    
     public static func IsBasicDaemon(actionID: TweakDBID) -> Bool {
         return Equals(actionID, BNConstants.PROGRAM_NETWORK_DEVICE_BASIC_ACTIONS());
     }
 
-    
     public static func IsUnlockDaemon(actionID: TweakDBID) -> Bool {
         return DaemonFilterUtils.IsCameraDaemon(actionID)
             || DaemonFilterUtils.IsTurretDaemon(actionID)
@@ -87,17 +61,12 @@ public abstract class DaemonFilterUtils {
     }
 
 
-
-
-
-    
     public static func ExtractUnlockFlags(minigamePrograms: array<TweakDBID>) -> BreachUnlockFlags {
         let flags: BreachUnlockFlags;
 
         let i: Int32 = 0;
         while i < ArraySize(minigamePrograms) {
             let programID: TweakDBID = minigamePrograms[i];
-
 
             if Equals(programID, BNConstants.PROGRAM_UNLOCK_QUICKHACKS()) {
                 flags.unlockBasic = true;
@@ -108,7 +77,6 @@ public abstract class DaemonFilterUtils {
             } else if Equals(programID, BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS()) {
                 flags.unlockTurrets = true;
             }
-
             else if Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_BASIC()) {
                 flags.unlockBasic = true;
             } else if Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_NPC()) {
@@ -126,10 +94,6 @@ public abstract class DaemonFilterUtils {
     }
 
 
-
-
-
-    
     public static func ShouldShowCameraDaemon(
         devicePS: ref<ScriptableDeviceComponentPS>,
         data: ConnectedClassTypes
@@ -137,7 +101,6 @@ public abstract class DaemonFilterUtils {
         return DaemonFilterUtils.IsCamera(devicePS) || data.surveillanceCamera;
     }
 
-    
     public static func ShouldShowTurretDaemon(
         devicePS: ref<ScriptableDeviceComponentPS>,
         data: ConnectedClassTypes
@@ -145,16 +108,11 @@ public abstract class DaemonFilterUtils {
         return DaemonFilterUtils.IsTurret(devicePS) || data.securityTurret;
     }
 
-    
     public static func ShouldShowNPCDaemon(data: ConnectedClassTypes) -> Bool {
         return data.puppet;
     }
 
 
-
-
-
-    
     public static func GetDeviceTypeName(devicePS: ref<ScriptableDeviceComponentPS>) -> String {
         if DaemonFilterUtils.IsCamera(devicePS) {
             return "Camera";
@@ -167,7 +125,6 @@ public abstract class DaemonFilterUtils {
         }
     }
 
-    
     public static func GetDaemonTypeName(actionID: TweakDBID) -> String {
         if DaemonFilterUtils.IsCameraDaemon(actionID) {
             return "Camera";
@@ -183,10 +140,6 @@ public abstract class DaemonFilterUtils {
     }
 
 
-
-
-
-    
     public static func IsSubnetDaemon(programID: TweakDBID) -> Bool {
         if Equals(programID, BNConstants.PROGRAM_UNLOCK_QUICKHACKS()) { return true; }
         if Equals(programID, BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS()) { return true; }
@@ -201,7 +154,6 @@ public abstract class DaemonFilterUtils {
         return false;
     }
 
-    
     public static func GetDaemonDisplayName(programID: TweakDBID) -> String {
         let record: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(programID);
         if !IsDefined(record) {
@@ -211,4 +163,3 @@ public abstract class DaemonFilterUtils {
         return GetLocalizedTextByKey(record.ObjectActionUI().Caption());
     }
 }
-

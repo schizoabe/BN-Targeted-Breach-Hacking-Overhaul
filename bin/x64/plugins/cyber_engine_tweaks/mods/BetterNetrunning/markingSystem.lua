@@ -1,4 +1,24 @@
-﻿
+local MarkingSystem = {}
+
+
+
+local SYSTEM_CLASS      = "BetterNetrunning.Marking.MarkingStateSystem"
+local PERK_SYSTEM_CLASS = "BetterNetrunning.Perks.BNPerkSystem"
+
+
+local PERK_COLD_TRACE      = 0
+local PERK_TRACE_SCRAMBLER = 6
+
+
+
+local COUNTER_BREACH_SYSTEM_CLASS = "BetterNetrunning.CounterBreach.CounterBreachSystem"
+local COUNTER_BREACH_THRESHOLD    = 0.95
+local COUNTER_BREACH_DISARM       = 0.5
+local COUNTER_BREACH_COOLDOWN     = 5.0
+local COUNTER_BREACH_DELAY        = 5.0
+
+
+local HEAT_PASSIVE_DECAY_PER_SEC = 0.001
 
 
 
@@ -8,68 +28,16 @@
 
 
 
-
-
-
-
-
-
-local MarkingSystem                = {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local SYSTEM_CLASS                 = "BetterNetrunning.Marking.MarkingStateSystem"
-local PERK_SYSTEM_CLASS            = "BetterNetrunning.Perks.BNPerkSystem"
-
-
-local PERK_COLD_TRACE              = 0
-local PERK_TRACE_SCRAMBLER         = 6
-
-
-
-local COUNTER_BREACH_SYSTEM_CLASS  = "BetterNetrunning.CounterBreach.CounterBreachSystem"
-local COUNTER_BREACH_THRESHOLD     = 0.95 -- Heat level that arms retaliation (cap is 1.0, use 0.95 for reliable trigger)
-local COUNTER_BREACH_DISARM        = 0.5  -- Heat must drop below this to cancel armed countdown
-local COUNTER_BREACH_COOLDOWN      = 5.0  -- Seconds between counter-breach attempts
-local COUNTER_BREACH_DELAY         = 5.0  -- Warning window before minigame fires
-
-
-local HEAT_PASSIVE_DECAY_PER_SEC   = 0.001 -- Passive session heat decay per second (very slow)
-
-
-
-
-
-
-
-
-
-local isInitialized                = false
-local counterBreachTimer           = 0.0   -- cooldown between counter-breach boards (starts when board CLOSES)
-local counterBreachPending         = 0.0   -- countdown until counter-breach fires (0 = not armed)
-local counterBreachEngaged         = false -- true after first fire; re-arm threshold drops to DISARM until heat < DISARM
-local counterBreachWasInMinigame   = false -- edge-detect: restart warning window when AP breach board closes
-local counterBreachWasActive       = false -- edge-detect: start cooldown when counter-breach board closes
-local isPlayerInControl            = false -- set by GameplayState listener; false = pause all timers
-local currentMaxHeat               = 0.0   -- session heat, shared with DrawUI
-local panelRefreshTimer            = 0.0   -- countdown to next live panel refresh (0.25s cadence)
-local hudPanelsVisible             = false -- toggle state for BNTestPanel + ICEScoutLog
+local isInitialized              = false
+local counterBreachTimer         = 0.0
+local counterBreachPending       = 0.0
+local counterBreachEngaged       = false
+local counterBreachWasInMinigame = false
+local counterBreachWasActive     = false
+local isPlayerInControl          = false
+local currentMaxHeat             = 0.0
+local panelRefreshTimer          = 0.0
+local hudPanelsVisible           = false
 
 
 
@@ -259,10 +227,6 @@ function MarkingSystem.ClearAll()
     print("[BetterNetrunning] All breach marks cleared")
 end
 
-
-
-
-
 function MarkingSystem.SetPlayerInControl(v)
     isPlayerInControl = v
 end
@@ -319,7 +283,7 @@ function MarkingSystem.Update(deltaTime)
         if hudPanelsVisible then
             local testSys = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.UI.BNTestPanelSystem")
             if testSys then pcall(function() testSys:Refresh(counterBreachPending) end) end
-            if logSys  then pcall(function() logSys:Refresh() end) end
+            if logSys then pcall(function() logSys:Refresh() end) end
         end
     end
 
@@ -397,42 +361,19 @@ function MarkingSystem.Update(deltaTime)
             end
         end
     end
-
 end
-
-
-
-
-
-
-
-
-
 
 function MarkingSystem.Init()
     isInitialized = true
     print("[BetterNetrunning] Marking system ready")
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function MarkingSystem.HK_ClearMarks()
     MarkingSystem.ClearAll()
     local testSys = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.UI.BNTestPanelSystem")
     local logSys  = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.Marking.ICEScoutLogSystem")
     if testSys then pcall(function() testSys:Hide() end) end
-    if logSys  then pcall(function() logSys:Hide() end) end
+    if logSys then pcall(function() logSys:Hide() end) end
     hudPanelsVisible = false
 end
 
@@ -440,7 +381,7 @@ function MarkingSystem.HK_HideWidgets()
     local testSys = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.UI.BNTestPanelSystem")
     local logSys  = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.Marking.ICEScoutLogSystem")
     if testSys then pcall(function() testSys:Hide() end) end
-    if logSys  then pcall(function() logSys:Hide() end) end
+    if logSys then pcall(function() logSys:Hide() end) end
     hudPanelsVisible = false
 end
 
@@ -452,7 +393,7 @@ function MarkingSystem.HK_ShowNetworkStatus()
     local testSys = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.UI.BNTestPanelSystem")
     local logSys  = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.Marking.ICEScoutLogSystem")
     if testSys then pcall(function() testSys:ShowTestPanel(counterBreachPending) end) end
-    if logSys  then pcall(function() logSys:Show() end) end
+    if logSys then pcall(function() logSys:Show() end) end
     hudPanelsVisible = true
 end
 
@@ -469,8 +410,6 @@ function MarkingSystem.HK_ForceJackOut()
         print("[BetterNetrunning] ForceJackOut error: " .. tostring(err))
     end
 end
-
-
 
 function MarkingSystem.HK_DEV_TriggerCounterBreach()
     local cbs = getCounterBreachSystem()
@@ -560,7 +499,7 @@ function MarkingSystem.HK_DEV_ShowTestPanel()
     if hudPanelsVisible then
         if bootSys then pcall(function() bootSys:Abort() end) end
         if testSys then pcall(function() testSys:Hide() end) end
-        if logSys  then pcall(function() logSys:Hide() end) end
+        if logSys then pcall(function() logSys:Hide() end) end
         hudPanelsVisible = false
     else
         if bootSys then
@@ -580,4 +519,3 @@ function MarkingSystem.HK_DEV_ShowTestPanel()
 end
 
 return MarkingSystem
-

@@ -1,46 +1,17 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunningConfig
-
-
-
 
 
 public class BetterNetrunningSettings {
 
 
-
-
-
     public static func BreachingHotkey() -> String { return "Choice3"; }
-
-
-
 
 
     public static func EnableClassicMode() -> Bool { return false; }
     public static func AllowBreachingUnconsciousNPCs() -> Bool { return true; }
     public static func RadialUnlockCrossNetwork() -> Bool { return true; }
     public static func QuickhackUnlockDurationHours() -> Int32 { return 6; }
-
-
-
 
 
     public static func RemoteBreachEnabledDevice() -> Bool { return true; }
@@ -52,9 +23,6 @@ public class BetterNetrunningSettings {
     public static func RemoteBreachRAMCostPercent() -> Int32 { return 15; }
 
 
-
-
-
     public static func BreachFailurePenaltyEnabled() -> Bool { return true; }
     public static func APBreachFailurePenaltyEnabled() -> Bool { return true; }
     public static func NPCBreachFailurePenaltyEnabled() -> Bool { return true; }
@@ -62,13 +30,7 @@ public class BetterNetrunningSettings {
     public static func BreachPenaltyDurationMinutes() -> Int32 { return 10; }
 
 
-
-
-
     public static func UnlockIfNoAccessPoint() -> Bool { return false; }
-
-
-
 
 
     public static func AlwaysAllowPing() -> Bool { return true; }
@@ -83,16 +45,10 @@ public class BetterNetrunningSettings {
     public static func AlwaysNPCsUltimate() -> Bool { return false; }
 
 
-
-
-
     public static func ProgressionRequireAll() -> Bool { return true; }
     public static func ProgressionCyberdeckEnabled() -> Bool { return false; }
     public static func ProgressionIntelligenceEnabled() -> Bool { return false; }
     public static func ProgressionEnemyRarityEnabled() -> Bool { return false; }
-
-
-
 
 
     public static func ProgressionCyberdeckBasicDevices() -> Int32 { return 1; }
@@ -104,9 +60,6 @@ public class BetterNetrunningSettings {
     public static func ProgressionCyberdeckNPCsUltimate() -> Int32 { return 1; }
 
 
-
-
-
     public static func ProgressionIntelligenceBasicDevices() -> Int32 { return 3; }
     public static func ProgressionIntelligenceCameras() -> Int32 { return 3; }
     public static func ProgressionIntelligenceTurrets() -> Int32 { return 3; }
@@ -116,18 +69,12 @@ public class BetterNetrunningSettings {
     public static func ProgressionIntelligenceNPCsUltimate() -> Int32 { return 3; }
 
 
-
-
-
     public static func ProgressionEnemyRarityNPCsCovert() -> Int32 { return 8; }
     public static func ProgressionEnemyRarityNPCsCombat() -> Int32 { return 8; }
     public static func ProgressionEnemyRarityNPCsControl() -> Int32 { return 8; }
     public static func ProgressionEnemyRarityNPCsUltimate() -> Int32 { return 8; }
 
 
-
-
-
     public static func EnableDebugLog() -> Bool { return false; }
-    public static func DebugLogLevel() -> Int32 { return 2; } // 0=ERROR, 1=WARNING, 2=INFO, 3=DEBUG, 4=TRACE
+    public static func DebugLogLevel() -> Int32 { return 2; }
 }

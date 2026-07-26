@@ -1,24 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Minigame
 
@@ -28,10 +7,6 @@ import BetterNetrunning.Utils.*
 import BetterNetrunning.Integration.*
 
 
-
-
-
-
 public func ShouldRemoveNetworkPrograms(actionID: TweakDBID, connectedToNetwork: Bool) -> Bool {
   if connectedToNetwork {
     return false;
@@ -39,9 +14,7 @@ public func ShouldRemoveNetworkPrograms(actionID: TweakDBID, connectedToNetwork:
   return IsUnlockQuickhackAction(actionID);
 }
 
-
 public func ShouldRemoveDeviceBackdoorPrograms(actionID: TweakDBID, entity: wref<GameObject>) -> Bool {
-
   if !DaemonFilterUtils.IsRegularDevice(entity) {
     return false;
   }
@@ -51,34 +24,23 @@ public func ShouldRemoveDeviceBackdoorPrograms(actionID: TweakDBID, entity: wref
 }
 
 
-
-
-
-
 public func ShouldRemoveAccessPointPrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, isRemoteBreach: Bool) -> Bool {
-
   if isRemoteBreach {
     return false;
   }
-
   return NotEquals(miniGameActionRecord.Type().Type(), gamedataMinigameActionType.AccessPoint)
       && !IsUnlockQuickhackAction(actionID);
 }
 
 
-
-
 public func ShouldRemoveNonNetrunnerPrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, isRemoteBreach: Bool, entity: wref<GameObject>) -> Bool {
-
   if !IsRemoteNonNetrunner(isRemoteBreach, entity) {
     return false;
   }
-
   return Equals(miniGameActionRecord.Type().Type(), gamedataMinigameActionType.AccessPoint)
       || actionID == BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS()
       || actionID == BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS();
 }
-
 
 public func IsRemoteNonNetrunner(isRemoteBreach: Bool, entity: wref<GameObject>) -> Bool {
   if !isRemoteBreach {
@@ -90,12 +52,9 @@ public func IsRemoteNonNetrunner(isRemoteBreach: Bool, entity: wref<GameObject>)
 
 
 
-
-
 private func IsUnlockQuickhackAction(actionID: TweakDBID) -> Bool {
   return actionID == BNConstants.PROGRAM_UNLOCK_QUICKHACKS()
       || actionID == BNConstants.PROGRAM_UNLOCK_NPC_QUICKHACKS()
       || actionID == BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS()
       || actionID == BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS();
 }
-

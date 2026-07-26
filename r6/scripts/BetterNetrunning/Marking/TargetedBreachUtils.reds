@@ -1,27 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Marking
 
@@ -29,9 +5,6 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Network.*
-
-
-
 
 
 @if(ModuleExists("HackthePlanetForReal"))
@@ -46,12 +19,8 @@ public func BN_StampSJKIBreached() -> Void {
 public func BN_StampSJKIBreached() -> Void {}
 
 
-
-
-
 public abstract class TargetedBreachUtils {
 
-    
     public static func UnlockMarkedEntities(
         markingSystem: ref<MarkingStateSystem>,
         unlockFlags:   BreachUnlockFlags,
@@ -112,7 +81,6 @@ public abstract class TargetedBreachUtils {
         if IsDefined(logSys) { logSys.Refresh(); }
     }
 
-    
     private static func UnlockEntityIDs(
         entityIDs:    array<EntityID>,
         targetType:   TargetType,
@@ -127,7 +95,6 @@ public abstract class TargetedBreachUtils {
         let i: Int32 = 0;
         while i < ArraySize(entityIDs) {
             let entityID: EntityID = entityIDs[i];
-
 
             let failed: Bool = failChance > 0.0 && RandF() < failChance;
             if failed {
@@ -149,19 +116,16 @@ public abstract class TargetedBreachUtils {
 
                     let unlocked: Bool = false;
 
-
                     let puppet: ref<ScriptedPuppet> = entity as ScriptedPuppet;
                     if IsDefined(puppet) {
                         TargetedBreachUtils.UnlockNPC(puppet, currentTime, persistency, entityID);
                         unlocked = true;
                     } else {
-
                         let vehicle: ref<VehicleObject> = entity as VehicleObject;
                         if IsDefined(vehicle) {
                             TargetedBreachUtils.UnlockVehicle(vehicle, currentTime, gameInstance);
                             unlocked = true;
                         } else {
-
                             let device: ref<Device> = entity as Device;
                             if IsDefined(device) {
                                 TargetedBreachUtils.UnlockDevice(device, targetType, currentTime, persistency);
@@ -187,7 +151,6 @@ public abstract class TargetedBreachUtils {
         return unlockedNames;
     }
 
-    
     private static func UnlockVehicle(
         vehicle:      ref<VehicleObject>,
         currentTime:  Float,
@@ -208,14 +171,11 @@ public abstract class TargetedBreachUtils {
             return;
         }
 
-
         sharedPS.m_betterNetrunningUnlockTimestampBasic = currentTime;
-
 
         if sharedPS.m_bnIceHitsRequired <= 0 { sharedPS.m_bnIceHitsRequired = 1; }
         sharedPS.m_bnIceHitsApplied = sharedPS.m_bnIceHitsRequired;
         sharedPS.m_bnIceDefeated = true;
-
 
         let persistency: ref<GamePersistencySystem> =
             GameInstance.GetPersistencySystem(gameInstance);
@@ -231,7 +191,6 @@ public abstract class TargetedBreachUtils {
             "Vehicle unlocked: " + EntityID.ToDebugString(vehicle.GetEntityID()));
     }
 
-    
     private static func UnlockNPC(
         puppet:      ref<ScriptedPuppet>,
         currentTime: Float,
@@ -245,7 +204,6 @@ public abstract class TargetedBreachUtils {
             return;
         }
 
-
         let deviceLink: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
         if IsDefined(deviceLink) {
             deviceLink.m_betterNetrunningUnlockTimestampNPCs = currentTime;
@@ -255,14 +213,11 @@ public abstract class TargetedBreachUtils {
                 "NPC is standalone -- no DeviceLink timestamp needed");
         }
 
-
         npcPS.BN_StampSJKIBreached();
-
 
         if npcPS.m_bnNPCIceHitsRequired <= 0 { npcPS.m_bnNPCIceHitsRequired = 1; }
         npcPS.m_bnNPCIceHitsApplied = npcPS.m_bnNPCIceHitsRequired;
         npcPS.m_bnNPCIceDefeated = true;
-
 
         let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
         exposeEvt.isRemote = true;
@@ -272,7 +227,6 @@ public abstract class TargetedBreachUtils {
             "NPC unlocked: " + EntityID.ToDebugString(entityID));
     }
 
-    
     private static func UnlockDevice(
         device:      ref<Device>,
         targetType:  TargetType,
@@ -292,19 +246,15 @@ public abstract class TargetedBreachUtils {
             return;
         }
 
-
         TimeUtils.SetDeviceUnlockTimestamp(sharedPS, targetType, currentTime);
-
 
         if sharedPS.m_bnIceHitsRequired <= 0 { sharedPS.m_bnIceHitsRequired = 1; }
         sharedPS.m_bnIceHitsApplied = sharedPS.m_bnIceHitsRequired;
         sharedPS.m_bnIceDefeated = true;
 
-
         let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
         exposeEvt.isRemote = true;
         persistency.QueuePSEvent(devicePS.GetID(), devicePS.GetClassName(), exposeEvt);
-
 
         let subnetEvt: ref<SetBreachedSubnet> = new SetBreachedSubnet();
         subnetEvt.unlockTimestampBasic   = Equals(targetType, TargetType.Basic)   ? currentTime : 0.0;

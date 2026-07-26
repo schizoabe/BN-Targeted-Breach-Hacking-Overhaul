@@ -1,24 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Marking
 
@@ -27,13 +6,7 @@ import BetterNetrunning.Logging.*
 import BetterNetrunning.UI.*
 
 
-
-
-
 public abstract class ICEDiagnosticUtils {
-
-
-
 
   public static func GetTierLabel(hitsRequired: Int32) -> String {
     if hitsRequired <= 0 { return "UNKNOWN ICE"; }
@@ -52,9 +25,6 @@ public abstract class ICEDiagnosticUtils {
 }
 
 
-
-
-
 public class ICEScoutLog {
   private let m_canvas:      ref<inkCanvas>;
   private let m_content:     ref<inkText>;
@@ -64,7 +34,6 @@ public class ICEScoutLog {
   private let m_sidebar:     ref<inkImage>;
   private let m_footerFluff: ref<inkImage>;
   private let m_footer:      ref<inkText>;
-
 
   private let m_isVisible: Bool;
 
@@ -155,7 +124,7 @@ public class ICEScoutLog {
     footer.SetAnchor(inkEAnchor.TopLeft);
     footer.SetMargin(new inkMargin(txtX, h - 24.0, 12.0, 0.0));
     footer.SetTintColor(new HDRColor(0.15, 1.2, 1.1, 0.7));
-    footer.SetText("BN // ICE Diagnostic System v1.0");
+    footer.SetText("ICE Diagnostic System v1.0");
     footer.Reparent(canvas);
     this.m_footer = footer;
 
@@ -170,7 +139,6 @@ public class ICEScoutLog {
     content.Reparent(canvas);
     this.m_content = content;
   }
-
 
   private func ResizeForEntries(count: Int32) -> Void {
     if !IsDefined(this.m_canvas) { return; }
@@ -190,7 +158,6 @@ public class ICEScoutLog {
     this.m_footer.SetMargin(new inkMargin(txtX, newH - 24.0, 12.0, 0.0));
   }
 
-
   public func Refresh(gi: GameInstance) -> Void {
     if !IsDefined(this.m_content) { return; }
 
@@ -203,7 +170,6 @@ public class ICEScoutLog {
   }
 
   public func IsVisible() -> Bool { return this.m_isVisible; }
-
 
   public func ShowIfNew(gi: GameInstance) -> Void {
     if !IsDefined(this.m_canvas) || !IsDefined(this.m_content) { return; }
@@ -220,7 +186,6 @@ public class ICEScoutLog {
       this.PlayShowAnimation();
     }
   }
-
 
   public func Show(gi: GameInstance) -> Void {
     if !IsDefined(this.m_canvas) { return; }
@@ -261,7 +226,6 @@ public class ICEScoutLog {
     this.m_animProxy = this.m_canvas.PlayAnimation(def);
   }
 
-
   public func Hide() -> Void {
     if !IsDefined(this.m_canvas) { return; }
     this.m_isVisible = false;
@@ -271,12 +235,10 @@ public class ICEScoutLog {
 
     if !this.m_canvas.IsVisible() { return; }
 
-
     if wasAnimating {
       this.m_canvas.SetVisible(false);
       return;
     }
-
 
     let def = new inkAnimDef();
     let scaleOut = new inkAnimScale();
@@ -342,7 +304,6 @@ public class ICEScoutLog {
         }
       }
     } else {
-
       let vehicle: ref<VehicleObject> = GameInstance.FindEntityByID(gi, entry.entityID) as VehicleObject;
       if IsDefined(vehicle) {
         let vps: ref<SharedGameplayPS> = vehicle.GetVehiclePS() as SharedGameplayPS;
@@ -356,7 +317,6 @@ public class ICEScoutLog {
         }
       }
     }
-
 
     let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
@@ -377,15 +337,12 @@ public class ICEScoutLog {
       if IsDefined(ps) {
         hitsApplied  = ps.m_bnNPCIceHitsApplied;
         if hitsRequired == 0 { hitsRequired = ps.m_bnNPCIceHitsRequired; }
-
-
         if ps.m_bnNPCIceDefeated {
           return entry.displayName + ": "
               + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", FULLY COMPROMISED\n";
         }
       }
     }
-
 
     let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
@@ -427,9 +384,6 @@ public class ICEScoutLog {
 }
 
 
-
-
-
 public class ICEScoutLogSystem extends ScriptableSystem {
   private let m_log: ref<ICEScoutLog>;
 
@@ -448,11 +402,9 @@ public class ICEScoutLogSystem extends ScriptableSystem {
     let gi: GameInstance = this.GetGameInstance();
 
     if this.m_log.IsVisible() {
-
       this.m_log.ShowIfNew(gi);
       return;
     }
-
 
     let bootSys: ref<BNBootSystem> = GameInstance.GetScriptableSystemsContainer(gi)
         .Get(n"BetterNetrunning.UI.BNBootSystem") as BNBootSystem;
@@ -479,9 +431,6 @@ public class ICEScoutLogSystem extends ScriptableSystem {
     if IsDefined(this.m_log) { this.m_log.Hide(); }
   }
 }
-
-
-
 
 
 @wrapMethod(PlayerPuppet)
@@ -518,4 +467,3 @@ protected cb func OnGameAttached() -> Bool {
 
   return result;
 }
-

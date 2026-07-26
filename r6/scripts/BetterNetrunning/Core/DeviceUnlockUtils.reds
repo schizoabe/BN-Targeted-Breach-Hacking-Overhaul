@@ -1,22 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Core
 
@@ -25,23 +6,20 @@ import BetterNetrunning.Logging.*
 import BetterNetrunning.Integration.*
 import BetterNetrunning.Utils.*
 
-
 public struct TargetingSetup {
     public let isValid: Bool;
     public let breachRadius: Float;
     public let sourcePos: Vector4;
-    public let originType: String;           // "NPC" or "Device"
+    public let originType: String;
     public let player: wref<PlayerPuppet>;
     public let targetingSystem: ref<TargetingSystem>;
     public let query: TargetSearchQuery;
 }
 
-
 public struct VehicleProcessResult {
     public let vehicleFound: Bool;
     public let unlocked: Bool;
 }
-
 
 enum NetworkClassification {
     BreachedNetwork = 0,
@@ -50,25 +28,18 @@ enum NetworkClassification {
 }
 
 
-
-
-
-
 public abstract class EntityUnlockProcessor {
-
     protected let m_origin: Vector4;
     protected let m_radiusSq: Float;
     protected let m_breachedAPID: PersistentID;
     protected let m_gameInstance: GameInstance;
     protected let m_unlockFlags: BreachUnlockFlags;
 
-
     protected let m_standaloneCount: Int32;
     protected let m_crossNetworkCount: Int32;
     protected let m_standaloneUnlocked: Int32;
     protected let m_crossNetworkUnlocked: Int32;
 
-    
     public func Initialize(
         origin: Vector4,
         radiusSq: Float,
@@ -88,24 +59,19 @@ public abstract class EntityUnlockProcessor {
         this.m_crossNetworkUnlocked = 0;
     }
 
-    
     public func ProcessEntity(part: TS_TargetPartInfo) -> Void {
-
         let entity: wref<GameObject>;
         if !DeviceUnlockUtils.ExtractAndValidateEntity(
             part, this.m_origin, this.m_radiusSq, entity
         ) { return; }
 
-
         if !this.CastToSpecificType(entity) { return; }
-
 
         let classification: NetworkClassification = this.ClassifyNetwork();
 
-
         switch classification {
             case NetworkClassification.BreachedNetwork:
-                return; // Skip (already processed)
+                return;
             case NetworkClassification.CrossNetwork:
                 this.m_crossNetworkCount += 1;
                 if this.ShouldUnlockCrossNetwork() {
@@ -125,25 +91,19 @@ public abstract class EntityUnlockProcessor {
         }
     }
 
-    
     protected func CastToSpecificType(entity: wref<GameObject>) -> Bool;
 
-    
     protected func ClassifyNetwork() -> NetworkClassification;
 
-    
     protected func UnlockEntity() -> Bool;
 
-    
     protected func ShouldUnlockCrossNetwork() -> Bool {
         return this.m_unlockFlags.unlockBasic;
     }
 
-    
     protected func ShouldUnlockStandalone() -> Bool {
         return this.m_unlockFlags.unlockBasic;
     }
-
 
     public func GetStandaloneCount() -> Int32 { return this.m_standaloneCount; }
     public func GetCrossNetworkCount() -> Int32 { return this.m_crossNetworkCount; }
@@ -151,24 +111,18 @@ public abstract class EntityUnlockProcessor {
     public func GetCrossNetworkUnlocked() -> Int32 { return this.m_crossNetworkUnlocked; }
 }
 
-
 public class DeviceUnlockProcessor extends EntityUnlockProcessor {
-
     private let m_device: ref<Device>;
     private let m_devicePS: ref<ScriptableDeviceComponentPS>;
 
-    
     protected func CastToSpecificType(entity: wref<GameObject>) -> Bool {
-
         this.m_device = entity as Device;
         if !IsDefined(this.m_device) { return false; }
-
 
         this.m_devicePS = this.m_device.GetDevicePS();
         return IsDefined(this.m_devicePS);
     }
 
-    
     protected func ClassifyNetwork() -> NetworkClassification {
         return DeviceUnlockUtils.ClassifyDeviceNetwork(
             this.m_devicePS,
@@ -176,7 +130,6 @@ public class DeviceUnlockProcessor extends EntityUnlockProcessor {
         );
     }
 
-    
     protected func UnlockEntity() -> Bool {
         return DeviceUnlockUtils.UnlockDeviceInRadius(
             this.m_devicePS,
@@ -186,24 +139,18 @@ public class DeviceUnlockProcessor extends EntityUnlockProcessor {
     }
 }
 
-
 public class VehicleUnlockProcessor extends EntityUnlockProcessor {
-
     private let m_vehicle: ref<VehicleObject>;
 
-    
     protected func CastToSpecificType(entity: wref<GameObject>) -> Bool {
         this.m_vehicle = entity as VehicleObject;
         return IsDefined(this.m_vehicle);
     }
 
-    
     protected func ClassifyNetwork() -> NetworkClassification {
-
         return NetworkClassification.PureStandalone;
     }
 
-    
     protected func UnlockEntity() -> Bool {
         return DeviceUnlockUtils.TryUnlockVehicle(
             this.m_vehicle,
@@ -212,24 +159,18 @@ public class VehicleUnlockProcessor extends EntityUnlockProcessor {
     }
 }
 
-
 public class NPCUnlockProcessor extends EntityUnlockProcessor {
-
     private let m_puppet: ref<ScriptedPuppet>;
     private let m_npcPS: ref<ScriptedPuppetPS>;
 
-    
     protected func CastToSpecificType(entity: wref<GameObject>) -> Bool {
-
         this.m_puppet = entity as ScriptedPuppet;
         if !IsDefined(this.m_puppet) { return false; }
-
 
         this.m_npcPS = this.m_puppet.GetPS();
         return IsDefined(this.m_npcPS);
     }
 
-    
     protected func ClassifyNetwork() -> NetworkClassification {
         return DeviceUnlockUtils.ClassifyNPCNetwork(
             this.m_puppet,
@@ -238,17 +179,14 @@ public class NPCUnlockProcessor extends EntityUnlockProcessor {
         );
     }
 
-    
     protected func UnlockEntity() -> Bool {
         return DeviceUnlockUtils.UnlockStandaloneNPC(this.m_puppet);
     }
 
-    
     protected func ShouldUnlockCrossNetwork() -> Bool {
         return this.m_unlockFlags.unlockNPCs && BetterNetrunningSettings.RadialUnlockCrossNetwork();
     }
 
-    
     protected func ShouldUnlockStandalone() -> Bool {
         return this.m_unlockFlags.unlockNPCs;
     }
@@ -256,10 +194,6 @@ public class NPCUnlockProcessor extends EntityUnlockProcessor {
 
 public abstract class DeviceUnlockUtils {
 
-
-
-
-    
     public static func ProcessNPCsInRadius(
         devicePS: ref<ScriptableDeviceComponentPS>,
         breachedAPID: PersistentID,
@@ -275,17 +209,14 @@ public abstract class DeviceUnlockUtils {
         npcPureStandaloneUnlocked = 0;
         npcCrossNetworkUnlocked = 0;
 
-
         let deviceEntity: wref<GameObject> = devicePS.GetOwnerEntityWeak() as GameObject;
         if !IsDefined(deviceEntity) {
             return;
         }
 
-
         let origin: Vector4 = deviceEntity.GetWorldPosition();
         let radius: Float = GetRadialBreachRange(gameInstance);
         let radiusSq: Float = radius * radius;
-
 
         let player: wref<PlayerPuppet> = GetPlayer(gameInstance);
         if !IsDefined(player) { return; }
@@ -304,17 +235,14 @@ public abstract class DeviceUnlockUtils {
         let parts: array<TS_TargetPartInfo>;
         targetingSystem.GetTargetParts(player, query, parts);
 
-
         let processor: ref<NPCUnlockProcessor> = new NPCUnlockProcessor();
         processor.Initialize(origin, radiusSq, breachedAPID, gameInstance, unlockFlags);
-
 
         let i: Int32 = ArraySize(parts) - 1;
         while i >= 0 {
             processor.ProcessEntity(parts[i]);
             i -= 1;
         }
-
 
         npcPureStandaloneCount = processor.GetStandaloneCount();
         npcCrossNetworkCount = processor.GetCrossNetworkCount();
@@ -323,15 +251,10 @@ public abstract class DeviceUnlockUtils {
     }
 
 
-
-
-
-    
     public static func SetupDeviceTargeting(sourceEntity: wref<GameObject>, gameInstance: GameInstance) -> TargetingSetup {
         let setup: TargetingSetup;
         setup.isValid = false;
         setup.breachRadius = GetRadialBreachRange(gameInstance);
-
 
         let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gameInstance)
             .Get(GetAllBlackboardDefs().HackingMinigame);
@@ -341,11 +264,9 @@ public abstract class DeviceUnlockUtils {
         let npcPuppet: wref<ScriptedPuppet> = breachEntity as ScriptedPuppet;
 
         if IsDefined(npcPuppet) {
-
             setup.sourcePos = npcPuppet.GetWorldPosition();
             setup.originType = "NPC";
         } else {
-
             setup.sourcePos = sourceEntity.GetWorldPosition();
             setup.originType = "Device";
         }
@@ -370,7 +291,6 @@ public abstract class DeviceUnlockUtils {
         setup.isValid = true;
         return setup;
     }
-
 
     private static func SetupVehicleTargeting(devicePS: ref<ScriptableDeviceComponentPS>, gameInstance: GameInstance) -> TargetingSetup {
         let setup: TargetingSetup;
@@ -408,22 +328,16 @@ public abstract class DeviceUnlockUtils {
     }
 
 
-
-
-
-    
     private static func ExtractAndValidateEntity(
         part: TS_TargetPartInfo,
         sourcePos: Vector4,
         breachRadius: Float,
         out entity: wref<GameObject>
     ) -> Bool {
-
         entity = TS_TargetPartInfo.GetComponent(part).GetEntity() as GameObject;
         if !IsDefined(entity) {
             return false;
         }
-
 
         let targetPos: Vector4 = entity.GetWorldPosition();
         let distance: Float = Vector4.Distance(sourcePos, targetPos);
@@ -434,7 +348,6 @@ public abstract class DeviceUnlockUtils {
         return true;
     }
 
-    
     private static func ClassifyDeviceNetwork(
         sharedPS: ref<SharedGameplayPS>,
         breachedAPID: PersistentID
@@ -447,7 +360,6 @@ public abstract class DeviceUnlockUtils {
         return NetworkClassification.PureStandalone;
     }
 
-    
     private static func ClassifyNPCNetwork(
         puppet: ref<ScriptedPuppet>,
         breachedAPID: PersistentID,
@@ -468,7 +380,6 @@ public abstract class DeviceUnlockUtils {
         return NetworkClassification.BreachedNetwork;
     }
 
-    
     private static func UnlockNetworkNPC(puppetLink: ref<PuppetDeviceLinkPS>) -> Bool {
         if !IsDefined(puppetLink) {
             return false;
@@ -489,7 +400,6 @@ public abstract class DeviceUnlockUtils {
             return false;
         }
 
-
         let exposeEvent: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
         exposeEvent.isRemote = true;
         npcPS.GetPersistencySystem().QueueEntityEvent(PersistentID.ExtractEntityID(npcPS.GetID()), exposeEvent);
@@ -497,7 +407,6 @@ public abstract class DeviceUnlockUtils {
         return true;
     }
 
-    
     private static func UnlockStandaloneNPC(puppet: ref<ScriptedPuppet>) -> Bool {
         if !IsDefined(puppet) {
             return false;
@@ -508,7 +417,6 @@ public abstract class DeviceUnlockUtils {
             return false;
         }
 
-
         let exposeEvent: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
         exposeEvent.isRemote = true;
         npcPS.GetPersistencySystem().QueueEntityEvent(PersistentID.ExtractEntityID(npcPS.GetID()), exposeEvent);
@@ -516,27 +424,23 @@ public abstract class DeviceUnlockUtils {
         return true;
     }
 
-    
     private static func ShouldApplyCrossNetworkFilter(sharedPS: ref<SharedGameplayPS>) -> Bool {
         if !IsDefined(sharedPS) {
-            return true;  // Filter out invalid devices
+            return true;
         }
-
 
         if BetterNetrunningSettings.RadialUnlockCrossNetwork() {
-            return false;  // Cross-Network enabled, don't filter
+            return false;
         }
-
 
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         if ArraySize(apControllers) > 0 {
-            return true;  // Network-connected device, filter out
+            return true;
         }
 
-        return false;  // Standalone device, don't filter
+        return false;
     }
 
-    
     private static func IsConnectedToBreachedNetwork(
         sharedPS: ref<SharedGameplayPS>,
         breachedAPID: PersistentID
@@ -545,22 +449,20 @@ public abstract class DeviceUnlockUtils {
             return false;
         }
 
-
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         let idx: Int32 = 0;
         while idx < ArraySize(apControllers) {
             if PersistentID.IsDefined(apControllers[idx].GetID()) && PersistentID.IsDefined(breachedAPID) {
                 if Equals(apControllers[idx].GetID(), breachedAPID) {
-                    return true;  // Device belongs to breached network
+                    return true;
                 }
             }
             idx += 1;
         }
 
-        return false;  // Device not connected to breached network
+        return false;
     }
 
-    
     private static func UnlockDeviceInRadius(
         devicePS: ref<ScriptableDeviceComponentPS>,
         unlockFlags: BreachUnlockFlags,
@@ -571,19 +473,15 @@ public abstract class DeviceUnlockUtils {
             return false;
         }
 
-
         if DeviceUnlockUtils.ShouldApplyCrossNetworkFilter(sharedPS) {
             return false;
         }
 
-
         let deviceType: TargetType = DeviceTypeUtils.GetDeviceType(devicePS);
 
-
         if !DeviceTypeUtils.ShouldUnlockByFlags(deviceType, unlockFlags) {
-            return false;  // Device type not in unlockFlags, skip
+            return false;
         }
-
 
         let currentTimestamp: Float = 0.0;
         if Equals(deviceType, TargetType.Camera) {
@@ -595,9 +493,8 @@ public abstract class DeviceUnlockUtils {
         }
 
         if currentTimestamp > 0.0 {
-            return false;  // Already unlocked, skip
+            return false;
         }
-
 
         let newTimestamp: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
         if Equals(deviceType, TargetType.Camera) {
@@ -612,10 +509,6 @@ public abstract class DeviceUnlockUtils {
     }
 
 
-
-
-
-    
     public static func ProcessEntityInRadius(
         parts: array<TS_TargetPartInfo>,
         origin: Vector4,
@@ -628,14 +521,11 @@ public abstract class DeviceUnlockUtils {
         out standaloneUnlocked: Int32,
         out crossNetworkUnlocked: Int32
     ) -> Void {
-
         let deviceProcessor: ref<DeviceUnlockProcessor> = new DeviceUnlockProcessor();
         deviceProcessor.Initialize(origin, radiusSq, breachedAPID, gameInstance, unlockFlags);
 
-
         let vehicleProcessor: ref<VehicleUnlockProcessor> = new VehicleUnlockProcessor();
         vehicleProcessor.Initialize(origin, radiusSq, breachedAPID, gameInstance, unlockFlags);
-
 
         let i: Int32 = ArraySize(parts) - 1;
         while i >= 0 {
@@ -644,13 +534,11 @@ public abstract class DeviceUnlockUtils {
             i -= 1;
         }
 
-
         standaloneCount = deviceProcessor.GetStandaloneCount() + vehicleProcessor.GetStandaloneCount();
         crossNetworkCount = deviceProcessor.GetCrossNetworkCount() + vehicleProcessor.GetCrossNetworkCount();
         standaloneUnlocked = deviceProcessor.GetStandaloneUnlocked() + vehicleProcessor.GetStandaloneUnlocked();
         crossNetworkUnlocked = deviceProcessor.GetCrossNetworkUnlocked() + vehicleProcessor.GetCrossNetworkUnlocked();
     }
-
 
     private static func TryUnlockVehicle(
         vehicle: ref<VehicleObject>,
@@ -673,7 +561,6 @@ public abstract class DeviceUnlockUtils {
         return true;
     }
 
-    
     public static func ApplyTimestampUnlock(
         device: ref<DeviceComponentPS>,
         gameInstance: GameInstance,
@@ -706,7 +593,7 @@ public abstract class DeviceUnlockUtils {
                     sharedPS.m_betterNetrunningUnlockTimestampTurrets = currentTime;
                 }
                 break;
-            default: // TargetType.Basic
+            default:
                 if unlockBasic {
                     sharedPS.m_betterNetrunningUnlockTimestampBasic = currentTime;
                 }
@@ -715,19 +602,13 @@ public abstract class DeviceUnlockUtils {
     }
 
 
-
-
-
-    
     private static func CollectNetworkNPCsFromAccessPoint(
         accessPoint: ref<AccessPointControllerPS>,
         origin: Vector4,
         radius: Float,
         out processedIDs: array<PersistentID>
     ) -> Void {
-
         if !IsDefined(accessPoint) { return; }
-
 
         let puppets: array<ref<PuppetDeviceLinkPS>> = accessPoint.GetPuppets();
 
@@ -735,16 +616,12 @@ public abstract class DeviceUnlockUtils {
         while i < ArraySize(puppets) {
             let puppetLink: ref<PuppetDeviceLinkPS> = puppets[i];
 
-
             if IsDefined(puppetLink) && puppetLink.IsConnected() {
-
                 let npcObject: wref<GameObject> = puppetLink.GetOwnerEntityWeak() as GameObject;
                 if IsDefined(npcObject) && npcObject.IsActive() {
-
                     let npcPos: Vector4 = npcObject.GetWorldPosition();
                     let distance: Float = Vector4.Distance(origin, npcPos);
                     if distance <= radius {
-
                         ArrayPush(processedIDs, puppetLink.GetID());
                     }
                 }
@@ -754,7 +631,6 @@ public abstract class DeviceUnlockUtils {
         }
     }
 
-    
     private static func IsNPCConnectedToBreachedNetwork(
         npc: ref<ScriptedPuppet>,
         breachedAPID: PersistentID,
@@ -765,22 +641,18 @@ public abstract class DeviceUnlockUtils {
             return false;
         }
 
-
         let deviceLink: ref<PuppetDeviceLinkPS> = npcPS.GetDeviceLink();
         if !IsDefined(deviceLink) {
-            return false;  // Standalone NPC (no network connection)
+            return false;
         }
-
 
         let sharedPS: ref<SharedGameplayPS> = deviceLink;
         if !IsDefined(sharedPS) {
             return false;
         }
 
-
         return DeviceUnlockUtils.IsConnectedToBreachedNetwork(sharedPS, breachedAPID);
     }
 
 }
-
 

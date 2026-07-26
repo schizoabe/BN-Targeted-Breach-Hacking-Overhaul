@@ -1,23 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.NPCs
 
@@ -40,13 +20,9 @@ public class UnconsciousBreachStateSystem extends ScriptableSystem {
     this.m_npcPS = null;
   }
 
-
-
-
   public func IsAvailableForDevice(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
     if !IsDefined(this.m_npcPS) { return false; }
     if this.m_npcPS.m_betterNetrunningWasDirectlyBreached { return false; }
     return true;
   }
 }
-

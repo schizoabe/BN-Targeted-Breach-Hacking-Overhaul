@@ -1,24 +1,5 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Devices
-
 
 @wrapMethod(DoorControllerPS)
 protected func ExposeQuickHakcsIfNotConnnectedToAP() -> Bool {
@@ -28,17 +9,6 @@ protected func ExposeQuickHakcsIfNotConnnectedToAP() -> Bool {
   }
   return vanilla;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 @wrapMethod(ScriptableDeviceComponentPS)
@@ -55,4 +25,3 @@ protected final func FinalizeGetQuickHackActions(outActions: script_ref<array<re
   }
   wrappedMethod(outActions, context);
 }
-

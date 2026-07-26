@@ -1,9 +1,3 @@
-﻿
-
-
-
-
-
 local SettingsManager = {}
 
 
@@ -70,7 +64,7 @@ local defaults = {
     AlwaysNPCsUltimate = false,
 
     EnableDebugLog = false,
-    DebugLogLevel = 2  -- 0=ERROR, 1=WARNING, 2=INFO (default), 3=DEBUG, 4=TRACE
+    DebugLogLevel = 2
 }
 
 
@@ -105,7 +99,6 @@ function SettingsManager.Load()
     return false
 end
 
-
 function SettingsManager.Save()
     local validJson, contents = pcall(function() return json.encode(current) end)
 
@@ -120,24 +113,19 @@ function SettingsManager.Save()
     return false
 end
 
-
 function SettingsManager.Get(key)
     return current[key]
 end
-
 
 function SettingsManager.Set(key, value)
     current[key] = value
 end
 
-
 function SettingsManager.GetAll()
     return current
 end
 
-
 function SettingsManager.OverrideConfigFunctions()
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "BreachingHotkey;",
         function() return current.BreachingHotkey end)
 
@@ -256,4 +244,3 @@ function SettingsManager.OverrideConfigFunctions()
 end
 
 return SettingsManager
-

@@ -1,20 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Utils
 
@@ -22,12 +5,8 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.Breach.*
 import BetterNetrunning.RemoteBreach.Core.*
 
-
-
-
 public abstract class BreachLockUtils {
 
-  
   public static func IsDeviceLockedByRemoteBreachFailure(
     devicePS: ref<ScriptableDeviceComponentPS>
   ) -> Bool {
@@ -35,11 +14,9 @@ public abstract class BreachLockUtils {
       return false;
     }
 
-
     return RemoteBreachLockSystem.IsRemoteBreachLockedByTimestamp(devicePS, devicePS.GetGameInstance());
   }
 
-  
   public static func IsNPCLockedByRemoteBreachFailure(
     npcPS: ref<ScriptedPuppetPS>
   ) -> Bool {
@@ -57,12 +34,9 @@ public abstract class BreachLockUtils {
       return false;
     }
 
-
-
     return false;
   }
 
-  
   public static func IsNPCLockedByUnconsciousNPCBreachFailure(
     npcPS: ref<ScriptedPuppetPS>
   ) -> Bool {
@@ -77,7 +51,6 @@ public abstract class BreachLockUtils {
     return BreachLockSystem.IsNPCBreachLockedByTimestamp(npcPS, npcPS.GetGameInstance());
   }
 
-  
   public static func IsJackInLockedByAPBreachFailure(
     devicePS: ref<ScriptableDeviceComponentPS>
   ) -> Bool {

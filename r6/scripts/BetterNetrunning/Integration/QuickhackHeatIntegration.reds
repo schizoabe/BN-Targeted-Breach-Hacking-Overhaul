@@ -1,26 +1,3 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module BetterNetrunning.Integration
 
@@ -32,9 +9,7 @@ import BetterNetrunning.Marking.*
 public func CompleteAction(gameInstance: GameInstance) -> Void {
   wrappedMethod(gameInstance);
 
-
   if !this.IsQuickHack() { return; }
-
 
   let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
   if !IsDefined(player) { return; }
@@ -46,19 +21,14 @@ public func CompleteAction(gameInstance: GameInstance) -> Void {
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
   if !IsDefined(ms) { return; }
 
-
-
   if ms.IsApBreachFinalizing() { return; }
-
 
   if ms.GetHidePresenceTimer() > 0.0 {
     BNDebug("QuickhackHeat", "Quickhack heat suppressed — Hide Presence active");
     return;
   }
 
-
   let heat: Float = 0.05;
-
 
   if ms.GetSignalNoiseTimer() > 0.0 {
     heat *= 0.5;
@@ -68,4 +38,3 @@ public func CompleteAction(gameInstance: GameInstance) -> Void {
   ms.AddSessionHeat(heat);
   BNInfo("QuickhackHeat", "Quickhack used — heat +" + ToString(heat));
 }
-
