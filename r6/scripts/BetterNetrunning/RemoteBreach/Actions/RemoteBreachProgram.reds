@@ -22,7 +22,7 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
     protected func GetBreachRangeForDifficulty() -> Float {
         let player: ref<PlayerPuppet> = this.GetPlayer();
         if !IsDefined(player) {
-            return 50.0;
+            return 50.0; // Fallback if player not available
         }
         return GetRadialBreachRange(player.GetGame());
     }

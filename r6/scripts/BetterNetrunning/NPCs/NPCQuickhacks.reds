@@ -92,6 +92,21 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
 
   if !isConnectedToNetwork {
     permissions.isBreached = true;
+  } else if !permissions.isBreached {
+    let deviceLink: ref<SharedGameplayPS> = this.GetDeviceLink();
+    if IsDefined(deviceLink) && deviceLink.m_betterNetrunningUnlockTimestampNPCs > 0.0 {
+      let unlockDurationHours: Int32 = BetterNetrunningSettings.QuickhackUnlockDurationHours();
+      if unlockDurationHours == 0 {
+        permissions.isBreached = true;
+      } else {
+        let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
+        let elapsed: Float = currentTime - deviceLink.m_betterNetrunningUnlockTimestampNPCs;
+        let durationSeconds: Float = Cast<Float>(unlockDurationHours) * 3600.0;
+        if elapsed <= durationSeconds {
+          permissions.isBreached = true;
+        }
+      }
+    }
   }
 
   permissions.allowCovert = ShouldUnlockHackNPC(gameInstance, npc, BetterNetrunningSettings.AlwaysNPCsCovert(), BetterNetrunningSettings.ProgressionCyberdeckNPCsCovert(), BetterNetrunningSettings.ProgressionIntelligenceNPCsCovert(), BetterNetrunningSettings.ProgressionEnemyRarityNPCsCovert());
@@ -144,7 +159,7 @@ private final func SetQuickhackInactiveReason(puppetAction: ref<PuppetAction>, a
   let isRemoteBreachLocked: Bool = BreachLockUtils.IsNPCLockedByRemoteBreachFailure(this);
 
   if isRemoteBreachLocked {
-    puppetAction.SetInactiveWithReason(false, BNConstants.LOCKEY_NO_NETWORK_ACCESS());
+    puppetAction.SetInactiveWithReason(false, BNConstants.LOCKEY_NO_NETWORK_ACCESS());  // "No network access rights"
   } else {
     puppetAction.SetInactiveWithReason(false, LocKeyToString(BNConstants.LOCKEY_QUICKHACKS_LOCKED()));
   }

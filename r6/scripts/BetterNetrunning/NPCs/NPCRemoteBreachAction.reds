@@ -348,14 +348,18 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   const puppetActions: script_ref<array<ref<PuppetAction>>>,
   commands: script_ref<array<ref<QuickhackData>>>
 ) -> Void {
+  if this.IsDead() {
+    wrappedMethod(puppetActions, commands);
+    return;
+  }
+
   wrappedMethod(puppetActions, commands);
 
   let npcPS: ref<ScriptedPuppetPS> = this.GetPS();
   if !IsDefined(npcPS) { return; }
 
   if !BetterNetrunningSettings.RemoteBreachEnabledNPC() { return; }
-  if this.IsDead() { return; }
-  if npcPS.m_quickHacksExposed { return; }
+  if npcPS.m_quickHacksExposed { return; }          // already breached
 
   let perkSysNRB: ref<BNPerkSystem> = BNPerkSystem.GetInstance(this.GetGame());
   if !IsDefined(perkSysNRB) || perkSysNRB.GetPerkLevel(BNPerk.IntrusionSuite) <= 0 { return; }
@@ -423,7 +427,7 @@ public abstract class NPCRemoteBreachUtils {
 
     let action: ref<NPCRemoteBreachAction> = new NPCRemoteBreachAction();
     action.SetNPC(npcPS);
-    action.SetExecutor(player);
+    action.SetExecutor(player); // required: ProcessRPGAction calls PayCost → GetExecutor() must return player
     action.m_calculatedRAMCost = ramCost;
     action.m_networkName       = npcName;
     action.m_isRemote          = true;

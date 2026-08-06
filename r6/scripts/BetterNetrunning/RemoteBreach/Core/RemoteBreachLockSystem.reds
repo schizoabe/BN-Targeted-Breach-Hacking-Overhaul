@@ -122,7 +122,7 @@ public class RemoteBreachLockSystem {
 
     let networkDevices: array<ref<ScriptableDeviceComponentPS>> = RemoteBreachLockSystem.GetNetworkDevices(
       failedDevicePS,
-      true
+      true  // excludeSource: Failed device is locked separately in Step 1
     );
 
     let i: Int32 = 0;
@@ -185,7 +185,7 @@ public class RemoteBreachLockSystem {
       }
     }
 
-    let totalLocked: Int32 = 1 + networkLockedCount + standaloneLockedCount + vehicleLockedCount;
+    let totalLocked: Int32 = 1 + networkLockedCount + standaloneLockedCount + vehicleLockedCount; // 1 = failed device
     BNInfo("RemoteBreachLock", "Locked " + IntToString(totalLocked) + " devices " +
            "(Network: " + IntToString(networkLockedCount) + " [connected network], " +
            "Standalone: " + IntToString(standaloneLockedCount) + " [" + FloatToString(radiusMeters) + "m], " +

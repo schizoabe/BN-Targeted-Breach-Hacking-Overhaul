@@ -117,7 +117,7 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
       }
       i -= 1;
     }
-    return;
+    return;  // Don't show minigame entry when unlocked
   }
 
   let gi2: GameInstance = this.GetGameInstance();
@@ -197,7 +197,7 @@ public static func TranslateActionsIntoQuickSlotCommands(const actions: array<re
   let playerRef: ref<PlayerPuppet> = GetPlayer(gameObject.GetGame());
   if !IsDefined(playerRef) {
     BNDebug("RemoteBreachVisibility", "Player not defined - EXIT");
-    return;
+    return; // Early return if player not available
   }
 
   let i: Int32 = 0;

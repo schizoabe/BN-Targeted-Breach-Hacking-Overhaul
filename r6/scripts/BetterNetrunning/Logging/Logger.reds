@@ -5,11 +5,11 @@ import BetterNetrunningConfig.*
 
 
 public enum LogLevel {
-  ERROR = 0,
-  WARNING = 1,
-  INFO = 2,
-  DEBUG = 3,
-  TRACE = 4
+  ERROR = 0,    // Critical errors only
+  WARNING = 1,  // Warnings + errors
+  INFO = 2,     // Normal information (default)
+  DEBUG = 3,    // Detailed debugging
+  TRACE = 4     // Very detailed (performance impact)
 }
 
 
@@ -41,7 +41,7 @@ public class LoggerStateSystem extends ScriptableSystem {
 
 private static func GetCurrentLogLevel() -> LogLevel {
   if !BetterNetrunningSettings.EnableDebugLog() {
-    return LogLevel.ERROR;
+    return LogLevel.ERROR; // Only errors when debug disabled
   }
 
   let level: Int32 = BetterNetrunningSettings.DebugLogLevel();
@@ -105,7 +105,7 @@ private static func LogWithLevel(level: LogLevel, context: String, message: Stri
 
   if timeSinceLastLog < 5.0 && Equals(loggerState.GetLastContext(), context) && Equals(loggerState.GetLastMessage(), message) {
     loggerState.IncrementDuplicateCount();
-    return;
+    return; // Suppress duplicate
   }
 
   if loggerState.GetDuplicateCount() > 0 {

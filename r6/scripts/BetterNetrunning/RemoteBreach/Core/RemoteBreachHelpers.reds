@@ -35,12 +35,12 @@ public abstract class StateSystemUtils {
         let heat: Float = IsDefined(ms) ? ms.GetSessionHeat() : 0.0;
         let iceMin: Int32;
         let iceMax: Int32;
-        if      heat >= 0.95 { iceMin = 6; iceMax = 11; }
-        else if heat >= 0.80 { iceMin = 5; iceMax = 10; }
-        else if heat >= 0.60 { iceMin = 4; iceMax =  8; }
-        else if heat >= 0.40 { iceMin = 3; iceMax =  7; }
-        else if heat >= 0.20 { iceMin = 2; iceMax =  6; }
-        else                 { iceMin = 1; iceMax =  4; }
+        if      heat >= 0.95 { iceMin = 6; iceMax = 11; }  // MAXIMUM: 6-10
+        else if heat >= 0.80 { iceMin = 5; iceMax = 10; }  // PEAK:     5-9
+        else if heat >= 0.60 { iceMin = 4; iceMax =  8; }  // CRITICAL: 4-7
+        else if heat >= 0.40 { iceMin = 3; iceMax =  7; }  // HOT:      3-6
+        else if heat >= 0.20 { iceMin = 2; iceMax =  6; }  // WARM:     2-5
+        else                 { iceMin = 1; iceMax =  4; }  // COLD:     1-3
         return RandRange(iceMin, iceMax);
     }
 
@@ -219,7 +219,7 @@ public abstract class RemoteBreachUtils {
 
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         if ArraySize(apControllers) == 0 {
-            return result;
+            return result;  // Not network-connected
         }
 
         let distance: Float = Vector4.Distance(setup.sourcePos, entity.GetWorldPosition());
@@ -262,7 +262,7 @@ public abstract class RemoteBreachUtils {
         let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(devicePS);
 
         if !DeviceTypeUtils.ShouldUnlockByFlags(TargetType, flags) {
-            return false;
+            return false;  // Device type not allowed by flags
         }
 
         DeviceUnlockUtils.ApplyTimestampUnlock(
@@ -274,7 +274,7 @@ public abstract class RemoteBreachUtils {
             flags.unlockTurrets
         );
 
-        return true;
+        return true;  // Successfully unlocked
     }
 }
 
@@ -288,7 +288,7 @@ public abstract class ComputerRemoteBreachUtils {
 
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         if ArraySize(apControllers) == 0 {
-            return;
+            return;  // Standalone computer, no network devices
         }
 
         let flags: BreachUnlockFlags = IDaemonUnlockStrategy.BuildUnlockFlags(unlockBasic, unlockNPCs, unlockCameras, unlockTurrets);
@@ -483,13 +483,13 @@ public abstract class RemoteBreachActionHelper {
         let minigameID: TweakDBID = MinigameIDHelper.GetMinigameID(targetType, difficulty, devicePS);
 
         action.SetProperties(
-            devicePS.GetDeviceName(),
-            1,
-            0,
-            true,
-            false,
-            minigameID,
-            devicePS
+            devicePS.GetDeviceName(),  // networkName
+            1,                         // npcCount
+            0,                         // attemptsCount
+            true,                      // isRemote
+            false,                     // isSuicide
+            minigameID,               // minigameDefinition
+            devicePS                   // targetHack
         );
 
     }
@@ -603,8 +603,8 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         }
 
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: collecting daemon stats");
-        BreachStatisticsCollector.CollectDisplayedDaemons(displayedDaemons, stats);
-        BreachStatisticsCollector.CollectExecutedDaemons(activePrograms, stats);
+        BreachStatisticsCollector.CollectDisplayedDaemons(displayedDaemons, stats);  // All daemons in minigame
+        BreachStatisticsCollector.CollectExecutedDaemons(activePrograms, stats);     // Successfully completed daemons
 
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: resolving network devices");
         let networkDevices: array<ref<DeviceComponentPS>>;
@@ -614,7 +614,7 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
             masterPS.GetChildren(networkDevices);
             let apPS: ref<AccessPointControllerPS> = device as AccessPointControllerPS;
             if IsDefined(apPS) {
-                breachedAPID = apPS.GetID();
+                breachedAPID = apPS.GetID();  // Direct AccessPoint
             }
         } else {
             let sharedPS: ref<SharedGameplayPS> = device;
@@ -622,7 +622,7 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
                 let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
                 if ArraySize(apControllers) > 0 {
                     apControllers[0].GetChildren(networkDevices);
-                    breachedAPID = apControllers[0].GetID();
+                    breachedAPID = apControllers[0].GetID();  // First AccessPoint (primary network)
                 }
             }
         }
@@ -647,7 +647,7 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: DONE");
     }
 
-}
+}// -----------------------------------------------------------------------------
 
 @if(ModuleExists("HackingExtensions"))
 public class OnRemoteBreachFailed extends OnCustomHackingFailed {

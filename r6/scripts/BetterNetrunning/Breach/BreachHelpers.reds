@@ -56,7 +56,7 @@ private final func UpdateDeviceTypeData(slave: ref<DeviceComponentPS>, out data:
   }
 
   if data.puppet {
-    return;
+    return;  // Already found
   }
 
   let puppetLink: ref<PuppetDeviceLinkPS> = slave as PuppetDeviceLinkPS;

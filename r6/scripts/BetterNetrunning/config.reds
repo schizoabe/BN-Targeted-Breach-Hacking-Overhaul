@@ -23,6 +23,9 @@ public class BetterNetrunningSettings {
     public static func RemoteBreachRAMCostPercent() -> Int32 { return 15; }
 
 
+    public static func MarkBeamsEnabled() -> Bool { return true; }
+
+
     public static func BreachFailurePenaltyEnabled() -> Bool { return true; }
     public static func APBreachFailurePenaltyEnabled() -> Bool { return true; }
     public static func NPCBreachFailurePenaltyEnabled() -> Bool { return true; }
@@ -76,5 +79,5 @@ public class BetterNetrunningSettings {
 
 
     public static func EnableDebugLog() -> Bool { return false; }
-    public static func DebugLogLevel() -> Int32 { return 2; }
+    public static func DebugLogLevel() -> Int32 { return 2; } // 0=ERROR, 1=WARNING, 2=INFO, 3=DEBUG, 4=TRACE
 }

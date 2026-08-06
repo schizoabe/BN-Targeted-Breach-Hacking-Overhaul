@@ -83,21 +83,21 @@ private func HandleTemporaryUnlock(
   TargetType: TargetType
 ) -> Bool {
   if !BreachStatusUtils.IsBreached(unlockTimestamp) {
-    return false;
+    return false; // Not breached - show program
   }
 
   if durationHours <= 0 {
-    return true;
+    return true; // Remove program permanently
   }
 
   let elapsedTime: Float = currentTime - unlockTimestamp;
 
   if elapsedTime > durationSeconds {
     ResetDeviceTimestamp(sharedPS, TargetType);
-    return false;
+    return false; // Show program (allow re-breach)
   }
 
-  return true;
+  return true; // Remove program
 }
 
 private func ResetDeviceTimestamp(sharedPS: ref<SharedGameplayPS>, TargetType: TargetType) -> Void {

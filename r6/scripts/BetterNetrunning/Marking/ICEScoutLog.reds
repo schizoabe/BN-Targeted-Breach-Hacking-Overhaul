@@ -124,7 +124,7 @@ public class ICEScoutLog {
     footer.SetAnchor(inkEAnchor.TopLeft);
     footer.SetMargin(new inkMargin(txtX, h - 24.0, 12.0, 0.0));
     footer.SetTintColor(new HDRColor(0.15, 1.2, 1.1, 0.7));
-    footer.SetText("ICE Diagnostic System v1.0");
+    footer.SetText("BN // ICE Diagnostic System v1.0");
     footer.Reparent(canvas);
     this.m_footer = footer;
 

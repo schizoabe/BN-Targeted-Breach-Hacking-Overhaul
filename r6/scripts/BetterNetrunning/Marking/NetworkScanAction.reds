@@ -122,9 +122,12 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   const puppetActions: script_ref<array<ref<PuppetAction>>>,
   commands:            script_ref<array<ref<QuickhackData>>>
 ) -> Void {
-  wrappedMethod(puppetActions, commands);
+  if this.IsDead() {
+    wrappedMethod(puppetActions, commands);
+    return;
+  }
 
-  if this.IsDead() { return; }
+  wrappedMethod(puppetActions, commands);
 
   let gi: GameInstance = this.GetGame();
 

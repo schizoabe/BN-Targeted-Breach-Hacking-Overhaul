@@ -45,7 +45,7 @@ public abstract class TracePositionOverhaulGating {
 
     let searchQuery: TargetSearchQuery;
     searchQuery.testedSet = TargetingSet.Complete;
-    searchQuery.searchFilter = TSF_All(TSFMV.Obj_Puppet);
+    searchQuery.searchFilter = TSF_All(TSFMV.Obj_Puppet);  // All puppets (NPCs)
     searchQuery.maxDistance = radius;
     searchQuery.filterObjectByDistance = true;
     searchQuery.includeSecondaryTargets = false;
@@ -93,7 +93,7 @@ public abstract class TracePositionOverhaulGating {
 
     let playerPos: Vector4 = player.GetWorldPosition();
     let nearestNPC: wref<NPCPuppet>;
-    let nearestDistSq: Float = radius * radius;
+    let nearestDistSq: Float = radius * radius; // Squared distance threshold
 
     let i: Int32 = 0;
     let count: Int32 = ArraySize(npcs);
@@ -116,4 +116,4 @@ public abstract class TracePositionOverhaulGating {
     return nearestNPC;
   }
 
-}
+} // class TracePositionOverhaulGating

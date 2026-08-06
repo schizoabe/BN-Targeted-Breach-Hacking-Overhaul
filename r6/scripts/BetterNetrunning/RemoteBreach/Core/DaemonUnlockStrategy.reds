@@ -76,7 +76,7 @@ public class ComputerUnlockStrategy extends IDaemonUnlockStrategy {
       ),
       gameInstance
     );
-  }
+  }  // Override network unlock hook for Computer-specific logic
   protected func UnlockNetwork(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,
@@ -217,7 +217,7 @@ public class VehicleUnlockStrategy extends IDaemonUnlockStrategy {
       ),
       gameInstance
     );
-  }
+  }  // Override network unlock hook for Vehicle-specific logic
   protected func UnlockNetwork(
     sourcePS: ref<DeviceComponentPS>,
     flags: BreachUnlockFlags,

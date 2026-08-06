@@ -24,4 +24,4 @@ public abstract class BonusDaemonUtils {
         || Equals(programID, BNConstants.PROGRAM_DATAMINE_MASTER());
   }
 
-}
+} // class BonusDaemonUtils

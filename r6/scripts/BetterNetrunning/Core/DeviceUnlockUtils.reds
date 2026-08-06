@@ -10,7 +10,7 @@ public struct TargetingSetup {
     public let isValid: Bool;
     public let breachRadius: Float;
     public let sourcePos: Vector4;
-    public let originType: String;
+    public let originType: String;           // "NPC" or "Device"
     public let player: wref<PlayerPuppet>;
     public let targetingSystem: ref<TargetingSystem>;
     public let query: TargetSearchQuery;
@@ -71,7 +71,7 @@ public abstract class EntityUnlockProcessor {
 
         switch classification {
             case NetworkClassification.BreachedNetwork:
-                return;
+                return; // Skip (already processed)
             case NetworkClassification.CrossNetwork:
                 this.m_crossNetworkCount += 1;
                 if this.ShouldUnlockCrossNetwork() {
@@ -426,19 +426,19 @@ public abstract class DeviceUnlockUtils {
 
     private static func ShouldApplyCrossNetworkFilter(sharedPS: ref<SharedGameplayPS>) -> Bool {
         if !IsDefined(sharedPS) {
-            return true;
+            return true;  // Filter out invalid devices
         }
 
         if BetterNetrunningSettings.RadialUnlockCrossNetwork() {
-            return false;
+            return false;  // Cross-Network enabled, don't filter
         }
 
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         if ArraySize(apControllers) > 0 {
-            return true;
+            return true;  // Network-connected device, filter out
         }
 
-        return false;
+        return false;  // Standalone device, don't filter
     }
 
     private static func IsConnectedToBreachedNetwork(
@@ -454,13 +454,13 @@ public abstract class DeviceUnlockUtils {
         while idx < ArraySize(apControllers) {
             if PersistentID.IsDefined(apControllers[idx].GetID()) && PersistentID.IsDefined(breachedAPID) {
                 if Equals(apControllers[idx].GetID(), breachedAPID) {
-                    return true;
+                    return true;  // Device belongs to breached network
                 }
             }
             idx += 1;
         }
 
-        return false;
+        return false;  // Device not connected to breached network
     }
 
     private static func UnlockDeviceInRadius(
@@ -480,7 +480,7 @@ public abstract class DeviceUnlockUtils {
         let deviceType: TargetType = DeviceTypeUtils.GetDeviceType(devicePS);
 
         if !DeviceTypeUtils.ShouldUnlockByFlags(deviceType, unlockFlags) {
-            return false;
+            return false;  // Device type not in unlockFlags, skip
         }
 
         let currentTimestamp: Float = 0.0;
@@ -493,7 +493,7 @@ public abstract class DeviceUnlockUtils {
         }
 
         if currentTimestamp > 0.0 {
-            return false;
+            return false;  // Already unlocked, skip
         }
 
         let newTimestamp: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
@@ -593,7 +593,7 @@ public abstract class DeviceUnlockUtils {
                     sharedPS.m_betterNetrunningUnlockTimestampTurrets = currentTime;
                 }
                 break;
-            default:
+            default: // TargetType.Basic
                 if unlockBasic {
                     sharedPS.m_betterNetrunningUnlockTimestampBasic = currentTime;
                 }
@@ -643,7 +643,7 @@ public abstract class DeviceUnlockUtils {
 
         let deviceLink: ref<PuppetDeviceLinkPS> = npcPS.GetDeviceLink();
         if !IsDefined(deviceLink) {
-            return false;
+            return false;  // Standalone NPC (no network connection)
         }
 
         let sharedPS: ref<SharedGameplayPS> = deviceLink;

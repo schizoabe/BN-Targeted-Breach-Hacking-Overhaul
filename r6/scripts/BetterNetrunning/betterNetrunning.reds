@@ -75,7 +75,7 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     if GameInstance.IsValid(gameInstance) {
       let perkSysNPC: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
       if IsDefined(perkSysNPC) && perkSysNPC.GetPerkLevel(BNPerk.NeuralTap) <= 0 {
-        ArrayClear(Deref(programs));
+        ArrayClear(Deref(programs));  // strip vanilla programs so nothing shows on the board
         BNInfo("FilterPlayerPrograms", "Neural Tap not owned — unconscious NPC breach blocked");
         return;
       }

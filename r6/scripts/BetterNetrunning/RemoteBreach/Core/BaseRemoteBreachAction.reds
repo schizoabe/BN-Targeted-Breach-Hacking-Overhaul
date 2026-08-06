@@ -18,7 +18,7 @@ import HackingExtensions.Programs.*
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
-    public let m_calculatedRAMCost: Int32;
+    public let m_calculatedRAMCost: Int32; // Dynamic RAM cost
     public let m_isICEBoard: Bool;
 
     public func SetProperties(networkName: String, npcCount: Int32, attemptsCount: Int32, isRemote: Bool, isSuicide: Bool, minigameDefinition: TweakDBID, targetHack: ref<IScriptable>) -> Void {
@@ -75,13 +75,13 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
             let onFailed: ref<OnRemoteBreachFailed> = new OnRemoteBreachFailed();
 
             let success: Bool = customHackSystem.StartNewQuickhackInstance(
-                this.m_networkName,
-                this,
-                this.m_minigameDefinition,
-                this.m_targetHack,
-                emptyData,
-                onSucceed,
-                onFailed
+                this.m_networkName,      // Network name
+                this,                    // This action
+                this.m_minigameDefinition, // Minigame def
+                this.m_targetHack,       // Target hack
+                emptyData,               // additionalData (empty array)
+                onSucceed,               // onSucceed callback
+                onFailed                 // onFailed callback
             );
 
             if !success {
@@ -115,7 +115,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
 
     public func PayCost(opt checkForOverclockedState: Bool) -> Bool {
         if this.m_calculatedRAMCost <= 0 {
-            return true;
+            return true; // No cost to pay
         }
 
         let executor: ref<GameObject> = this.GetExecutor();
@@ -140,7 +140,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
 
     public func CanPayCost(opt user: ref<GameObject>, opt checkForOverclockedState: Bool) -> Bool {
         if this.m_calculatedRAMCost <= 0 {
-            return true;
+            return true; // No cost required
         }
 
         let executor: ref<GameObject>;

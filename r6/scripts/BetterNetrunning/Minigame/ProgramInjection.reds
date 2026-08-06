@@ -140,3 +140,4 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     + " NPC="    + ToString(npcAdded)
     + " Basic="  + ToString(basicAdded));
 }
+

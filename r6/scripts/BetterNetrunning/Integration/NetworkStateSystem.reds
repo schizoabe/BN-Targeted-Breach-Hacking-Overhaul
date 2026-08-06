@@ -18,10 +18,10 @@ public abstract class HeatThresholds {
 
 
 public struct NetworkState {
-  public let hitsRequired: Int32;
-  public let hitsApplied:  Int32;
-  public let globalBonus:  Int32;
-  public let isDefeated:   Bool;
+  public let hitsRequired: Int32;  // base ICE pool (2-6); 0 = uninitialized (AP)
+  public let hitsApplied:  Int32;  // ICE damage dealt so far
+  public let globalBonus:  Int32;  // heat bonus from MarkingStateSystem (added to base for effective)
+  public let isDefeated:   Bool;   // latched true once hitsApplied >= effective; never resets
 }
 
 
@@ -347,7 +347,7 @@ public abstract class NetworkStateUtils {
   }
 
   public static func GetHeatScaledICEHits(gi: GameInstance) -> Int32 {
-    return RandRange(2, 7);
+    return RandRange(2, 7); // 2-6
   }
 
   private static func GetMarkingSystem(gi: GameInstance) -> ref<MarkingStateSystem> {

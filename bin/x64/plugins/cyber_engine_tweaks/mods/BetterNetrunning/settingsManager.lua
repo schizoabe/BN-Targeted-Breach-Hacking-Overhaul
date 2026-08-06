@@ -1,39 +1,32 @@
+
 local SettingsManager = {}
 
-
 local defaults = {
-
     BreachingHotkey = 3,
-
     EnableClassicMode = false,
     AllowBreachUnconscious = true,
     RadialUnlockCrossNetwork = true,
     QuickhackUnlockDurationHours = 6,
-
+    MarkBeamsEnabled = true,
     RemoteBreachEnabledDevice = true,
     RemoteBreachEnabledComputer = false,
     RemoteBreachEnabledCamera = true,
     RemoteBreachEnabledTurret = true,
     RemoteBreachEnabledVehicle = true,
     RemoteBreachRAMCostPercent = 50,
-
     BreachFailurePenaltyEnabled = true,
     APBreachFailurePenaltyEnabled = true,
     NPCBreachFailurePenaltyEnabled = true,
     RemoteBreachFailurePenaltyEnabled = true,
     BreachPenaltyDurationMinutes = 10,
-
     AlwaysAllowPing = true,
     AlwaysAllowWhistle = false,
     AlwaysAllowDistract = false,
-
     UnlockIfNoAccessPoint = false,
-
     ProgressionRequireAll = true,
     ProgressionCyberdeckEnabled = false,
     ProgressionIntelligenceEnabled = false,
     ProgressionEnemyRarityEnabled = false,
-
     ProgressionCyberdeckBasicDevices = 1,
     ProgressionCyberdeckCameras = 1,
     ProgressionCyberdeckTurrets = 1,
@@ -41,7 +34,6 @@ local defaults = {
     ProgressionCyberdeckNPCsCombat = 1,
     ProgressionCyberdeckNPCsControl = 1,
     ProgressionCyberdeckNPCsUltimate = 1,
-
     ProgressionIntelligenceBasicDevices = 3,
     ProgressionIntelligenceCameras = 3,
     ProgressionIntelligenceTurrets = 3,
@@ -49,12 +41,10 @@ local defaults = {
     ProgressionIntelligenceNPCsCombat = 3,
     ProgressionIntelligenceNPCsControl = 3,
     ProgressionIntelligenceNPCsUltimate = 3,
-
     ProgressionEnemyRarityNPCsCovert = 8,
     ProgressionEnemyRarityNPCsCombat = 8,
     ProgressionEnemyRarityNPCsControl = 8,
     ProgressionEnemyRarityNPCsUltimate = 8,
-
     AlwaysBasicDevices = false,
     AlwaysCameras = false,
     AlwaysTurrets = false,
@@ -62,19 +52,15 @@ local defaults = {
     AlwaysNPCsCombat = false,
     AlwaysNPCsControl = false,
     AlwaysNPCsUltimate = false,
-
     EnableDebugLog = false,
-    DebugLogLevel = 2
+    DebugLogLevel = 2  -- 0=ERROR, 1=WARNING, 2=INFO (default), 3=DEBUG, 4=TRACE
 }
 
-
 local current = {}
-
 
 for k, v in pairs(defaults) do
     current[k] = v
 end
-
 
 function SettingsManager.Load()
     local file = io.open("settings.json", "r")
@@ -128,7 +114,6 @@ end
 function SettingsManager.OverrideConfigFunctions()
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "BreachingHotkey;",
         function() return current.BreachingHotkey end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "EnableClassicMode;",
         function() return current.EnableClassicMode end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "AllowBreachingUnconsciousNPCs;",
@@ -137,7 +122,8 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.RadialUnlockCrossNetwork end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "QuickhackUnlockDurationHours;",
         function() return current.QuickhackUnlockDurationHours end)
-
+    Override("BetterNetrunningConfig.BetterNetrunningSettings", "MarkBeamsEnabled;",
+        function() return current.MarkBeamsEnabled end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "RemoteBreachEnabledDevice;",
         function() return current.RemoteBreachEnabledDevice end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "RemoteBreachEnabledComputer;",
@@ -150,7 +136,6 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.RemoteBreachEnabledVehicle end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "RemoteBreachRAMCostPercent;",
         function() return current.RemoteBreachRAMCostPercent end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "BreachFailurePenaltyEnabled;",
         function() return current.BreachFailurePenaltyEnabled end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "APBreachFailurePenaltyEnabled;",
@@ -161,17 +146,14 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.RemoteBreachFailurePenaltyEnabled end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "BreachPenaltyDurationMinutes;",
         function() return current.BreachPenaltyDurationMinutes end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "AlwaysAllowPing;",
         function() return current.AlwaysAllowPing end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "AlwaysAllowWhistle;",
         function() return current.AlwaysAllowWhistle end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "AlwaysAllowDistract;",
         function() return current.AlwaysAllowDistract end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "UnlockIfNoAccessPoint;",
         function() return current.UnlockIfNoAccessPoint end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionRequireAll;",
         function() return current.ProgressionRequireAll end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionCyberdeckEnabled;",
@@ -180,7 +162,6 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.ProgressionIntelligenceEnabled end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionEnemyRarityEnabled;",
         function() return current.ProgressionEnemyRarityEnabled end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionCyberdeckBasicDevices;",
         function() return current.ProgressionCyberdeckBasicDevices end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionCyberdeckCameras;",
@@ -195,7 +176,6 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.ProgressionCyberdeckNPCsControl end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionCyberdeckNPCsUltimate;",
         function() return current.ProgressionCyberdeckNPCsUltimate end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionIntelligenceBasicDevices;",
         function() return current.ProgressionIntelligenceBasicDevices end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionIntelligenceCameras;",
@@ -210,7 +190,6 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.ProgressionIntelligenceNPCsControl end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionIntelligenceNPCsUltimate;",
         function() return current.ProgressionIntelligenceNPCsUltimate end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionEnemyRarityNPCsCovert;",
         function() return current.ProgressionEnemyRarityNPCsCovert end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionEnemyRarityNPCsCombat;",
@@ -219,7 +198,6 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.ProgressionEnemyRarityNPCsControl end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "ProgressionEnemyRarityNPCsUltimate;",
         function() return current.ProgressionEnemyRarityNPCsUltimate end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "AlwaysBasicDevices;",
         function() return current.AlwaysBasicDevices end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "AlwaysCameras;",
@@ -234,7 +212,6 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.AlwaysNPCsControl end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "AlwaysNPCsUltimate;",
         function() return current.AlwaysNPCsUltimate end)
-
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "EnableDebugLog;",
         function() return current.EnableDebugLog end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "DebugLogLevel;",

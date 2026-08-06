@@ -109,7 +109,7 @@ public abstract class DebugUtils {
     let context: String = NotEquals(logContext, "") ? logContext : "[Debug]";
 
     if !npcPS.IsConnectedToAccessPoint() {
-      return;
+      return;  // Normal state - no warning needed
     }
 
     let deviceLinkPS: ref<SharedGameplayPS> = npcPS.GetDeviceLink();

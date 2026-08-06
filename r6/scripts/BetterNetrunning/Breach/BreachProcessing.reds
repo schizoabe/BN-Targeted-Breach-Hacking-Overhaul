@@ -51,7 +51,7 @@ private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceCompo
   if IsDefined(ms) { ms.SetApBreachFinalizing(true); }
   wrappedMethod(devices);
   if IsDefined(ms) { ms.SetApBreachFinalizing(false); }
-  stats.minigameSuccess = true;
+  stats.minigameSuccess = true; // RefreshSlaves only called on success
 
   this.ApplyBetterNetrunningExtensionsWithStats(devices, unlockFlags, stats, isUnconsciousNPCBreach, minigamePrograms);
 
@@ -133,7 +133,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
           case TargetType.Turret:
             currentTimestamp = sharedPS.m_betterNetrunningUnlockTimestampTurrets;
             break;
-          default:
+          default: // TargetType.Basic
             currentTimestamp = sharedPS.m_betterNetrunningUnlockTimestampBasic;
             break;
         }
@@ -149,7 +149,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
             case TargetType.Turret:
               sharedPS.m_betterNetrunningUnlockTimestampTurrets = 0.0;
               break;
-            default:
+            default: // TargetType.Basic
               sharedPS.m_betterNetrunningUnlockTimestampBasic = 0.0;
               break;
           }
@@ -297,7 +297,7 @@ private final func ShowBreachResultInWidget(unlockFlags: BreachUnlockFlags, isUn
   else if unlockFlags.unlockTurrets { targetType = "turret"; }
 
   ms.RecordRemoteBreachTarget(targetName, targetType);
-  ms.RecordBreachICEState(1, 1);
+  ms.RecordBreachICEState(1, 1);  // 1/1 = shows "FULLY COMPROMISED" for a successful breach
   ms.ShowRemoteBreachStatus();
 }
 

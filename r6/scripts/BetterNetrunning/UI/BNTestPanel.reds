@@ -41,8 +41,8 @@ public class BNTestPanel {
         let w:      Float = 520.0;
         let h:      Float = 296.0;
         let sideW:  Float = 50.0;
-        let txtX:   Float = sideW + 20.0;
-        let trackW: Float = w - txtX - 12.0;
+        let txtX:   Float = sideW + 20.0;    // 70
+        let trackW: Float = w - txtX - 12.0; // 438
 
         let canvas = new inkCanvas();
         canvas.SetName(n"BNTestInner");
@@ -96,7 +96,7 @@ public class BNTestPanel {
         title.SetAnchor(inkEAnchor.TopLeft);
         title.SetMargin(new inkMargin(txtX, 10.0, 12.0, 0.0));
         title.SetTintColor(new HDRColor(1.2, 0.78, 0.12, 1.0));
-        title.SetText("Network Status");
+        title.SetText("Network Status  //  Daemon Feed");
         title.Reparent(canvas);
 
         let deckLine = new inkText();
@@ -424,7 +424,7 @@ public class BNTestPanel {
         this.m_counterTrack.SetVisible(showCounterBar);
         this.m_counterFill.SetVisible(showCounterBar);
 
-        let curY: Float = 120.0;
+        let curY: Float = 120.0; // bottom of heat bar (Y=110 + height=10)
 
         let sigLabelY: Float = curY + 8.0;
         this.m_signalLabel.SetMargin(new inkMargin(txtX, sigLabelY, 12.0, 0.0));

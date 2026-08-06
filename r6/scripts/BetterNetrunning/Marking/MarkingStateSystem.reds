@@ -5,6 +5,7 @@ import BetterNetrunning.Logging.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Perks.*
+import BetterNetrunningConfig.*
 
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
@@ -12,16 +13,16 @@ import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
 public struct MarkEntry {
   public let entityID:          EntityID;
-  public let creationTimestamp: Float;
-  public let displayName:       String;
-  public let iceHitsRequired:   Int32;
+  public let creationTimestamp: Float;   // TimeSystem.GetGameTimeStamp() at mark time
+  public let displayName:       String;  // localized entity name, captured at first diagnostic
+  public let iceHitsRequired:   Int32;   // stamped by first diagnostic (Ping/jack-in/breach); 0 = unscanned
 }
 
 public enum MarkedSubnetType {
-  Root     = 0,
-  NPC      = 1,
-  Camera   = 2,
-  Defense  = 3
+  Root     = 0,   // Basic devices: doors, terminals, vending, etc.
+  NPC      = 1,   // Human targets (UnlockNPCQuickhacks)
+  Camera   = 2,   // Surveillance cameras (UnlockCameraQuickhacks)
+  Defense  = 3    // Security turrets (UnlockTurretQuickhacks)
 }
 
 public class MarkingStateSystem extends ScriptableSystem {
@@ -38,9 +39,11 @@ public class MarkingStateSystem extends ScriptableSystem {
   private let m_signalNoiseTimer: Float;
 
   private let m_heatICEBonus:  Int32;
-  private let m_lastHeatBand:  Int32;
+  private let m_lastHeatBand:  Int32; // highest band reached so far (0-5)
 
   private let m_apBreachFinalizing: Bool;
+
+  private let m_beamedEntityIDs: array<EntityID>;
 
 
   private func OnAttach() -> Void {
@@ -48,6 +51,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     ArrayClear(this.m_markedNPCs);
     ArrayClear(this.m_markedCameras);
     ArrayClear(this.m_markedDefense);
+    ArrayClear(this.m_beamedEntityIDs);
     this.m_sessionHeat          = 0.0;
     this.m_hidePresenceTimer     = 0.0;
     this.m_disarmICETimer        = 0.0;
@@ -64,7 +68,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     let player: ref<PlayerPuppet> = GetPlayer(gi);
 
     if !IsDefined(statsSystem) || !IsDefined(player) {
-      return 180.0;
+      return 180.0; // Safe fallback: 3 minutes
     }
 
     let intelligence: Float = statsSystem.GetStatValue(
@@ -87,7 +91,7 @@ public class MarkingStateSystem extends ScriptableSystem {
       Cast<StatsObjectID>(player.GetEntityID()),
       gamedataStatType.Memory
     );
-    let baseMarks: Int32 = Cast<Int32>(maxRAM) / 3;
+    let baseMarks: Int32 = Cast<Int32>(maxRAM) / 4;
 
     let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
     let trackLevel: Int32 = IsDefined(perkSys) ? perkSys.GetPerkLevel(BNPerk.TrackingProtocol) : 0;
@@ -108,7 +112,7 @@ public class MarkingStateSystem extends ScriptableSystem {
   }
 
   private func IsExpired(entry: MarkEntry, currentTime: Float, duration: Float) -> Bool {
-    if entry.creationTimestamp <= 0.0 { return false; }
+    if entry.creationTimestamp <= 0.0 { return false; } // 0 = never decays (legacy)
     return (currentTime - entry.creationTimestamp) > duration;
   }
 
@@ -164,11 +168,11 @@ public class MarkingStateSystem extends ScriptableSystem {
   }
 
   private static func RollBonusForBand(band: Int32) -> Int32 {
-    if band == 5 { return RandRange(8, 11); }
-    if band == 4 { return RandRange(7, 10); }
-    if band == 3 { return RandRange(6,  9); }
-    if band == 2 { return RandRange(2,  5); }
-    if band == 1 { return RandRange(1,  4); }
+    if band == 5 { return RandRange(8, 11); } // 8-10
+    if band == 4 { return RandRange(7, 10); } // 7-9
+    if band == 3 { return RandRange(6,  9); } // 6-8  ← Critical
+    if band == 2 { return RandRange(2,  5); } // 2-4
+    if band == 1 { return RandRange(1,  4); } // 1-3
     return 0;
   }
 
@@ -260,6 +264,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     removed += this.PruneArray(this.m_markedNPCs,    currentTime, duration);
     removed += this.PruneArray(this.m_markedCameras, currentTime, duration);
     removed += this.PruneArray(this.m_markedDefense, currentTime, duration);
+    if removed > 0 { this.RebuildMarkBeams(); }
     return removed;
   }
 
@@ -324,6 +329,7 @@ public class MarkingStateSystem extends ScriptableSystem {
         this.RefreshTimestamp(this.m_markedDefense, entityID, entry.creationTimestamp);
       }
     }
+    this.RebuildMarkBeams();
   }
 
   public func AddMarkNamed(entityID: EntityID, subnetType: MarkedSubnetType, displayName: String, iceHitsRequired: Int32) -> Void {
@@ -367,6 +373,7 @@ public class MarkingStateSystem extends ScriptableSystem {
         this.RefreshTimestamp(this.m_markedDefense, entityID, entry.creationTimestamp);
       }
     }
+    this.RebuildMarkBeams();
   }
 
   public func AddMarkFromEntity(entityID: EntityID, subnetType: MarkedSubnetType) -> Void {
@@ -423,6 +430,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     if Equals(subnetType, MarkedSubnetType.NPC)     { this.RemoveID(this.m_markedNPCs,    entityID); }
     if Equals(subnetType, MarkedSubnetType.Camera)  { this.RemoveID(this.m_markedCameras, entityID); }
     if Equals(subnetType, MarkedSubnetType.Defense) { this.RemoveID(this.m_markedDefense, entityID); }
+    this.RebuildMarkBeams();
   }
 
   public func RemoveMarkAny(entityID: EntityID) -> Void {
@@ -430,6 +438,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     this.RemoveID(this.m_markedNPCs,    entityID);
     this.RemoveID(this.m_markedCameras, entityID);
     this.RemoveID(this.m_markedDefense, entityID);
+    this.RebuildMarkBeams();
   }
 
 
@@ -490,6 +499,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     ArrayClear(this.m_markedCameras);
     ArrayClear(this.m_markedDefense);
     BNInfo("MarkingSystem", "All breach marks cleared");
+    this.RebuildMarkBeams();
   }
 
   public func ClearType(subnetType: MarkedSubnetType) -> Void {
@@ -497,6 +507,83 @@ public class MarkingStateSystem extends ScriptableSystem {
     if Equals(subnetType, MarkedSubnetType.NPC)     { ArrayClear(this.m_markedNPCs); }
     if Equals(subnetType, MarkedSubnetType.Camera)  { ArrayClear(this.m_markedCameras); }
     if Equals(subnetType, MarkedSubnetType.Defense) { ArrayClear(this.m_markedDefense); }
+    this.RebuildMarkBeams();
+  }
+
+
+  public func RefreshMarkBeams() -> Void {
+    this.RebuildMarkBeams();
+  }
+
+  private func RebuildMarkBeams() -> Void {
+    let gi: GameInstance = this.GetGameInstance();
+    let player: ref<PlayerPuppet> = GetPlayer(gi);
+    if !IsDefined(player) { return; }
+
+    let networkSys: ref<NetworkSystem> =
+      GameInstance.GetScriptableSystemsContainer(gi).Get(n"NetworkSystem") as NetworkSystem;
+    if !IsDefined(networkSys) { return; }
+
+    let playerID: EntityID = player.GetEntityID();
+
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_beamedEntityIDs) {
+      networkSys.RemoveNetworkLinksBetweenTwoEntitities(playerID, this.m_beamedEntityIDs[i], false);
+      i += 1;
+    }
+    ArrayClear(this.m_beamedEntityIDs);
+
+    if !BetterNetrunningSettings.MarkBeamsEnabled() {
+      NetworkSystem.SendEvaluateVisionModeRequest(gi, gameVisionModeType.Default);
+      return;
+    }
+
+    let playerPos: Vector4 = player.GetWorldPosition();
+    this.RegisterBeamsForEntries(this.m_markedRoot,    playerID, playerPos, networkSys, gi);
+    this.RegisterBeamsForEntries(this.m_markedNPCs,    playerID, playerPos, networkSys, gi);
+    this.RegisterBeamsForEntries(this.m_markedCameras, playerID, playerPos, networkSys, gi);
+    this.RegisterBeamsForEntries(this.m_markedDefense, playerID, playerPos, networkSys, gi);
+
+    let mode: gameVisionModeType = ArraySize(this.m_beamedEntityIDs) > 0
+      ? gameVisionModeType.Focus
+      : gameVisionModeType.Default;
+    NetworkSystem.SendEvaluateVisionModeRequest(gi, mode);
+  }
+
+  private func RegisterBeamsForEntries(
+    entries:    array<MarkEntry>,
+    playerID:   EntityID,
+    playerPos:  Vector4,
+    networkSys: ref<NetworkSystem>,
+    gi:         GameInstance
+  ) -> Void {
+    let i: Int32 = 0;
+    while i < ArraySize(entries) {
+      let entityID: EntityID      = entries[i].entityID;
+      let entity: ref<GameObject> = GameInstance.FindEntityByID(gi, entityID) as GameObject;
+      if IsDefined(entity) {
+        let linkData: SNetworkLinkData;
+        linkData.masterID  = playerID;
+        linkData.masterPos = playerPos;
+        linkData.slaveID   = entityID;
+        linkData.slavePos  = entity.GetWorldPosition();
+        linkData.drawLink  = true;
+        linkData.isActive  = true;
+        linkData.isPing    = true;
+        linkData.permanent = true;
+        linkData.isDynamic = true;
+        linkData.lifetime  = 0.0;
+        let device: ref<Device> = entity as Device;
+        if IsDefined(device) {
+          linkData.fxResource = device.GetDefaultNetworkBeamResource();
+        } else {
+          linkData.fxResource = entity.GetFxResourceByKey(n"pingNetworkLink");
+        }
+        networkSys.RegisterNetworkLink(linkData);
+        ArrayPush(this.m_beamedEntityIDs, entityID);
+      }
+      i += 1;
+    }
   }
 
 

@@ -221,7 +221,7 @@ private static func ApplyBreachFailurePenaltyVFX(
   GameObjectEffectHelper.StartEffectEvent(
     player,
     n"disabling_connectivity_glitch_red",
-    false
+    false  // Not looping
   );
 }
 

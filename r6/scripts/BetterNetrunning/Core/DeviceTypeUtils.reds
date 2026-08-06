@@ -104,7 +104,7 @@ public abstract class DeviceTypeUtils {
         return BreachStatusUtils.IsCamerasBreached(sharedPS);
       case TargetType.Turret:
         return BreachStatusUtils.IsTurretsBreached(sharedPS);
-      default:
+      default: // TargetType.Basic
         return BreachStatusUtils.IsBasicBreached(sharedPS);
     }
   }
@@ -118,7 +118,7 @@ public abstract class DeviceTypeUtils {
         return flags.unlockCameras;
       case TargetType.Turret:
         return flags.unlockTurrets;
-      default:
+      default: // TargetType.Basic
         return flags.unlockBasic;
     }
   }

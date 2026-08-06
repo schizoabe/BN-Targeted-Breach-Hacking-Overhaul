@@ -8,46 +8,46 @@ import BetterNetrunning.Logging.*
 
 
 public class BreachSessionStats {
-  public let breachType: String;
-  public let breachTarget: String;
-  public let timestamp: Float;
+  public let breachType: String;           // "AccessPoint", "RemoteBreach", "UnconsciousNPC"
+  public let breachTarget: String;         // Device name (e.g., "AccessPoint", "Turret")
+  public let timestamp: Float;             // Start time
 
-  public let minigameSuccess: Bool;
-  public let programsInjected: Int32;
-  public let programsFiltered: Int32;
-  public let programsRemoved: Int32;
+  public let minigameSuccess: Bool;        // Success/Failure
+  public let programsInjected: Int32;      // Daemon count injected
+  public let programsFiltered: Int32;      // Daemon count after filtering
+  public let programsRemoved: Int32;       // Daemon count removed
 
-  public let networkDeviceCount: Int32;
-  public let devicesUnlocked: Int32;
-  public let devicesFailed: Int32;
-  public let devicesSkipped: Int32;
+  public let networkDeviceCount: Int32;    // Total network devices
+  public let devicesUnlocked: Int32;       // Successfully unlocked
+  public let devicesFailed: Int32;         // Failed to unlock
+  public let devicesSkipped: Int32;        // Skipped (flag check)
 
-  public let basicCount: Int32;
-  public let cameraCount: Int32;
-  public let turretCount: Int32;
-  public let npcNetworkCount: Int32;
+  public let basicCount: Int32;            // Basic devices (doors, terminals, etc.)
+  public let cameraCount: Int32;           // Surveillance cameras
+  public let turretCount: Int32;           // Security turrets
+  public let npcNetworkCount: Int32;       // Network-connected NPCs (via device link)
 
-  public let basicUnlocked: Int32;
-  public let basicSkipped: Int32;
-  public let cameraUnlocked: Int32;
-  public let cameraSkipped: Int32;
-  public let turretUnlocked: Int32;
-  public let turretSkipped: Int32;
-  public let npcNetworkUnlocked: Int32;
-  public let npcNetworkSkipped: Int32;
+  public let basicUnlocked: Int32;         // Basic devices successfully unlocked
+  public let basicSkipped: Int32;          // Basic devices skipped (flag check)
+  public let cameraUnlocked: Int32;        // Cameras successfully unlocked
+  public let cameraSkipped: Int32;         // Cameras skipped (flag check)
+  public let turretUnlocked: Int32;        // Turrets successfully unlocked
+  public let turretSkipped: Int32;         // Turrets skipped (flag check)
+  public let npcNetworkUnlocked: Int32;    // Network NPCs successfully unlocked
+  public let npcNetworkSkipped: Int32;     // Network NPCs skipped (flag check)
 
-  public let unlockBasic: Bool;
-  public let unlockCameras: Bool;
-  public let unlockTurrets: Bool;
-  public let unlockNPCs: Bool;
+  public let unlockBasic: Bool;            // Basic Subnet unlocked
+  public let unlockCameras: Bool;          // Camera Subnet unlocked
+  public let unlockTurrets: Bool;          // Turret Subnet unlocked
+  public let unlockNPCs: Bool;             // NPC Subnet unlocked
 
-  public let displayedSubnetDaemons: array<TweakDBID>;
-  public let executedSubnetDaemons: array<TweakDBID>;
-  public let displayedNormalDaemons: array<TweakDBID>;
-  public let executedNormalDaemons: array<TweakDBID>;
-  public let executedBonusDaemons: array<TweakDBID>;
+  public let displayedSubnetDaemons: array<TweakDBID>;  // All Subnet daemons displayed (success + failed)
+  public let executedSubnetDaemons: array<TweakDBID>;  // Subnet daemons successfully executed
+  public let displayedNormalDaemons: array<TweakDBID>;  // All Normal daemons displayed (success + failed)
+  public let executedNormalDaemons: array<TweakDBID>;  // Normal daemons successfully executed
+  public let executedBonusDaemons: array<TweakDBID>;   // Bonus daemons (auto Datamine) executed
 
-  public let processingTimeMs: Float;
+  public let processingTimeMs: Float;      // Milliseconds (auto-calculated in Finalize)
 
   public static func Create(breachType: String, breachTarget: String) -> ref<BreachSessionStats> {
     let stats: ref<BreachSessionStats> = new BreachSessionStats();
@@ -91,9 +91,9 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
     stats.displayedSubnetDaemons,
     stats.executedSubnetDaemons,
     "(None executed)",
-    true,
-    true,
-    ""
+    true,  // showStatusIcon - ✓ executed / ⊘ displayed only
+    true,  // showIcon - Subnet type icons (🔌📷🔫👤)
+    ""     // no additional suffix
   );
 
   if ArraySize(stats.displayedNormalDaemons) > 0 {
@@ -105,9 +105,9 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
       stats.displayedNormalDaemons,
       stats.executedNormalDaemons,
       "(None executed)",
-      true,
-      false,
-      ""
+      true,   // showStatusIcon - ✓ executed / ⊘ displayed only
+      false,  // no icon for Normal daemons
+      ""      // no additional suffix
     );
   }
 
@@ -117,11 +117,11 @@ public static func LogBreachSummary(stats: ref<BreachSessionStats>) -> Void {
     BNInfo("BreachStats", "│ Bonus Daemons (" + ToString(bonusCount) + "):");
     LogDaemonList(
       stats.executedBonusDaemons,
-      stats.executedBonusDaemons,
+      stats.executedBonusDaemons,  // All bonus daemons executed by definition
       "(None)",
-      false,
-      false,
-      "(auto-added)"
+      false,  // no status icon - all are ✓
+      false,  // no type icon
+      "(auto-added)"  // suffix to indicate auto-execution
     );
   }
 
