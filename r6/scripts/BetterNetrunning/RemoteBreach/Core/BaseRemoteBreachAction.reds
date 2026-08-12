@@ -15,10 +15,9 @@ import HackingExtensions.*
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
 
-
 @if(ModuleExists("HackingExtensions"))
 public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
-    public let m_calculatedRAMCost: Int32; // Dynamic RAM cost
+    public let m_calculatedRAMCost: Int32;
     public let m_isICEBoard: Bool;
 
     public func SetProperties(networkName: String, npcCount: Int32, attemptsCount: Int32, isRemote: Bool, isSuicide: Bool, minigameDefinition: TweakDBID, targetHack: ref<IScriptable>) -> Void {
@@ -75,13 +74,13 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
             let onFailed: ref<OnRemoteBreachFailed> = new OnRemoteBreachFailed();
 
             let success: Bool = customHackSystem.StartNewQuickhackInstance(
-                this.m_networkName,      // Network name
-                this,                    // This action
-                this.m_minigameDefinition, // Minigame def
-                this.m_targetHack,       // Target hack
-                emptyData,               // additionalData (empty array)
-                onSucceed,               // onSucceed callback
-                onFailed                 // onFailed callback
+                this.m_networkName,
+                this,
+                this.m_minigameDefinition,
+                this.m_targetHack,
+                emptyData,
+                onSucceed,
+                onFailed
             );
 
             if !success {
@@ -101,13 +100,11 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
         blackboard.SetEntityID(GetAllBlackboardDefs().NetworkBlackboard.DeviceID, GetPlayer(gameInstance).GetEntityID(), true);
         blackboard.SetInt(GetAllBlackboardDefs().NetworkBlackboard.Attempt, this.m_attempt);
 
-
         let psmEvent: ref<PSMPostponedParameterBool> = new PSMPostponedParameterBool();
         psmEvent.id = n"NanoWireRemoteBreach";
         psmEvent.value = true;
         GameInstance.GetPlayerSystem(gameInstance).GetLocalPlayerMainGameObject().QueueEvent(psmEvent);
     }
-
 
     public func GetCost() -> Int32 {
         return this.m_calculatedRAMCost;
@@ -115,7 +112,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
 
     public func PayCost(opt checkForOverclockedState: Bool) -> Bool {
         if this.m_calculatedRAMCost <= 0 {
-            return true; // No cost to pay
+            return true;
         }
 
         let executor: ref<GameObject> = this.GetExecutor();
@@ -140,7 +137,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
 
     public func CanPayCost(opt user: ref<GameObject>, opt checkForOverclockedState: Bool) -> Bool {
         if this.m_calculatedRAMCost <= 0 {
-            return true; // No cost required
+            return true;
         }
 
         let executor: ref<GameObject>;

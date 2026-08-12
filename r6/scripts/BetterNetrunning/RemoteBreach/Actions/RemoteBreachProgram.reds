@@ -13,7 +13,6 @@ import HackingExtensions.*
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
 
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
     private let m_devicePS: ref<ScriptableDeviceComponentPS>;
@@ -22,7 +21,7 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
     protected func GetBreachRangeForDifficulty() -> Float {
         let player: ref<PlayerPuppet> = this.GetPlayer();
         if !IsDefined(player) {
-            return 50.0; // Fallback if player not available
+            return 50.0;
         }
         return GetRadialBreachRange(player.GetGame());
     }
@@ -82,7 +81,6 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
         }
     }
 
-
     protected func GetHackedDevice() -> ref<ScriptableDeviceComponentPS> {
         if IsDefined(this.m_devicePS) {
             return this.m_devicePS;
@@ -106,7 +104,6 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
     }
 }
 
-
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachEasyProgramAction extends RemoteBreachProgramActionBase {
 }
@@ -118,7 +115,6 @@ public class RemoteBreachMediumProgramAction extends RemoteBreachProgramActionBa
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachHardProgramAction extends RemoteBreachProgramActionBase {
 }
-
 
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(PlayerPuppet)

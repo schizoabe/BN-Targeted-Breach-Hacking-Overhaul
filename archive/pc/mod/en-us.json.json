@@ -220,6 +220,76 @@
               "maleVariant": "",
               "primaryKey": "4820037",
               "secondaryKey": "Better-Netrunning-Unmark-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Entropy Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820038",
+              "secondaryKey": "Better-Netrunning-EntropyProtocol-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Degrades all resistance systems on marked personnel.",
+              "maleVariant": "",
+              "primaryKey": "4820039",
+              "secondaryKey": "Better-Netrunning-EntropyProtocol-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Exit Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820040",
+              "secondaryKey": "Better-Netrunning-ExitProtocol-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Initiates a clean disconnect from the network.",
+              "maleVariant": "",
+              "primaryKey": "4820041",
+              "secondaryKey": "Better-Netrunning-ExitProtocol-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Offload Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820042",
+              "secondaryKey": "Better-Netrunning-OffloadProtocol-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Routes surplus RAM from the breached node into your own pool during Defend mode.",
+              "maleVariant": "",
+              "primaryKey": "4820043",
+              "secondaryKey": "Better-Netrunning-OffloadProtocol-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Firewall Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820044",
+              "secondaryKey": "Better-Netrunning-Firewall-ICE-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Intercept the incoming hack.",
+              "maleVariant": "",
+              "primaryKey": "4820045",
+              "secondaryKey": "Better-Netrunning-Firewall-ICE-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Cascade Protocol",
+              "maleVariant": "",
+              "primaryKey": "4820048",
+              "secondaryKey": "Better-Netrunning-CascadeProtocol-Name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Broadcasts quickhack across all marked personnel.",
+              "maleVariant": "",
+              "primaryKey": "4820049",
+              "secondaryKey": "Better-Netrunning-CascadeProtocol-Description"
             }
           ]
         }

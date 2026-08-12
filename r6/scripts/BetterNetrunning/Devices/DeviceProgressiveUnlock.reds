@@ -10,7 +10,6 @@ import BetterNetrunning.Breach.*
 import BetterNetrunning.RemoteBreach.Core.*
 import BetterNetrunning.RadialUnlock.*
 
-
 @addMethod(ScriptableDeviceComponentPS)
 public final func IsBreached() -> Bool {
   let sharedPS: ref<SharedGameplayPS> = this;
@@ -139,8 +138,6 @@ private final func ShouldAllowAction(action: ref<ScriptableDeviceAction>, isCame
   return false;
 }
 
-
-
 @addMethod(ScriptableDeviceComponentPS)
 private final func RemoveVanillaRemoteBreachActions(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
   let i: Int32 = ArraySize(Deref(outActions)) - 1;
@@ -156,7 +153,6 @@ private final func RemoveVanillaRemoteBreachActions(outActions: script_ref<array
     i -= 1;
   }
 }
-
 
 @wrapMethod(ScriptableDeviceComponentPS)
 protected final func FinalizeGetQuickHackActions(outActions: script_ref<array<ref<DeviceAction>>>, const context: script_ref<GetActionsContext>) -> Void {

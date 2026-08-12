@@ -8,7 +8,6 @@ import BetterNetrunning.Breach.*
 import BetterNetrunning.Marking.*
 import BetterNetrunning.Perks.*
 
-
 @addMethod(AccessPointControllerPS)
 public func GetMainframe() -> ref<AccessPointControllerPS> {
   let parents: array<ref<DeviceComponentPS>>;
@@ -56,7 +55,7 @@ private final func UpdateDeviceTypeData(slave: ref<DeviceComponentPS>, out data:
   }
 
   if data.puppet {
-    return;  // Already found
+    return;
   }
 
   let puppetLink: ref<PuppetDeviceLinkPS> = slave as PuppetDeviceLinkPS;

@@ -8,7 +8,6 @@ import BetterNetrunning.Utils.*
 @if(ModuleExists("RadialBreach"))
 import RadialBreach.Config.*
 
-
 @if(ModuleExists("RadialBreach"))
 public static func GetRadialBreachRange(gameInstance: GameInstance) -> Float {
   let config: ref<RadialBreachSettings> = new RadialBreachSettings();
@@ -25,7 +24,6 @@ public static func GetRadialBreachRange(gameInstance: GameInstance) -> Float {
   return 50.0;
 }
 
-
 @addMethod(AccessPointControllerPS)
 public final func GetBreachPosition() -> Vector4 {
   let apEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
@@ -41,7 +39,6 @@ public final func GetBreachPosition() -> Vector4 {
   BNError("RadialBreach", "Could not get breach position - returning error signal");
   return Vector4(-999999.0, -999999.0, -999999.0, 1.0);
 }
-
 
 @if(ModuleExists("RadialBreach"))
 @addMethod(AccessPointControllerPS)
@@ -79,7 +76,6 @@ public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref
 private final func ProcessSingleDeviceUnlock(device: ref<DeviceComponentPS>, unlockFlags: BreachUnlockFlags) -> Void {
   this.ApplyDeviceTypeUnlock(device, unlockFlags);
 
-
   let currentTime: Float = TimeUtils.GetCurrentTimestamp(this.GetGameInstance());
 
   let evt: ref<SetBreachedSubnet> = new SetBreachedSubnet();
@@ -89,7 +85,6 @@ private final func ProcessSingleDeviceUnlock(device: ref<DeviceComponentPS>, unl
   evt.unlockTimestampTurrets = unlockFlags.unlockTurrets ? currentTime : 0.0;
   this.GetPersistencySystem().QueuePSEvent(device.GetID(), device.GetClassName(), evt);
 }
-
 
 @addMethod(PlayerPuppet)
 private final func ApplyRemoteBreachDeviceUnlockInternal(

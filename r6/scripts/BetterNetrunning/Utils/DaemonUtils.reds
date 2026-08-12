@@ -5,7 +5,6 @@ import BetterNetrunning.Core.*
 
 public abstract class DaemonFilterUtils {
 
-
     public static func IsCamera(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
         return IsDefined(devicePS as SurveillanceCameraControllerPS);
     }
@@ -24,7 +23,6 @@ public abstract class DaemonFilterUtils {
             && !IsDefined((entity as Device).GetDevicePS() as ComputerControllerPS);
     }
 
-
     public static func IsConnectedToNetwork(entity: wref<GameObject>) -> Bool {
         if DaemonFilterUtils.IsRegularDevice(entity) {
             return true;
@@ -35,7 +33,6 @@ public abstract class DaemonFilterUtils {
     public static func IsConnectedToPhysicalAccessPoint(devicePS: ref<ScriptableDeviceComponentPS>) -> Bool {
         return devicePS.IsConnectedToPhysicalAccessPoint();
     }
-
 
     public static func IsCameraDaemon(actionID: TweakDBID) -> Bool {
         return Equals(actionID, BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS());
@@ -59,7 +56,6 @@ public abstract class DaemonFilterUtils {
             || DaemonFilterUtils.IsNPCDaemon(actionID)
             || DaemonFilterUtils.IsBasicDaemon(actionID);
     }
-
 
     public static func ExtractUnlockFlags(minigamePrograms: array<TweakDBID>) -> BreachUnlockFlags {
         let flags: BreachUnlockFlags;
@@ -93,7 +89,6 @@ public abstract class DaemonFilterUtils {
         return flags;
     }
 
-
     public static func ShouldShowCameraDaemon(
         devicePS: ref<ScriptableDeviceComponentPS>,
         data: ConnectedClassTypes
@@ -111,7 +106,6 @@ public abstract class DaemonFilterUtils {
     public static func ShouldShowNPCDaemon(data: ConnectedClassTypes) -> Bool {
         return data.puppet;
     }
-
 
     public static func GetDeviceTypeName(devicePS: ref<ScriptableDeviceComponentPS>) -> String {
         if DaemonFilterUtils.IsCamera(devicePS) {
@@ -138,7 +132,6 @@ public abstract class DaemonFilterUtils {
             return "Unknown";
         }
     }
-
 
     public static func IsSubnetDaemon(programID: TweakDBID) -> Bool {
         if Equals(programID, BNConstants.PROGRAM_UNLOCK_QUICKHACKS()) { return true; }

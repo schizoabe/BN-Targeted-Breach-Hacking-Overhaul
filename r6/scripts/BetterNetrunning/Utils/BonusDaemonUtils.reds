@@ -6,7 +6,6 @@ import BetterNetrunning.Core.*
 
 public abstract class BonusDaemonUtils {
 
-
   public static func HasProgram(programs: array<TweakDBID>, programID: TweakDBID) -> Bool {
     let i: Int32 = 0;
     while i < ArraySize(programs) {
@@ -24,4 +23,4 @@ public abstract class BonusDaemonUtils {
         || Equals(programID, BNConstants.PROGRAM_DATAMINE_MASTER());
   }
 
-} // class BonusDaemonUtils
+}

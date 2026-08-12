@@ -35,12 +35,12 @@ public abstract class StateSystemUtils {
         let heat: Float = IsDefined(ms) ? ms.GetSessionHeat() : 0.0;
         let iceMin: Int32;
         let iceMax: Int32;
-        if      heat >= 0.95 { iceMin = 6; iceMax = 11; }  // MAXIMUM: 6-10
-        else if heat >= 0.80 { iceMin = 5; iceMax = 10; }  // PEAK:     5-9
-        else if heat >= 0.60 { iceMin = 4; iceMax =  8; }  // CRITICAL: 4-7
-        else if heat >= 0.40 { iceMin = 3; iceMax =  7; }  // HOT:      3-6
-        else if heat >= 0.20 { iceMin = 2; iceMax =  6; }  // WARM:     2-5
-        else                 { iceMin = 1; iceMax =  4; }  // COLD:     1-3
+        if      heat >= 0.95 { iceMin = 6; iceMax = 11; }
+        else if heat >= 0.80 { iceMin = 5; iceMax = 10; }
+        else if heat >= 0.60 { iceMin = 4; iceMax =  8; }
+        else if heat >= 0.40 { iceMin = 3; iceMax =  7; }
+        else if heat >= 0.20 { iceMin = 2; iceMax =  6; }
+        else                 { iceMin = 1; iceMax =  4; }
         return RandRange(iceMin, iceMax);
     }
 
@@ -60,6 +60,7 @@ public abstract class StateSystemUtils {
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class RemoteBreachRAMUtils {
+
   public static func CheckAndLockRemoteBreachRAM(
     actions: script_ref<array<ref<DeviceAction>>>
   ) -> Void {
@@ -90,6 +91,7 @@ public abstract class RemoteBreachRAMUtils {
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class ProgramIDUtils {
+
     public static func ApplyProgramToSharedPS(programID: TweakDBID, sharedPS: ref<SharedGameplayPS>, gameInstance: GameInstance) -> Void {
         let currentTime: Float = TimeUtils.GetCurrentTimestamp(gameInstance);
 
@@ -129,10 +131,9 @@ public abstract class ProgramIDUtils {
     }
 }
 
-
-
 @if(ModuleExists("HackingExtensions"))
 public abstract class RemoteBreachUtils {
+
     public static func UnlockNearbyNetworkDevices(sourceEntity: wref<GameObject>, gameInstance: GameInstance, unlockBasic: Bool, unlockNPCs: Bool, unlockCameras: Bool, unlockTurrets: Bool, logPrefix: String) -> RadialUnlockResult {
         let result: RadialUnlockResult;
 
@@ -219,7 +220,7 @@ public abstract class RemoteBreachUtils {
 
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         if ArraySize(apControllers) == 0 {
-            return result;  // Not network-connected
+            return result;
         }
 
         let distance: Float = Vector4.Distance(setup.sourcePos, entity.GetWorldPosition());
@@ -262,7 +263,7 @@ public abstract class RemoteBreachUtils {
         let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(devicePS);
 
         if !DeviceTypeUtils.ShouldUnlockByFlags(TargetType, flags) {
-            return false;  // Device type not allowed by flags
+            return false;
         }
 
         DeviceUnlockUtils.ApplyTimestampUnlock(
@@ -274,7 +275,7 @@ public abstract class RemoteBreachUtils {
             flags.unlockTurrets
         );
 
-        return true;  // Successfully unlocked
+        return true;
     }
 }
 
@@ -288,7 +289,7 @@ public abstract class ComputerRemoteBreachUtils {
 
         let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
         if ArraySize(apControllers) == 0 {
-            return;  // Standalone computer, no network devices
+            return;
         }
 
         let flags: BreachUnlockFlags = IDaemonUnlockStrategy.BuildUnlockFlags(unlockBasic, unlockNPCs, unlockCameras, unlockTurrets);
@@ -363,8 +364,8 @@ public abstract class ComputerRemoteBreachUtils {
     }
 }
 
-
 public abstract class MinigameIDHelper {
+
     public static func GetMinigameID(targetType: MinigameTargetType, difficulty: GameplayDifficulty, opt devicePS: ref<ScriptableDeviceComponentPS>) -> TweakDBID {
         switch targetType {
             case MinigameTargetType.Computer:
@@ -428,7 +429,6 @@ enum MinigameTargetType {
     Vehicle = 2
 }
 
-
 public abstract class RemoteBreachActionHelper {
     public static func Initialize(action: ref<CustomAccessBreach>, devicePS: ref<ScriptableDeviceComponentPS>, actionName: CName) -> Void {
         action.clearanceLevel = DefaultActionsParametersHolder.GetInteractiveClearance();
@@ -483,13 +483,13 @@ public abstract class RemoteBreachActionHelper {
         let minigameID: TweakDBID = MinigameIDHelper.GetMinigameID(targetType, difficulty, devicePS);
 
         action.SetProperties(
-            devicePS.GetDeviceName(),  // networkName
-            1,                         // npcCount
-            0,                         // attemptsCount
-            true,                      // isRemote
-            false,                     // isSuicide
-            minigameID,               // minigameDefinition
-            devicePS                   // targetHack
+            devicePS.GetDeviceName(),
+            1,
+            0,
+            true,
+            false,
+            minigameID,
+            devicePS
         );
 
     }
@@ -513,7 +513,6 @@ public abstract class RemoteBreachActionHelper {
         actions = actionsArray;
     }
 }
-
 
 @if(ModuleExists("HackingExtensions"))
 public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
@@ -603,8 +602,8 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         }
 
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: collecting daemon stats");
-        BreachStatisticsCollector.CollectDisplayedDaemons(displayedDaemons, stats);  // All daemons in minigame
-        BreachStatisticsCollector.CollectExecutedDaemons(activePrograms, stats);     // Successfully completed daemons
+        BreachStatisticsCollector.CollectDisplayedDaemons(displayedDaemons, stats);
+        BreachStatisticsCollector.CollectExecutedDaemons(activePrograms, stats);
 
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: resolving network devices");
         let networkDevices: array<ref<DeviceComponentPS>>;
@@ -614,7 +613,7 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
             masterPS.GetChildren(networkDevices);
             let apPS: ref<AccessPointControllerPS> = device as AccessPointControllerPS;
             if IsDefined(apPS) {
-                breachedAPID = apPS.GetID();  // Direct AccessPoint
+                breachedAPID = apPS.GetID();
             }
         } else {
             let sharedPS: ref<SharedGameplayPS> = device;
@@ -622,7 +621,7 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
                 let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
                 if ArraySize(apControllers) > 0 {
                     apControllers[0].GetChildren(networkDevices);
-                    breachedAPID = apControllers[0].GetID();  // First AccessPoint (primary network)
+                    breachedAPID = apControllers[0].GetID();
                 }
             }
         }
@@ -647,7 +646,7 @@ public class OnRemoteBreachSucceeded extends OnCustomHackingSucceeded {
         BNInfo("RemoteBreachSucceeded", "ExecuteStats: DONE");
     }
 
-}// -----------------------------------------------------------------------------
+}
 
 @if(ModuleExists("HackingExtensions"))
 public class OnRemoteBreachFailed extends OnCustomHackingFailed {
@@ -700,7 +699,6 @@ public class OnRemoteBreachFailed extends OnCustomHackingFailed {
         return null;
     }
 }
-
 
 @if(ModuleExists("HackingExtensions"))
 public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
@@ -794,8 +792,8 @@ public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
   }
 }
 
-
 public abstract class RemoteBreachLockUtils {
+
   public static func RemoveAllRemoteBreachActions(
     outActions: script_ref<array<ref<DeviceAction>>>
   ) -> Void {

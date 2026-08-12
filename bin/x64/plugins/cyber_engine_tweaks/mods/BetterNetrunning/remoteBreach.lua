@@ -15,7 +15,6 @@ function RemoteBreach.Setup()
 
     local betterNetrunningCategory = api.CreateHackingMinigameCategory("BetterNetrunning")
 
-
     local daemonRewardType = api.CreateProgramActionType("RemoteBreachDaemonRewards")
 
     local daemonUIIcon = api.CreateUIIcon(
@@ -101,30 +100,29 @@ function RemoteBreach.Setup()
 
     local unlockBasicProgram = api.CreateProgram(
         "BN_UnlockQuickhacks",
-        unlockBasicProgramAction, -- Pass the ProgramAction object, not a string
-        4                         -- buffer size
+        unlockBasicProgramAction,
+        4
     )
 
     local unlockNPCProgram = api.CreateProgram(
         "BN_UnlockNPCQuickhacks",
-        unlockNPCProgramAction, -- Pass the ProgramAction object, not a string
-        5                       -- buffer size
+        unlockNPCProgramAction,
+        5
     )
 
     local unlockCameraProgram = api.CreateProgram(
         "BN_UnlockCameraQuickhacks",
-        unlockCameraProgramAction, -- Pass the ProgramAction object, not a string
-        4                          -- buffer size
+        unlockCameraProgramAction,
+        4
     )
 
     local unlockTurretProgram = api.CreateProgram(
         "BN_UnlockTurretQuickhacks",
-        unlockTurretProgramAction, -- Pass the ProgramAction object, not a string
-        6                          -- buffer size
+        unlockTurretProgramAction,
+        6
     )
 
     print("[BetterNetrunning] Created daemon program actions and programs for RemoteBreach")
-
 
     local iceRewardType = api.CreateProgramActionType("RemoteBreachICERewards")
 
@@ -199,10 +197,10 @@ function RemoteBreach.Setup()
 
     local npcSubnetBoard = api.CreateHackingMinigame(
         "BNNPCRemoteBreach",
-        10.00, -- timeLimit
-        5,     -- gridSize
-        0,     -- extraDifficulty (medium)
-        7,     -- bufferSize
+        10.00,
+        5,
+        0,
+        7,
         { unlockNPCProgram },
         {}
     )
@@ -212,10 +210,10 @@ function RemoteBreach.Setup()
 
     local netrunnerNPCBoard = api.CreateHackingMinigame(
         "BNNetrunnerNPCRemoteBreach",
-        10.00, -- timeLimit
-        5,     -- gridSize
-        0,     -- extraDifficulty (medium)
-        7,     -- bufferSize
+        10.00,
+        5,
+        0,
+        7,
         { unlockBasicProgram, unlockNPCProgram, unlockCameraProgram, unlockTurretProgram },
         {}
     )
@@ -225,10 +223,10 @@ function RemoteBreach.Setup()
 
     local computerMinigameEasy = api.CreateHackingMinigame(
         "ComputerRemoteBreachEasy",
-        10.00, -- timeLimit: 20 seconds
-        5,     -- gridSize: 5x5
-        -20,   -- extraDifficulty: easier
-        7,     -- bufferSize
+        10.00,
+        5,
+        -20,
+        7,
         {
             unlockBasicProgram,
             unlockCameraProgram
@@ -238,10 +236,10 @@ function RemoteBreach.Setup()
 
     api.CreateHackingMinigame(
         "ComputerRemoteBreachMedium",
-        10.00, -- timeLimit: 25 seconds
-        6,     -- gridSize: 6x6
-        10,    -- extraDifficulty: moderate
-        8,     -- bufferSize
+        10.00,
+        6,
+        10,
+        8,
         {
             unlockBasicProgram,
             unlockCameraProgram
@@ -251,10 +249,10 @@ function RemoteBreach.Setup()
 
     api.CreateHackingMinigame(
         "ComputerRemoteBreachHard",
-        10.00, -- timeLimit: 30 seconds
-        7,     -- gridSize: 7x7
-        30,    -- extraDifficulty: hard
-        9,     -- bufferSize
+        10.00,
+        7,
+        30,
+        9,
         {
             unlockBasicProgram,
             unlockCameraProgram
@@ -378,16 +376,15 @@ function RemoteBreach.Setup()
 
     local vehicleMinigameEasy = api.CreateHackingMinigame(
         "VehicleRemoteBreach",
-        10.00, -- duration
-        6,     -- bufferSize
-        10,    -- difficulty (Medium-equivalent)
-        8,     -- tracesStartingLength
+        10.00,
+        6,
+        10,
+        8,
         {
             unlockVehicleProgram
         },
         {}
     )
-
 
     TweakDB:CloneRecord("Minigame.ComputerRemoteBreachEasy", "CustomHackingSystemMinigame.ComputerRemoteBreachEasy")
     TweakDB:CloneRecord("Minigame.ComputerRemoteBreachMedium", "CustomHackingSystemMinigame.ComputerRemoteBreachMedium")
@@ -409,7 +406,6 @@ function RemoteBreach.Setup()
 
     print("[BetterNetrunning] TweakDB entries created for minigame mapping (Minigame.* → CustomHackingSystemMinigame.*)")
 
-
     print("[BetterNetrunning] Remote Breach minigame setup complete (Phase 6 - Device-type-specific)")
     print("  - Category: " .. betterNetrunningCategory)
     print("  - Computer Minigames: Easy/Medium/Hard (Basic + Camera)")
@@ -422,7 +418,6 @@ function RemoteBreach.Setup()
     print("  - Camera Easy: " .. cameraMinigameEasy)
     print("  - Turret Easy: " .. turretMinigameEasy)
     print("  - Vehicle Easy: " .. vehicleMinigameEasy)
-
 
     return true
 end

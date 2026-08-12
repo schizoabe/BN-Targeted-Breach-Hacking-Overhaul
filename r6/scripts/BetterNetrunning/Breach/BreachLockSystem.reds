@@ -4,9 +4,8 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 
-
-
 public class BreachLockSystem {
+
   public static func IsLockedByTimestamp(
     timestamp: Float,
     gameInstance: GameInstance,

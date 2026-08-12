@@ -32,7 +32,6 @@ public abstract class BreachStatisticsCollector {
         }
     }
 
-
     private static func ProcessNetworkDevice(
         device: ref<DeviceComponentPS>,
         unlockFlags: BreachUnlockFlags,
@@ -79,7 +78,6 @@ public abstract class BreachStatisticsCollector {
         }
     }
 
-
     public static func CollectDisplayedDaemons(
         minigamePrograms: array<TweakDBID>,
         stats: ref<BreachSessionStats>
@@ -119,7 +117,6 @@ public abstract class BreachStatisticsCollector {
         }
     }
 }
-
 
 public class DisplayedDaemonsStateSystem extends ScriptableSystem {
     private let m_displayedDaemons: array<TweakDBID>;

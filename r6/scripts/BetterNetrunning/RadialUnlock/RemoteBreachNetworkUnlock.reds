@@ -9,8 +9,6 @@ import BetterNetrunning.RemoteBreach.Core.*
 import BetterNetrunning.RemoteBreach.Actions.*
 import BetterNetrunningConfig.*
 
-
-
 public struct RadialUnlockResult {
     public let basicCount: Int32;
     public let cameraCount: Int32;
@@ -21,7 +19,6 @@ public struct RadialUnlockResult {
     public let turretUnlocked: Int32;
     public let npcUnlocked: Int32;
 }
-
 
 @addMethod(PlayerPuppet)
 private func ApplyUnconsciousNPCNetworkUnlockWithStats(
@@ -53,7 +50,6 @@ private func ApplyUnconsciousNPCNetworkUnlockWithStats(
   }
 }
 
-
 @addMethod(PlayerPuppet)
 private func ApplyRemoteBreachNetworkUnlockWithStats(
   targetDevice: ref<ScriptableDeviceComponentPS>,
@@ -84,7 +80,6 @@ private func ApplyRemoteBreachNetworkUnlockWithStats(
   }
 }
 
-
 @addMethod(PlayerPuppet)
 private func ParseRemoteBreachUnlockFlags(activePrograms: array<TweakDBID>) -> BreachUnlockFlags {
   let flags: BreachUnlockFlags;
@@ -109,7 +104,6 @@ private func ParseRemoteBreachUnlockFlags(activePrograms: array<TweakDBID>) -> B
   return flags;
 }
 
-
 @addMethod(PlayerPuppet)
 private func GetRemoteBreachTargetDevice() -> ref<ScriptableDeviceComponentPS> {
   let gameInstance: GameInstance = this.GetGame();
@@ -122,7 +116,6 @@ private func GetRemoteBreachTargetDevice() -> ref<ScriptableDeviceComponentPS> {
 
   return null;
 }
-
 
 @addMethod(PlayerPuppet)
 private func GetRemoteBreachNetworkDevices(
@@ -169,7 +162,6 @@ private func CollectAccessPointDevices(
   }
 }
 
-
 @addMethod(PlayerPuppet)
 private func ApplyRemoteBreachDeviceUnlockWithStats(
   targetDevice: ref<ScriptableDeviceComponentPS>,
@@ -212,7 +204,6 @@ private func ApplyRemoteBreachDeviceUnlockWithStats(
     stats.basicCount += 1;
   }
 }
-
 
 @addMethod(PlayerPuppet)
 public func FindNearbyDevices(

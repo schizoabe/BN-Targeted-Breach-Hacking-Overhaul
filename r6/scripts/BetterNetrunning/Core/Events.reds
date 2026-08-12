@@ -3,10 +3,8 @@ module BetterNetrunning.Core
 import BetterNetrunning.Core.TimeUtils
 import BetterNetrunningConfig.*
 
-
 @addField(ScriptedPuppetPS)
 public persistent let m_betterNetrunningWasDirectlyBreached: Bool;
-
 
 @addField(SharedGameplayPS)
 public persistent let m_betterNetrunningUnlockTimestampBasic: Float;
@@ -20,7 +18,6 @@ public persistent let m_betterNetrunningUnlockTimestampTurrets: Float;
 @addField(SharedGameplayPS)
 public persistent let m_betterNetrunningUnlockTimestampNPCs: Float;
 
-
 @addField(SharedGameplayPS)
 public persistent let m_betterNetrunningAPBreachFailedTimestamp: Float;
 
@@ -29,8 +26,6 @@ public persistent let m_betterNetrunningNPCBreachFailedTimestamp: Float;
 
 @addField(SharedGameplayPS)
 public persistent let m_betterNetrunningRemoteBreachFailedTimestamp: Float;
-
-
 
 @addField(SharedGameplayPS)
 public persistent let m_bnNetworkVulnerability: Float;
@@ -49,15 +44,6 @@ public persistent let m_bnIceHitsApplied: Int32;
 
 @addField(SharedGameplayPS)
 public persistent let m_bnIceDefeated: Bool;
-
-
-
-
-
-
-
-
-
 
 public class SetBreachedSubnet extends ActionBool {
 
@@ -105,8 +91,6 @@ public func OnSetBreachedSubnet(evt: ref<SetBreachedSubnet>) -> EntityNotificati
 
   return EntityNotificationType.DoNotNotifyEntity;
 }
-
-
 
 public abstract class BreachStatusUtils {
 

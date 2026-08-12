@@ -143,7 +143,6 @@ public class BNBootOverlay {
     }
 }
 
-
 public class BNBootSystem extends ScriptableSystem {
     private let m_overlay: ref<BNBootOverlay>;
 
@@ -161,7 +160,6 @@ public class BNBootSystem extends ScriptableSystem {
         if IsDefined(this.m_overlay) { this.m_overlay.Abort(); }
     }
 }
-
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {

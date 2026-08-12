@@ -9,7 +9,6 @@ import BetterNetrunning.Utils.*
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.*
 
-
 @if(ModuleExists("HackingExtensions"))
 public class BNMarkNPCAction extends CustomAccessBreach {
   private let m_npcPS:   ref<ScriptedPuppetPS>;
@@ -62,7 +61,6 @@ public class BNMarkNPCAction extends CustomAccessBreach {
   }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 public class BNUnmarkNPCAction extends CustomAccessBreach {
   private let m_npcPS:   ref<ScriptedPuppetPS>;
@@ -114,7 +112,6 @@ public class BNUnmarkNPCAction extends CustomAccessBreach {
     if IsDefined(logSys) { logSys.Refresh(); }
   }
 }
-
 
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptedPuppet)
@@ -198,7 +195,6 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   ArrayPush(Deref(commands), entry);
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 public class BNMarkDeviceAction extends CustomAccessBreach {
   private let m_devicePS: ref<ScriptableDeviceComponentPS>;
@@ -207,12 +203,12 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
   public func SetDevicePS(devicePS: ref<ScriptableDeviceComponentPS>, ramCost: Int32) -> Void {
     this.m_devicePS = devicePS;
     this.m_ramCost = ramCost;
-    this.SetObjectActionID(t"QuickHack.BNMark");
+    this.SetObjectActionID(t"QuickHack.BNMarkDevice");
   }
 
-  public func GetTweakDBChoiceRecord() -> String { return "BNMark"; }
+  public func GetTweakDBChoiceRecord() -> String { return "BNMarkDevice"; }
   public func GetInteractionDescription() -> String {
-    let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNMark");
+    let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNMarkDevice");
     if IsDefined(rec) {
       let s: String = LocKeyToString(rec.ObjectActionUI().Caption());
       if NotEquals(s, "") { return s; }
@@ -280,7 +276,6 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
   }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 public class BNUnmarkDeviceAction extends CustomAccessBreach {
   private let m_devicePS: ref<ScriptableDeviceComponentPS>;
@@ -289,12 +284,12 @@ public class BNUnmarkDeviceAction extends CustomAccessBreach {
   public func SetDevicePS(devicePS: ref<ScriptableDeviceComponentPS>, ramCost: Int32) -> Void {
     this.m_devicePS = devicePS;
     this.m_ramCost = ramCost;
-    this.SetObjectActionID(t"QuickHack.BNUnmark");
+    this.SetObjectActionID(t"QuickHack.BNUnmarkDevice");
   }
 
-  public func GetTweakDBChoiceRecord() -> String { return "BNUnmark"; }
+  public func GetTweakDBChoiceRecord() -> String { return "BNUnmarkDevice"; }
   public func GetInteractionDescription() -> String {
-    let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNUnmark");
+    let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNUnmarkDevice");
     if IsDefined(rec) {
       let s: String = LocKeyToString(rec.ObjectActionUI().Caption());
       if NotEquals(s, "") { return s; }
@@ -345,7 +340,6 @@ public class BNUnmarkDeviceAction extends CustomAccessBreach {
     if IsDefined(logSys) { logSys.Refresh(); }
   }
 }
-
 
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptableDeviceComponentPS)

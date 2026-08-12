@@ -6,8 +6,6 @@ import BetterNetrunning.Utils.*
 import BetterNetrunning.Integration.*
 import BetterNetrunning.Logging.*
 
-
-
 public func ShouldRemoveBreachedPrograms(actionID: TweakDBID, entity: wref<GameObject>) -> Bool {
   if !IsDefined(entity as Device) {
     return false;
@@ -83,21 +81,21 @@ private func HandleTemporaryUnlock(
   TargetType: TargetType
 ) -> Bool {
   if !BreachStatusUtils.IsBreached(unlockTimestamp) {
-    return false; // Not breached - show program
+    return false;
   }
 
   if durationHours <= 0 {
-    return true; // Remove program permanently
+    return true;
   }
 
   let elapsedTime: Float = currentTime - unlockTimestamp;
 
   if elapsedTime > durationSeconds {
     ResetDeviceTimestamp(sharedPS, TargetType);
-    return false; // Show program (allow re-breach)
+    return false;
   }
 
-  return true; // Remove program
+  return true;
 }
 
 private func ResetDeviceTimestamp(sharedPS: ref<SharedGameplayPS>, TargetType: TargetType) -> Void {
@@ -111,7 +109,6 @@ private func ResetDeviceTimestamp(sharedPS: ref<SharedGameplayPS>, TargetType: T
     sharedPS.m_betterNetrunningUnlockTimestampTurrets = 0.0;
   }
 }
-
 
 public func ShouldRemoveDeviceTypePrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, data: ConnectedClassTypes) -> Bool {
   if !BetterNetrunningSettings.UnlockIfNoAccessPoint() {
@@ -129,7 +126,6 @@ public func ShouldRemoveDeviceTypePrograms(actionID: TweakDBID, miniGameActionRe
   }
   return false;
 }
-
 
 public func ShouldRemoveOutOfRangeDevicePrograms(actionID: TweakDBID, gameInstance: GameInstance, breachPosition: Vector4, breachEntity: wref<GameObject>) -> Bool {
   if breachPosition.X < -999000.0 {
@@ -278,7 +274,6 @@ private func ClassifyDeviceByType(
   }
 }
 
-
 public static func IsBetterNetrunningSubnetDaemon(actionID: TweakDBID) -> Bool {
   if Equals(actionID, BNConstants.PROGRAM_UNLOCK_QUICKHACKS()) { return true; }
   if Equals(actionID, BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS()) { return true; }
@@ -369,3 +364,4 @@ private static func ShouldRemoveByNetworkConnectivity(
 
   return false;
 }
+

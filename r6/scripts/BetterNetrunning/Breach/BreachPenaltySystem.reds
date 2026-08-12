@@ -5,9 +5,11 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Integration.*
+import BetterNetrunning.Marking.*
 import BetterNetrunning.RemoteBreach.Common.*
 import BetterNetrunning.RemoteBreach.Core.*
 import BetterNetrunning.Network.*
+import BetterNetrunning.Minigame.*
 
 public enum BreachType {
   Unknown = 0,
@@ -18,32 +20,185 @@ public enum BreachType {
 
 @wrapMethod(ScriptableDeviceComponentPS)
 public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
-  if NotEquals(state, HackingMinigameState.Failed) {
+  if NotEquals(state, HackingMinigameState.Failed) && NotEquals(state, HackingMinigameState.Succeeded) {
     wrappedMethod(state);
     return;
   }
 
-  let breachType: BreachType = this.DetectBreachType();
-
-  if !ShouldApplyBreachPenalty(breachType) {
+  if Equals(state, HackingMinigameState.Failed) {
+    let breachType: BreachType = this.DetectBreachType();
+    if !ShouldApplyBreachPenalty(breachType) {
+      wrappedMethod(state);
+      return;
+    }
+    let gameInstance: GameInstance = this.GetGameInstance();
+    let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
+    if !IsDefined(player) {
+      BNError("BreachPenalty", "Player not found, skipping penalty");
+      wrappedMethod(state);
+      return;
+    }
+    ApplyFailurePenalty(player, this, gameInstance, breachType);
+    NetworkStateUtils.OnBreachFailed(this, gameInstance);
+    BNDebug("NetworkState", "Breach failed — Heat spiked, Vulnerability reduced");
     wrappedMethod(state);
     return;
   }
 
-  let gameInstance: GameInstance = this.GetGameInstance();
-  let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
-  if !IsDefined(player) {
-    BNError("BreachPenalty", "Player not found, skipping penalty");
+  let gi: GameInstance = this.GetGameInstance();
+  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gi);
+  let markingSystem: ref<MarkingStateSystem> = container.Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+
+  let bbHacking: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
+  let completedPrograms: array<TweakDBID> = FromVariant<array<TweakDBID>>(
+    bbHacking.GetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms)
+  );
+  let hasExitProtocol: Bool = false;
+  let epi: Int32 = 0;
+  while epi < ArraySize(completedPrograms) {
+    if completedPrograms[epi] == BNConstants.PROGRAM_BN_EXIT_PROTOCOL() { hasExitProtocol = true; }
+    epi += 1;
+  }
+
+  this.BNDispatchOffensiveDaemons();
+
+  if hasExitProtocol {
+    BNInfo("BreachLoop", "Exit Protocol completed — jacking out");
     wrappedMethod(state);
     return;
   }
 
-  ApplyFailurePenalty(player, this, gameInstance, breachType);
+  let heat: Float = IsDefined(markingSystem) ? markingSystem.GetSessionHeat() : 1.0;
+  if heat >= 1.0 {
+    BNInfo("BreachLoop", "Heat maxed — jacking out");
+    wrappedMethod(state);
+    return;
+  }
 
-  NetworkStateUtils.OnBreachFailed(this, gameInstance);
-  BNDebug("NetworkState", "Breach failed — Heat spiked, Vulnerability reduced");
+  BNInfo("BreachLoop", "Board complete — looping (heat=" + ToString(heat) + ")");
 
-  wrappedMethod(state);
+  NetworkStateUtils.OnDaemonsCompleted(completedPrograms, this, gi);
+
+  let unlockFlags: BreachUnlockFlags = DaemonFilterUtils.ExtractUnlockFlags(completedPrograms);
+  if IsDefined(markingSystem) && markingSystem.HasAnyMarked() {
+    let markedCount: Int32 = markingSystem.GetTotalCount();
+    let loopPlayer: ref<PlayerPuppet> = GetPlayer(gi);
+    if IsDefined(loopPlayer) && markedCount > 0 {
+      let statPools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gi);
+      let playerID: StatsObjectID = Cast<StatsObjectID>(loopPlayer.GetEntityID());
+      let curRAM: Float = statPools.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
+      statPools.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.Memory,
+        MaxF(0.0, curRAM - Cast<Float>(markedCount)), loopPlayer, false);
+    }
+    TargetedBreachUtils.UnlockMarkedEntities(markingSystem, unlockFlags, gi);
+    BNInfo("BreachLoop", "Targeted breach unlock applied mid-loop");
+  }
+
+  this.BNReopenBreachBoard(gi);
+}
+
+@addMethod(ScriptableDeviceComponentPS)
+private final func BNReopenBreachBoard(gi: GameInstance) -> Void {
+  let bbMinigame: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
+
+  let emptyPrograms: array<TweakDBID>;
+  bbMinigame.SetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms, ToVariant(emptyPrograms), true);
+
+  let cb: ref<BNReopenBoardCallback> = new BNReopenBoardCallback();
+  cb.m_gi = gi;
+  cb.m_ps = this;
+  GameInstance.GetDelaySystem(gi).DelayCallback(cb, 0.5, false);
+}
+
+public class BNReopenBoardCallback extends DelayCallback {
+  public let m_gi: GameInstance;
+  public let m_ps: wref<ScriptableDeviceComponentPS>;
+
+  public func Call() -> Void {
+    let ps: ref<ScriptableDeviceComponentPS> = this.m_ps;
+    if !IsDefined(ps) {
+      BNError("BreachLoop", "PS weak ref expired — cannot reopen board");
+      return;
+    }
+
+    let bbNetwork: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.m_gi).Get(GetAllBlackboardDefs().NetworkBlackboard);
+    bbNetwork.SetString(GetAllBlackboardDefs().NetworkBlackboard.NetworkName, "");
+    ps.BNReInitiateDive(this.m_gi);
+  }
+}
+
+@addField(ScriptableDeviceComponentPS)
+let m_bnSJKILooping: Bool;
+
+@addMethod(ScriptableDeviceComponentPS)
+public final func BNHandleSJKIBoardComplete(gi: GameInstance, completedPrograms: array<TweakDBID>) -> Void {
+  let markingSystem: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
+    .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+
+  let hasExitProtocol: Bool = false;
+  let i: Int32 = 0;
+  while i < ArraySize(completedPrograms) {
+    if completedPrograms[i] == BNConstants.PROGRAM_BN_EXIT_PROTOCOL() { hasExitProtocol = true; }
+    i += 1;
+  }
+
+  if hasExitProtocol {
+    BNInfo("BreachLoop", "SJKI: Exit Protocol — jacking out");
+    return;
+  }
+
+  let heat: Float = IsDefined(markingSystem) ? markingSystem.GetSessionHeat() : 1.0;
+  if heat >= 1.0 {
+    BNInfo("BreachLoop", "SJKI: Heat maxed — jacking out");
+    return;
+  }
+
+  BNInfo("BreachLoop", "SJKI: Board complete — looping (heat=" + ToString(heat) + ")");
+  this.m_bnSJKILooping = true;
+  this.BNReopenBreachBoard(gi);
+}
+
+@if(ModuleExists("HackthePlanetForReal"))
+@addMethod(ScriptableDeviceComponentPS)
+public final func BNReInitiateDiveSJKI(gi: GameInstance) -> Void {
+  this.m_bnSJKILooping = false;
+  this.m_isSJKIStandaloneDevice = true;
+  this.m_personalLinkStatus = EPersonalLinkConnectionStatus.CONNECTED;
+  this.m_hackingMinigameState = HackingMinigameState.Unknown;
+  let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().NetworkBlackboard);
+  bb.SetInt    (GetAllBlackboardDefs().NetworkBlackboard.DevicesCount,  1);
+  bb.SetBool   (GetAllBlackboardDefs().NetworkBlackboard.OfficerBreach, false);
+  bb.SetBool   (GetAllBlackboardDefs().NetworkBlackboard.RemoteBreach,  false);
+  bb.SetInt    (GetAllBlackboardDefs().NetworkBlackboard.Attempt,       this.m_minigameAttempt);
+  bb.SetEntityID(GetAllBlackboardDefs().NetworkBlackboard.DeviceID,     this.GetMyEntityID());
+  bb.SetVariant(GetAllBlackboardDefs().NetworkBlackboard.MinigameDef,   ToVariant(this.GetMinigameDefinition()));
+  bb.SetString (GetAllBlackboardDefs().NetworkBlackboard.NetworkName,   this.GetDeviceName(), true);
+  BNInfo("BreachLoop", "SJKI re-entry: re-armed standalone, HUD reopened");
+}
+
+@if(!ModuleExists("HackthePlanetForReal"))
+@addMethod(ScriptableDeviceComponentPS)
+public final func BNReInitiateDiveSJKI(gi: GameInstance) -> Void {}
+
+@addMethod(ScriptableDeviceComponentPS)
+public final func BNReInitiateDive(gi: GameInstance) -> Void {
+  if this.m_bnSJKILooping {
+    this.BNReInitiateDiveSJKI(gi);
+    return;
+  }
+
+  let linked: Bool = this.IsPersonalLinkConnected();
+  BNDebug("BreachLoop", "BNReInitiateDive: personalLinkConnected=" + ToString(linked));
+
+  this.m_personalLinkStatus = EPersonalLinkConnectionStatus.CONNECTED;
+
+  this.m_hackingMinigameState = HackingMinigameState.Unknown;
+
+  let player: ref<GameObject> = this.GetPlayerMainObject();
+  let diveAction: ref<ToggleNetrunnerDive> = this.ActionToggleNetrunnerDive(false);
+  diveAction.SetExecutor(player);
+  this.ExecutePSAction(diveAction);
+  BNInfo("BreachLoop", "Dive re-triggered (wasLinked=" + ToString(linked) + ") — board spawn expected");
 }
 
 @wrapMethod(AccessPointControllerPS)
@@ -92,7 +247,6 @@ public func OnNPCBreachEvent(evt: ref<NPCBreachEvent>) -> EntityNotificationType
 
   if Equals(evt.state, HackingMinigameState.Failed) {
     this.m_minigameAttempt += 1;
-
 
     BNInfo("BreachPenalty", "Unconscious NPC breach failed - NPC alert suppressed (SendMinigameFailedToAllNPCs skipped)");
     return EntityNotificationType.DoNotNotifyEntity;
@@ -221,7 +375,7 @@ private static func ApplyBreachFailurePenaltyVFX(
   GameObjectEffectHelper.StartEffectEvent(
     player,
     n"disabling_connectivity_glitch_red",
-    false  // Not looping
+    false
   );
 }
 

@@ -11,8 +11,6 @@ import BetterNetrunning.RemoteBreach.Core.*
 import BetterNetrunning.RemoteBreach.Actions.*
 import BetterNetrunning.RadialUnlock.*
 
-
-
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func ApplyBetterNetrunningDeviceFilters(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
@@ -65,7 +63,7 @@ private final func ReplaceVanillaRemoteBreachWithCustom(outActions: script_ref<a
 @addMethod(ScriptableDeviceComponentPS)
 private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
   if !this.IsBreached() {
-    return; // Device not yet breached, keep RemoteBreach action
+    return;
   }
 
   let i: Int32 = ArraySize(Deref(outActions)) - 1;
@@ -90,7 +88,7 @@ private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref
 @addMethod(ScriptableDeviceComponentPS)
 private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
   if !this.IsBreached() {
-    return; // Device not yet breached, keep RemoteBreach action
+    return;
   }
 
   let i: Int32 = ArraySize(Deref(outActions)) - 1;
@@ -104,7 +102,6 @@ private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref
     i -= 1;
   }
 }
-
 
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)

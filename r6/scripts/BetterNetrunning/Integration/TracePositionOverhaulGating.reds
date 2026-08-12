@@ -4,9 +4,7 @@ module BetterNetrunning.Integration
 @if(ModuleExists("TracePositionOverhaul"))
 import TracePositionOverhaul.*
 
-
 public abstract class TracePositionOverhaulGating {
-
 
   @if(ModuleExists("TracePositionOverhaul"))
   public static func IsValidTraceSource(npc: wref<NPCPuppet>) -> Bool {
@@ -32,7 +30,6 @@ public abstract class TracePositionOverhaulGating {
     return true;
   }
 
-
   @if(ModuleExists("TracePositionOverhaul"))
   public static func GetNPCsInRadius(
     player: wref<PlayerPuppet>,
@@ -45,7 +42,7 @@ public abstract class TracePositionOverhaulGating {
 
     let searchQuery: TargetSearchQuery;
     searchQuery.testedSet = TargetingSet.Complete;
-    searchQuery.searchFilter = TSF_All(TSFMV.Obj_Puppet);  // All puppets (NPCs)
+    searchQuery.searchFilter = TSF_All(TSFMV.Obj_Puppet);
     searchQuery.maxDistance = radius;
     searchQuery.filterObjectByDistance = true;
     searchQuery.includeSecondaryTargets = false;
@@ -79,7 +76,6 @@ public abstract class TracePositionOverhaulGating {
     return npcs;
   }
 
-
   public static func FindNearestValidTraceSource(
     player: wref<PlayerPuppet>,
     gameInstance: GameInstance,
@@ -93,7 +89,7 @@ public abstract class TracePositionOverhaulGating {
 
     let playerPos: Vector4 = player.GetWorldPosition();
     let nearestNPC: wref<NPCPuppet>;
-    let nearestDistSq: Float = radius * radius; // Squared distance threshold
+    let nearestDistSq: Float = radius * radius;
 
     let i: Int32 = 0;
     let count: Int32 = ArraySize(npcs);
@@ -116,4 +112,4 @@ public abstract class TracePositionOverhaulGating {
     return nearestNPC;
   }
 
-} // class TracePositionOverhaulGating
+}

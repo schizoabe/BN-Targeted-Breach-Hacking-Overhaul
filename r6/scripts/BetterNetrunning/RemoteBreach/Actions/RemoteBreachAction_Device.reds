@@ -58,7 +58,6 @@ public class DeviceRemoteBreachAction extends BaseRemoteBreachAction {
     }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAction> {

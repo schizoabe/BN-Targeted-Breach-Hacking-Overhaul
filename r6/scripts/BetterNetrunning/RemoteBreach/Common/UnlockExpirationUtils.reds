@@ -5,13 +5,11 @@ import BetterNetrunning.Core.TimeUtils
 import BetterNetrunning.Utils.*
 import BetterNetrunningConfig.*
 
-
 public struct UnlockExpirationResult {
   public let isUnlocked: Bool;
   public let wasExpired: Bool;
   public let expiredDeviceType: CName;
 }
-
 
 public abstract class UnlockExpirationUtils {
 

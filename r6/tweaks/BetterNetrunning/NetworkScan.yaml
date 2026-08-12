@@ -49,28 +49,18 @@ Interactions.BNUnmark:
   description: LocKey#4820037
 
 # ── NPC quickhack records (for ObjectActionUI lookup in REDscript) ────────────
-# Note: costs/activationTime/startEffects all cleared so these records are
-# harmless if accidentally referenced outside the injection path.
 QuickHack.BNMark:
   $base: QuickHack.CovertHack
-  actionName: BNMark
-  gameplayCategory: ActionCategories.Ping
   objectActionUI: Interactions.BNMark
-  costs: []
-  activationTime: []
-  instigatorPrereqs: []
-  targetActivePrereqs: []
-  startEffects: []
-  completionEffects: []
 
 QuickHack.BNUnmark:
   $base: QuickHack.CovertHack
-  actionName: BNUnmark
-  gameplayCategory: ActionCategories.Ping
   objectActionUI: Interactions.BNUnmark
-  costs: []
-  activationTime: []
-  instigatorPrereqs: []
-  targetActivePrereqs: []
-  startEffects: []
-  completionEffects: []
+
+QuickHack.BNMarkDevice:
+  $type: gamedataObjectAction_Record
+  objectActionUI: Interactions.BNMark
+
+QuickHack.BNUnmarkDevice:
+  $type: gamedataObjectAction_Record
+  objectActionUI: Interactions.BNUnmark

@@ -7,9 +7,7 @@ import BetterNetrunning.Utils.*
 import BetterNetrunningConfig.*
 import BetterNetrunning.Logging.*
 
-
 public abstract class DebugUtils {
-
 
   public static func CleanDeviceName(rawName: String) -> String {
     let prefix: String = BNConstants.DEVICE_NAME_PREFIX();
@@ -25,7 +23,6 @@ public abstract class DebugUtils {
 
     return cleaned;
   }
-
 
   private static func LogQuickhackListFromDeviceActions(
     actions: array<ref<DeviceAction>>,
@@ -54,7 +51,6 @@ public abstract class DebugUtils {
       i += 1;
     }
   }
-
 
   public static func LogDeviceQuickhackStateOnScan(devicePS: ref<ScriptableDeviceComponentPS>, actions: array<ref<DeviceAction>>) -> Void {
     if !BetterNetrunningSettings.EnableDebugLog() {
@@ -96,7 +92,6 @@ public abstract class DebugUtils {
     BNInfo("[SCAN]", "==========================");
   }
 
-
   public static func LogNPCQuickhackState(
     npcPS: ref<ScriptedPuppetPS>,
     puppetActions: script_ref<array<ref<PuppetAction>>>,
@@ -109,7 +104,7 @@ public abstract class DebugUtils {
     let context: String = NotEquals(logContext, "") ? logContext : "[Debug]";
 
     if !npcPS.IsConnectedToAccessPoint() {
-      return;  // Normal state - no warning needed
+      return;
     }
 
     let deviceLinkPS: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
@@ -152,7 +147,6 @@ public abstract class DebugUtils {
 
     BNInfo(context, "===============================");
   }
-
 
   public static func LogAccessPointBreachTarget(apPS: ref<AccessPointControllerPS>, opt logContext: String) -> Void {
     if !BetterNetrunningSettings.EnableDebugLog() {
@@ -239,7 +233,6 @@ public abstract class DebugUtils {
     BNInfo(context, "=====================================");
   }
 
-
   public static func LogProgramFilteringStep(
     filterName: String,
     programsBefore: Int32,
@@ -292,7 +285,6 @@ public abstract class DebugUtils {
     BNInfo(context, "=============================");
   }
 
-
   public static func LogRemoteBreachRAMCheck(
     actionClassName: CName,
     ramCost: Int32,
@@ -318,7 +310,6 @@ public abstract class DebugUtils {
   }
 
 }
-
 
 @wrapMethod(Device)
 protected cb func OnScanningActionFinishedEvent(evt: ref<ScanningActionFinishedEvent>) -> Void {

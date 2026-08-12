@@ -1,0 +1,147 @@
+# BN_EntropyProtocol — breach daemon injected during physical device breach.
+# Degrades all resistance systems on marked+stamped personnel for 60 seconds.
+# Three tiers, each unlocked by the corresponding GhostNET Offensive Daemons research.
+#
+# Tier I   (rank 1, -25):  entropy_protocol v1.0
+# Tier II  (rank 2, -50):  entropy_protocol v2.0
+# Tier III (rank 3, -100): entropy_protocol v3.0
+#
+# Dispatch: OffensiveDaemonDispatch.reds reads BNPerk.EntropyProtocol level
+# and applies the matching tier record. Only one tier is ever active per NPC.
+#
+# $base: BaseStatusEffect.VulnerableStatusEffect (not Stat_Buff) — Stat_Buff extends
+# plain StatusEffect which has no icon-rendering plumbing.
+# immunityStats cleared — VulnerableImmunity is an unrelated vanilla mechanic.
+#
+# stats: field applies modifiers to the TARGET entity's vanilla stat pool.
+# Values are additive integers — vanilla resistance stats are raw point values,
+# not percentages (a typical NPC has ~17 points of shock/electric resistance).
+
+BaseStatusEffect.BN_EntropyProtocol_I:
+  $base: BaseStatusEffect.VulnerableStatusEffect
+  immunityStats: []
+  duration:
+    $type: gamedataStatModifierGroup_Record
+    statModifiers:
+      - $type: gamedataConstantStatModifier_Record
+        statType: BaseStats.MaxDuration
+        modifierType: Additive
+        value: 60
+  statusEffectType: BaseStatusEffectTypes.PassiveDebuff
+  gameplayTags:
+    - Debuff
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: Entropy Protocol
+    iconPath: decreased_stats_icon
+    priority: -6.0
+  packages:
+    - $type: gamedataGameplayLogicPackage_Record
+      stats:
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.PhysicalResistance
+          modifierType: Additive
+          value: -25
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ChemicalResistance
+          modifierType: Additive
+          value: -25
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ThermalResistance
+          modifierType: Additive
+          value: -25
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ElectricResistance
+          modifierType: Additive
+          value: -25
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.QuickhackResistance
+          modifierType: Additive
+          value: -25
+
+BaseStatusEffect.BN_EntropyProtocol_II:
+  $base: BaseStatusEffect.VulnerableStatusEffect
+  immunityStats: []
+  duration:
+    $type: gamedataStatModifierGroup_Record
+    statModifiers:
+      - $type: gamedataConstantStatModifier_Record
+        statType: BaseStats.MaxDuration
+        modifierType: Additive
+        value: 60
+  statusEffectType: BaseStatusEffectTypes.PassiveDebuff
+  gameplayTags:
+    - Debuff
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: Entropy Protocol
+    iconPath: decreased_stats_icon
+    priority: -6.0
+  packages:
+    - $type: gamedataGameplayLogicPackage_Record
+      stats:
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.PhysicalResistance
+          modifierType: Additive
+          value: -50
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ChemicalResistance
+          modifierType: Additive
+          value: -50
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ThermalResistance
+          modifierType: Additive
+          value: -50
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ElectricResistance
+          modifierType: Additive
+          value: -50
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.QuickhackResistance
+          modifierType: Additive
+          value: -50
+
+BaseStatusEffect.BN_EntropyProtocol_III:
+  $base: BaseStatusEffect.VulnerableStatusEffect
+  immunityStats: []
+  duration:
+    $type: gamedataStatModifierGroup_Record
+    statModifiers:
+      - $type: gamedataConstantStatModifier_Record
+        statType: BaseStats.MaxDuration
+        modifierType: Additive
+        value: 60
+  statusEffectType: BaseStatusEffectTypes.PassiveDebuff
+  gameplayTags:
+    - Debuff
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: Entropy Protocol
+    iconPath: decreased_stats_icon
+    priority: -6.0
+  packages:
+    - $type: gamedataGameplayLogicPackage_Record
+      stats:
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.PhysicalResistance
+          modifierType: Additive
+          value: -100
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ChemicalResistance
+          modifierType: Additive
+          value: -100
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ThermalResistance
+          modifierType: Additive
+          value: -100
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.ElectricResistance
+          modifierType: Additive
+          value: -100
+        - $type: gamedataConstantStatModifier_Record
+          statType: BaseStats.QuickhackResistance
+          modifierType: Additive
+          value: -100

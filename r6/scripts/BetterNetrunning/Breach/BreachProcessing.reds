@@ -46,12 +46,14 @@ private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceCompo
   stats.unlockTurrets = unlockFlags.unlockTurrets;
   stats.unlockNPCs = unlockFlags.unlockNPCs;
 
+  this.SuppressVanillaOffensiveDaemonPropagation();
+
   let ms: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance())
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
   if IsDefined(ms) { ms.SetApBreachFinalizing(true); }
   wrappedMethod(devices);
   if IsDefined(ms) { ms.SetApBreachFinalizing(false); }
-  stats.minigameSuccess = true; // RefreshSlaves only called on success
+  stats.minigameSuccess = true;
 
   this.ApplyBetterNetrunningExtensionsWithStats(devices, unlockFlags, stats, isUnconsciousNPCBreach, minigamePrograms);
 
@@ -60,8 +62,6 @@ private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceCompo
 
   this.ShowBreachResultInWidget(unlockFlags, isUnconsciousNPCBreach);
 }
-
-
 
 @addMethod(AccessPointControllerPS)
 private final func IsUnconsciousNPCBreach() -> Bool {
@@ -84,7 +84,6 @@ private final func MarkUnconsciousNPCAsDirectlyBreached() -> Void {
     DebugUtils.LogUnconsciousNPCBreachTarget(npcPuppet, npcPS, "BreachStart");
   }
 }
-
 
 @addMethod(AccessPointControllerPS)
 private final func ApplyBetterNetrunningExtensionsWithStats(
@@ -133,7 +132,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
           case TargetType.Turret:
             currentTimestamp = sharedPS.m_betterNetrunningUnlockTimestampTurrets;
             break;
-          default: // TargetType.Basic
+          default:
             currentTimestamp = sharedPS.m_betterNetrunningUnlockTimestampBasic;
             break;
         }
@@ -149,7 +148,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
             case TargetType.Turret:
               sharedPS.m_betterNetrunningUnlockTimestampTurrets = 0.0;
               break;
-            default: // TargetType.Basic
+            default:
               sharedPS.m_betterNetrunningUnlockTimestampBasic = 0.0;
               break;
           }
@@ -172,12 +171,10 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
 private final func ExecuteNPCBreachPingIfNeeded(minigamePrograms: array<TweakDBID>) -> Void {
 }
 
-
 @addMethod(AccessPointControllerPS)
 private final func GetMinigameBlackboard() -> ref<IBlackboard> {
   return GameInstance.GetBlackboardSystem(this.GetGameInstance()).Get(GetAllBlackboardDefs().HackingMinigame);
 }
-
 
 @addMethod(AccessPointControllerPS)
 private final func ApplyBreachUnlockToDevicesWithStats(
@@ -297,7 +294,7 @@ private final func ShowBreachResultInWidget(unlockFlags: BreachUnlockFlags, isUn
   else if unlockFlags.unlockTurrets { targetType = "turret"; }
 
   ms.RecordRemoteBreachTarget(targetName, targetType);
-  ms.RecordBreachICEState(1, 1);  // 1/1 = shows "FULLY COMPROMISED" for a successful breach
+  ms.RecordBreachICEState(1, 1);
   ms.ShowRemoteBreachStatus();
 }
 
@@ -315,4 +312,29 @@ private final func DeductRAMForMarkedEntities(markingSystem: ref<MarkingStateSys
     let newRAM: Float = MaxF(0.0, currentRAM - Cast<Float>(markedCount));
     statPoolSystem.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.Memory, newRAM, player, false);
     BNInfo("BreachProcessing", "Targeted breach RAM cost: -" + ToString(markedCount) + " (" + ToString(markedCount) + " marked entities)");
+}
+
+@addMethod(AccessPointControllerPS)
+private final func SuppressVanillaOffensiveDaemonPropagation() -> Void {
+  if !BetterNetrunningSettings.OffensiveDaemonsEnabled() { return; }
+
+  let bb: ref<IBlackboard> = this.GetMinigameBlackboard();
+  let programs: array<TweakDBID> = FromVariant<array<TweakDBID>>(
+    bb.GetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms)
+  );
+
+  let stripped: Int32 = 0;
+  let i: Int32 = ArraySize(programs) - 1;
+  while i >= 0 {
+    if BNConstants.IsOffensiveDaemon(programs[i]) {
+      ArrayErase(programs, i);
+      stripped += 1;
+    }
+    i -= 1;
+  }
+
+  if stripped > 0 {
+    bb.SetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms, ToVariant(programs));
+    BNInfo("BreachProcessing", "Suppressed " + ToString(stripped) + " vanilla offensive daemon(s) from AP propagation");
+  }
 }

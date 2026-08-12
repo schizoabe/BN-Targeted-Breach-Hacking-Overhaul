@@ -25,7 +25,7 @@ public abstract class TimeUtils {
             case TargetType.Turret:
                 sharedPS.m_betterNetrunningUnlockTimestampTurrets = timestamp;
                 break;
-            default: // TargetType.Basic
+            default:
                 sharedPS.m_betterNetrunningUnlockTimestampBasic = timestamp;
                 break;
         }

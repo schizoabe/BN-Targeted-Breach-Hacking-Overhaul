@@ -5,7 +5,6 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Logging.*
 
-
 @wrapMethod(Device)
 protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
   evt.SetShouldForward(false);
@@ -55,7 +54,6 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
   return result;
 }
 
-
 @addMethod(VehicleObject)
 protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
   let gi: GameInstance = this.GetGame();
@@ -79,7 +77,6 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
 
   return false;
 }
-
 
 func BNUnmarkEntity(gi: GameInstance, entityID: EntityID, reason: String) -> Void {
   let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)

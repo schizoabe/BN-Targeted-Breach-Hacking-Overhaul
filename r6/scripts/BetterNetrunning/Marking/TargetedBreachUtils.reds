@@ -6,7 +6,6 @@ import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Network.*
 
-
 @if(ModuleExists("HackthePlanetForReal"))
 @addMethod(ScriptedPuppetPS)
 public func BN_StampSJKIBreached() -> Void {
@@ -17,7 +16,6 @@ public func BN_StampSJKIBreached() -> Void {
 @if(!ModuleExists("HackthePlanetForReal"))
 @addMethod(ScriptedPuppetPS)
 public func BN_StampSJKIBreached() -> Void {}
-
 
 public abstract class TargetedBreachUtils {
 

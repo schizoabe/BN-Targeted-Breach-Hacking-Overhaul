@@ -15,7 +15,6 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Perks.*
 
-
 @wrapMethod(MinigameGenerationRuleScalingPrograms)
 public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgramData>>) -> Void {
   if IsDefined(this.m_entity) {
@@ -46,6 +45,11 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     if IsDefined(npcRBSS) && IsDefined(npcRBSS.GetCurrentNPC()) {
       let puppet: ref<ScriptedPuppet> = this.m_entity as ScriptedPuppet;
       if IsDefined(puppet) && Equals(puppet.GetPS().GetID(), npcRBSS.GetCurrentNPC().GetID()) {
+        if !IsDefined(markingSystem) || !markingSystem.IsScoutMode() {
+          ArrayClear(Deref(programs));
+          BNInfo("FilterPlayerPrograms", "NPC remote breach blocked — not in Scout mode");
+          return;
+        }
         BNDebug("FilterPlayerPrograms", "NPC remote breach board — preserving programs");
         return;
       }
@@ -62,11 +66,15 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
           BNInfo("FilterPlayerPrograms", "Intrusion Suite not owned — device remote breach blocked");
           return;
         }
+        if !IsDefined(markingSystem) || !markingSystem.IsScoutMode() {
+          ArrayClear(Deref(programs));
+          BNInfo("FilterPlayerPrograms", "Device remote breach blocked — not in Scout mode");
+          return;
+        }
         BNDebug("FilterPlayerPrograms", "Device remote breach board — preserving programs");
         return;
       }
     }
-
 
   }
 
@@ -75,12 +83,37 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     if GameInstance.IsValid(gameInstance) {
       let perkSysNPC: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
       if IsDefined(perkSysNPC) && perkSysNPC.GetPerkLevel(BNPerk.NeuralTap) <= 0 {
-        ArrayClear(Deref(programs));  // strip vanilla programs so nothing shows on the board
+        ArrayClear(Deref(programs));
         BNInfo("FilterPlayerPrograms", "Neural Tap not owned — unconscious NPC breach blocked");
         return;
       }
     }
     ArrayClear(Deref(programs));
+
+    if IsDefined(markingSystem) && markingSystem.IsDefendMode() {
+      let perkSysUNPC: ref<BNPerkSystem> = BNPerkSystem.GetInstance(this.m_player.GetGame());
+      let offloadUnlockedNPC: Bool = IsDefined(perkSysUNPC) && perkSysUNPC.GetPerkLevel(BNPerk.OffloadProtocol) > 0;
+      if offloadUnlockedNPC {
+        let offloadNPC: MinigameProgramData;
+        offloadNPC.actionID    = BNConstants.PROGRAM_BN_OFFLOAD_PROTOCOL();
+        offloadNPC.programName = n"BN_OffloadProtocol";
+        ArrayPush(Deref(programs), offloadNPC);
+      }
+      let exitNPC: MinigameProgramData;
+      exitNPC.actionID    = BNConstants.PROGRAM_BN_EXIT_PROTOCOL();
+      exitNPC.programName = n"BN_ExitProtocol";
+      ArrayPush(Deref(programs), exitNPC);
+      let ddNPC: ref<DisplayedDaemonsStateSystem> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame())
+        .Get(BNConstants.CLASS_DISPLAYED_DAEMONS_STATE_SYSTEM()) as DisplayedDaemonsStateSystem;
+      if IsDefined(ddNPC) {
+        let shownNPC: array<TweakDBID>;
+        if offloadUnlockedNPC { ArrayPush(shownNPC, BNConstants.PROGRAM_BN_OFFLOAD_PROTOCOL()); }
+        ArrayPush(shownNPC, BNConstants.PROGRAM_BN_EXIT_PROTOCOL());
+        ddNPC.SetDisplayedDaemons(shownNPC);
+      }
+      BNInfo("FilterPlayerPrograms", "Defend mode — unconscious NPC board: Offload=" + ToString(offloadUnlockedNPC) + " + Exit Protocol");
+      return;
+    }
 
     if IsDefined(markingSystem) {
       if markingSystem.HasMarkedRoot() {
@@ -107,6 +140,11 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     signalNoise.actionID    = BNConstants.PROGRAM_SIGNAL_NOISE();
     signalNoise.programName = n"SignalNoiseProtocol";
     ArrayPush(Deref(programs), signalNoise);
+
+    let exitProtoNPC: MinigameProgramData;
+    exitProtoNPC.actionID    = BNConstants.PROGRAM_BN_EXIT_PROTOCOL();
+    exitProtoNPC.programName = n"BN_ExitProtocol";
+    ArrayPush(Deref(programs), exitProtoNPC);
 
     let perkSysP: ref<BNPerkSystem>;
     if GameInstance.IsValid(gameInstance) {
@@ -163,6 +201,32 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     }
   }
 
+  if IsDefined(markingSystem) && markingSystem.IsDefendMode() {
+    ArrayClear(Deref(programs));
+    let perkSysDef: ref<BNPerkSystem> = BNPerkSystem.GetInstance(this.m_player.GetGame());
+    let offloadUnlocked: Bool = IsDefined(perkSysDef) && perkSysDef.GetPerkLevel(BNPerk.OffloadProtocol) > 0;
+    if offloadUnlocked {
+      let offloadProg: MinigameProgramData;
+      offloadProg.actionID    = BNConstants.PROGRAM_BN_OFFLOAD_PROTOCOL();
+      offloadProg.programName = n"BN_OffloadProtocol";
+      ArrayPush(Deref(programs), offloadProg);
+    }
+    let exitProg: MinigameProgramData;
+    exitProg.actionID    = BNConstants.PROGRAM_BN_EXIT_PROTOCOL();
+    exitProg.programName = n"BN_ExitProtocol";
+    ArrayPush(Deref(programs), exitProg);
+    let ddSysDef: ref<DisplayedDaemonsStateSystem> = GameInstance.GetScriptableSystemsContainer(this.m_player.GetGame())
+      .Get(BNConstants.CLASS_DISPLAYED_DAEMONS_STATE_SYSTEM()) as DisplayedDaemonsStateSystem;
+    if IsDefined(ddSysDef) {
+      let shownDef: array<TweakDBID>;
+      if offloadUnlocked { ArrayPush(shownDef, BNConstants.PROGRAM_BN_OFFLOAD_PROTOCOL()); }
+      ArrayPush(shownDef, BNConstants.PROGRAM_BN_EXIT_PROTOCOL());
+      ddSysDef.SetDisplayedDaemons(shownDef);
+    }
+    BNInfo("FilterPlayerPrograms", "Defend mode — board override: Offload=" + ToString(offloadUnlocked) + " + Exit Protocol");
+    return;
+  }
+
   let protectedPrograms: array<MinigameProgramData>;
   this.ExtractBetterNetrunningDaemons(programs, protectedPrograms);
 
@@ -194,18 +258,23 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
   while i >= 0 {
     let pid: TweakDBID = Deref(programs)[i].actionID;
     let subnetHasMarks: Bool = false;
+    let allMarksUnlocked: Bool = false;
     if IsDefined(markingSystem) {
       if pid == BNConstants.PROGRAM_UNLOCK_QUICKHACKS() {
         subnetHasMarks = markingSystem.HasMarkedRoot();
+        if subnetHasMarks { allMarksUnlocked = markingSystem.AllMarkedRootStamped(); }
       } else if pid == BNConstants.PROGRAM_UNLOCK_NPC_QUICKHACKS() {
         subnetHasMarks = markingSystem.HasMarkedNPCs();
+        if subnetHasMarks { allMarksUnlocked = markingSystem.AllMarkedNPCsStamped(); }
       } else if pid == BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS() {
         subnetHasMarks = markingSystem.HasMarkedCameras();
+        if subnetHasMarks { allMarksUnlocked = markingSystem.AllMarkedCamerasStamped(); }
       } else if pid == BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS() {
         subnetHasMarks = markingSystem.HasMarkedDefense();
+        if subnetHasMarks { allMarksUnlocked = markingSystem.AllMarkedTurretsStamped(); }
       }
     }
-    if !subnetHasMarks && ShouldRemoveBreachedPrograms(pid, this.m_entity as GameObject) {
+    if allMarksUnlocked || (!subnetHasMarks && ShouldRemoveBreachedPrograms(pid, this.m_entity as GameObject)) {
       ArrayErase(Deref(programs), i);
     }
     i -= 1;
@@ -294,11 +363,31 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
   }
 }
 
-
 @addMethod(MinigameGenerationRuleScalingPrograms)
 private final func EnsureIcepickFallback(programs: script_ref<array<MinigameProgramData>>) -> Void {
   if BetterNetrunningSettings.EnableClassicMode() {
     return;
+  }
+
+  if IsDefined(this.m_entity as AccessPoint) { return; }
+
+  let giEI: GameInstance;
+  if IsDefined(this.m_entity as Device) { giEI = (this.m_entity as Device).GetGame(); }
+  else if IsDefined(this.m_entity as ScriptedPuppet) { giEI = (this.m_entity as ScriptedPuppet).GetGame(); }
+  if GameInstance.IsValid(giEI) {
+    let mssEI: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(giEI)
+      .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+    if IsDefined(mssEI) && mssEI.IsAttackMode() { return; }
+  }
+
+  let iceAlreadyBroken: Bool = false;
+  if GameInstance.IsValid(giEI) {
+    let devPS: ref<ScriptableDeviceComponentPS>;
+    if IsDefined(this.m_entity as Device) { devPS = (this.m_entity as Device).GetDevicePS(); }
+    if IsDefined(devPS) {
+      let netState: NetworkState = NetworkStateUtils.GetNetworkState(devPS, giEI);
+      iceAlreadyBroken = netState.hitsRequired > 0 && NetworkStateUtils.IsSubnetAccessible(netState);
+    }
   }
 
   let k: Int32 = 0;
@@ -344,10 +433,12 @@ private final func EnsureIcepickFallback(programs: script_ref<array<MinigameProg
   }
   let hasPerkSys: Bool = IsDefined(perkSysFB);
 
-  let v1: MinigameProgramData;
-  v1.actionID    = BNConstants.PROGRAM_BN_ICEPICK_V1();
-  v1.programName = n"FractureProtocol";
-  ArrayInsert(Deref(programs), 0, v1);
+  if !iceAlreadyBroken {
+    let v1: MinigameProgramData;
+    v1.actionID    = BNConstants.PROGRAM_BN_ICEPICK_V1();
+    v1.programName = n"FractureProtocol";
+    ArrayInsert(Deref(programs), 0, v1);
+  }
 
   if !hasPerkSys || perkSysFB.GetPerkLevel(BNPerk.Purge) > 0 {
     let v2: MinigameProgramData;
@@ -356,7 +447,7 @@ private final func EnsureIcepickFallback(programs: script_ref<array<MinigameProg
     ArrayInsert(Deref(programs), ArraySize(Deref(programs)), v2);
   }
 
-  if !hasPerkSys || perkSysFB.GetPerkLevel(BNPerk.Sunder) > 0 {
+  if (!hasPerkSys || perkSysFB.GetPerkLevel(BNPerk.Sunder) > 0) && !iceAlreadyBroken {
     let v3: MinigameProgramData;
     v3.actionID    = BNConstants.PROGRAM_BN_ICEPICK_V3();
     v3.programName = n"SunderProtocol";
@@ -364,16 +455,16 @@ private final func EnsureIcepickFallback(programs: script_ref<array<MinigameProg
   }
 
   BNDebug("FilterPlayerPrograms",
-    "EnsureIcepickFallback: injected Fracture"
+    "EnsureIcepickFallback:"
+    + (!iceAlreadyBroken ? " Fracture" : " (ICE broken — Fracture/Sunder skipped)")
     + (!hasPerkSys || perkSysFB.GetPerkLevel(BNPerk.Purge) > 0 ? " + Purge" : "")
-    + (!hasPerkSys || perkSysFB.GetPerkLevel(BNPerk.Sunder) > 0 ? " + Sunder" : ""));
+    + ((!hasPerkSys || perkSysFB.GetPerkLevel(BNPerk.Sunder) > 0) && !iceAlreadyBroken ? " + Sunder" : ""));
 }
 
 @addMethod(MinigameGenerationRuleScalingPrograms)
 private final func InjectIcepickIfNoMarks(programs: script_ref<array<MinigameProgramData>>) -> Void {
   this.EnsureIcepickFallback(programs);
 }
-
 
 @addMethod(MinigameGenerationRuleScalingPrograms)
 private final func ExtractBetterNetrunningDaemons(
@@ -407,7 +498,6 @@ private final func RestoreBetterNetrunningDaemons(
     i += 1;
   }
 }
-
 
 @addMethod(MinigameGenerationRuleScalingPrograms)
 private final func GetBreachPositionForFiltering() -> Vector4 {

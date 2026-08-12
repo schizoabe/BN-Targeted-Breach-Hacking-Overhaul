@@ -11,6 +11,7 @@ import BetterNetrunning.Breach.*
 import BetterNetrunning.*
 import BetterNetrunningConfig.*
 import BetterNetrunning.Perks.*
+import BetterNetrunning.Marking.*
 
 @addMethod(ScriptableDeviceComponentPS)
 public final func IsDeviceAlreadyUnlocked() -> Bool {
@@ -70,6 +71,12 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
     }
   }
 
+  if GameInstance.IsValid(gi) {
+    let mssRB: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
+      .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+    if IsDefined(mssRB) && !mssRB.IsScoutMode() { return; }
+  }
+
   let hasCustomRemoteBreach: Bool = false;
   let i: Int32 = 0;
   while i < ArraySize(Deref(outActions)) {
@@ -117,7 +124,7 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
       }
       i -= 1;
     }
-    return;  // Don't show minigame entry when unlocked
+    return;
   }
 
   let gi2: GameInstance = this.GetGameInstance();
@@ -126,6 +133,12 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
     if !IsDefined(perkSys2) || perkSys2.GetPerkLevel(BNPerk.IntrusionSuite) <= 0 {
       return;
     }
+  }
+
+  if GameInstance.IsValid(gi2) {
+    let mssRB2: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi2)
+      .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+    if IsDefined(mssRB2) && !mssRB2.IsScoutMode() { return; }
   }
 
   let isCamera: Bool = DeviceTypeUtils.IsCameraDevice(this);
@@ -188,7 +201,6 @@ private final func RemoveCustomRemoteBreachAction(outActions: script_ref<array<r
   }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(QuickHackableHelper)
 public static func TranslateActionsIntoQuickSlotCommands(const actions: array<ref<DeviceAction>>, commands: script_ref<array<ref<QuickhackData>>>, gameObject: ref<GameObject>, scriptableComponentPS: ref<ScriptableDeviceComponentPS>) -> Void {
@@ -197,7 +209,7 @@ public static func TranslateActionsIntoQuickSlotCommands(const actions: array<re
   let playerRef: ref<PlayerPuppet> = GetPlayer(gameObject.GetGame());
   if !IsDefined(playerRef) {
     BNDebug("RemoteBreachVisibility", "Player not defined - EXIT");
-    return; // Early return if player not available
+    return;
   }
 
   let i: Int32 = 0;

@@ -79,7 +79,6 @@ private final func ApplyBetterNetrunningQuickhackFilter(
 
 }
 
-
 @addMethod(ScriptedPuppetPS)
 private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
   let permissions: NPCHackPermissions;
@@ -118,7 +117,6 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
 
   return permissions;
 }
-
 
 @addMethod(ScriptedPuppetPS)
 private final func ShouldQuickhackBeInactive(puppetAction: ref<PuppetAction>, permissions: NPCHackPermissions) -> Bool {
@@ -159,12 +157,11 @@ private final func SetQuickhackInactiveReason(puppetAction: ref<PuppetAction>, a
   let isRemoteBreachLocked: Bool = BreachLockUtils.IsNPCLockedByRemoteBreachFailure(this);
 
   if isRemoteBreachLocked {
-    puppetAction.SetInactiveWithReason(false, BNConstants.LOCKEY_NO_NETWORK_ACCESS());  // "No network access rights"
+    puppetAction.SetInactiveWithReason(false, BNConstants.LOCKEY_NO_NETWORK_ACCESS());
   } else {
     puppetAction.SetInactiveWithReason(false, LocKeyToString(BNConstants.LOCKEY_QUICKHACKS_LOCKED()));
   }
 }
-
 
 @addMethod(ScriptedPuppetPS)
 protected final func IsWhiteListedForHacks() -> Bool {

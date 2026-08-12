@@ -5,7 +5,6 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.UI.*
 
-
 public abstract class ICEDiagnosticUtils {
 
   public static func GetTierLabel(hitsRequired: Int32) -> String {
@@ -23,7 +22,6 @@ public abstract class ICEDiagnosticUtils {
     return ToString(pct) + "% DEGRADED";
   }
 }
-
 
 public class ICEScoutLog {
   private let m_canvas:      ref<inkCanvas>;
@@ -101,7 +99,7 @@ public class ICEScoutLog {
     title.SetAnchor(inkEAnchor.TopLeft);
     title.SetMargin(new inkMargin(txtX, 10.0, 12.0, 0.0));
     title.SetTintColor(new HDRColor(0.15, 1.2, 1.1, 1.0));
-    title.SetText("ICE Scout Log  //  Diagnostic Feed");
+    title.SetText("Diagnostic Feed");
     title.Reparent(canvas);
 
     let footerFluff = new inkImage();
@@ -124,7 +122,7 @@ public class ICEScoutLog {
     footer.SetAnchor(inkEAnchor.TopLeft);
     footer.SetMargin(new inkMargin(txtX, h - 24.0, 12.0, 0.0));
     footer.SetTintColor(new HDRColor(0.15, 1.2, 1.1, 0.7));
-    footer.SetText("BN // ICE Diagnostic System v1.0");
+    footer.SetText("ICE Diagnostic System v1.4");
     footer.Reparent(canvas);
     this.m_footer = footer;
 
@@ -383,7 +381,6 @@ public class ICEScoutLog {
   }
 }
 
-
 public class ICEScoutLogSystem extends ScriptableSystem {
   private let m_log: ref<ICEScoutLog>;
 
@@ -431,7 +428,6 @@ public class ICEScoutLogSystem extends ScriptableSystem {
     if IsDefined(this.m_log) { this.m_log.Hide(); }
   }
 }
-
 
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {

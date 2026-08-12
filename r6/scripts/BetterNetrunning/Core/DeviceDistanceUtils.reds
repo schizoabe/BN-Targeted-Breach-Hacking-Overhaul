@@ -48,7 +48,7 @@ public abstract class DeviceDistanceUtils {
     let devicePosition: Vector4 = DeviceDistanceUtils.GetDevicePosition(device, gameInstance);
 
     if devicePosition.X <= -999000.0 {
-      return true; // Fallback: allow if position unavailable
+      return true;
     }
 
     return DeviceDistanceUtils.IsPositionWithinRadius(devicePosition, centerPosition, radiusMeters);

@@ -208,17 +208,113 @@ function TweakDBSetup.SetupSignalNoiseDaemon()
     print("[Better Netrunning] Signal Noise daemon configured")
 end
 
+function TweakDBSetup.SetupOffensiveNPCDaemon()
+    TweakDB:CloneRecord("Interactions.BNEntropyProtocol", "Interactions.NetworkGainAccessProgram")
+    TweakDB:SetFlat("Interactions.BNEntropyProtocol.caption",
+        LocKey("Better-Netrunning-EntropyProtocol-Name"))
+    TweakDB:SetFlat("Interactions.BNEntropyProtocol.description",
+        LocKey("Better-Netrunning-EntropyProtocol-Description"))
+
+    TweakDB:CloneRecord("MinigameAction.BN_EntropyProtocol", "MinigameAction.NetworkLowerICEMajor")
+    TweakDB:SetFlat("MinigameAction.BN_EntropyProtocol.objectActionUI",    "Interactions.BNEntropyProtocol")
+    TweakDB:SetFlat("MinigameAction.BN_EntropyProtocol.completionEffects", {})
+    TweakDB:SetFlat("MinigameAction.BN_EntropyProtocol.type",              "MinigameAction.Both")
+    TweakDB:SetFlat("MinigameAction.BN_EntropyProtocol.complexity",        60.0)
+
+    print("[Better Netrunning] Entropy Protocol NPC daemon configured")
+end
+
+function TweakDBSetup.SetupFirewallMinigame()
+    TweakDB:CloneRecord("Interactions.NetworkFirewallICE", "Interactions.NetworkGainAccessProgram")
+    TweakDB:SetFlat("Interactions.NetworkFirewallICE.caption",
+        LocKey("Better-Netrunning-Firewall-ICE-Name"))
+    TweakDB:SetFlat("Interactions.NetworkFirewallICE.description",
+        LocKey("Better-Netrunning-Firewall-ICE-Description"))
+
+    TweakDB:CloneRecord("MinigameAction.BNFirewallICE", "MinigameAction.NetworkLowerICEMajor")
+    TweakDB:SetFlat("MinigameAction.BNFirewallICE.objectActionUI", "Interactions.NetworkFirewallICE")
+    TweakDB:SetFlat("MinigameAction.BNFirewallICE.completionEffects", {})
+
+    TweakDB:CloneRecord("MinigameProgram.BNFirewall", "minigame_v2.DefaultItemMinigame_inline0")
+    TweakDB:SetFlat("MinigameProgram.BNFirewall.program", "MinigameAction.BNFirewallICE")
+    TweakDB:SetFlat("MinigameProgram.BNFirewall.charactersChain", {-1, -1, -1, -1, -1})
+
+    TweakDB:CloneRecord("CustomHackingSystemMinigame.BNFirewall", "minigame_v2.DefaultMinigame")
+    TweakDB:SetFlat("CustomHackingSystemMinigame.BNFirewall.timeLimit", 10.0)
+    TweakDB:SetFlat("CustomHackingSystemMinigame.BNFirewall.gridSize", 5)
+    TweakDB:SetFlat("CustomHackingSystemMinigame.BNFirewall.bufferSize", 5)
+    TweakDB:SetFlat("CustomHackingSystemMinigame.BNFirewall.extraDifficulty", 25)
+    TweakDB:SetFlat("CustomHackingSystemMinigame.BNFirewall.overrideProgramsList",
+        {"MinigameProgram.BNFirewall"})
+    TweakDB:SetFlat("CustomHackingSystemMinigame.BNFirewall.forbiddenProgramsList", {})
+
+    print("[Better Netrunning] Firewall minigame configured")
+end
+
+function TweakDBSetup.SetupCascadeProtocol()
+    TweakDB:CloneRecord("Interactions.BNCascadeProtocol", "Interactions.NetworkGainAccessProgram")
+    TweakDB:SetFlat("Interactions.BNCascadeProtocol.caption",
+        LocKey("Better-Netrunning-CascadeProtocol-Name"))
+    TweakDB:SetFlat("Interactions.BNCascadeProtocol.description",
+        LocKey("Better-Netrunning-CascadeProtocol-Description"))
+
+    TweakDB:CloneRecord("MinigameAction.BN_CascadeProtocol", "MinigameAction.NetworkLowerICEMajor")
+    TweakDB:SetFlat("MinigameAction.BN_CascadeProtocol.objectActionUI",    "Interactions.BNCascadeProtocol")
+    TweakDB:SetFlat("MinigameAction.BN_CascadeProtocol.completionEffects", {})
+    TweakDB:SetFlat("MinigameAction.BN_CascadeProtocol.type",              "MinigameAction.Both")
+    TweakDB:SetFlat("MinigameAction.BN_CascadeProtocol.complexity",        60.0)
+
+    print("[Better Netrunning] Cascade Protocol configured")
+end
+
+function TweakDBSetup.SetupOffloadProtocol()
+    TweakDB:CloneRecord("Interactions.BNOffloadProtocol", "Interactions.NetworkGainAccessProgram")
+    TweakDB:SetFlat("Interactions.BNOffloadProtocol.caption",
+        LocKey("Better-Netrunning-OffloadProtocol-Name"))
+    TweakDB:SetFlat("Interactions.BNOffloadProtocol.description",
+        LocKey("Better-Netrunning-OffloadProtocol-Description"))
+
+    TweakDB:CloneRecord("MinigameAction.BN_OffloadProtocol", "MinigameAction.NetworkLowerICEMajor")
+    TweakDB:SetFlat("MinigameAction.BN_OffloadProtocol.objectActionUI",    "Interactions.BNOffloadProtocol")
+    TweakDB:SetFlat("MinigameAction.BN_OffloadProtocol.completionEffects", {})
+    TweakDB:SetFlat("MinigameAction.BN_OffloadProtocol.type",              "MinigameAction.Both")
+    TweakDB:SetFlat("MinigameAction.BN_OffloadProtocol.complexity",        30.0)
+
+    print("[Better Netrunning] Offload Protocol daemon configured")
+end
+
+function TweakDBSetup.SetupExitProtocol()
+    TweakDB:CloneRecord("Interactions.BNExitProtocol", "Interactions.NetworkGainAccessProgram")
+    TweakDB:SetFlat("Interactions.BNExitProtocol.caption",
+        LocKey("Better-Netrunning-ExitProtocol-Name"))
+    TweakDB:SetFlat("Interactions.BNExitProtocol.description",
+        LocKey("Better-Netrunning-ExitProtocol-Description"))
+
+    TweakDB:CloneRecord("MinigameAction.BN_ExitProtocol", "MinigameAction.NetworkLowerICEMajor")
+    TweakDB:SetFlat("MinigameAction.BN_ExitProtocol.objectActionUI",    "Interactions.BNExitProtocol")
+    TweakDB:SetFlat("MinigameAction.BN_ExitProtocol.completionEffects", {})
+    TweakDB:SetFlat("MinigameAction.BN_ExitProtocol.type",              "MinigameAction.Both")
+    TweakDB:SetFlat("MinigameAction.BN_ExitProtocol.complexity",        70.0)
+
+    print("[Better Netrunning] Exit Protocol daemon configured")
+end
+
 local BN_MINIGAME_ATLAS = "base\\gameplay\\gui\\fullscreen\\hacking_minigame\\atlas_minigame_programs.inkatlas"
 
 function TweakDBSetup.SetupDaemonIcons()
     local icons = {
-        { record = "Interactions.BNIcepickV1",             name = "BNFracture",  part = "DataMineAdvanced"  },
-        { record = "Interactions.BNIcepickV2",             name = "BNPurge",     part = "ICEMedium"         },
-        { record = "Interactions.BNIcepickV3",             name = "BNSunder",    part = "DataMineMaster"    },
-        { record = "Interactions.NetworkCounterBreachICE", name = "BNDeadlock",  part = "DoorAuthorization" },
-        { record = "Interactions.BNHidePresence",          name = "BNGhost",     part = "AutoBlind"         },
-        { record = "Interactions.BNDisarmICE",             name = "BNNull",      part = "ICEMajor"          },
-        { record = "Interactions.BNSignalNoise",           name = "BNRaven",     part = "ICEPick"           },
+        { record = "Interactions.BNIcepickV1",             name = "BNFracture",    part = "DataMineAdvanced"  },
+        { record = "Interactions.BNIcepickV2",             name = "BNPurge",       part = "ICEMedium"         },
+        { record = "Interactions.BNIcepickV3",             name = "BNSunder",      part = "DataMineMaster"    },
+        { record = "Interactions.NetworkCounterBreachICE", name = "BNDeadlock",    part = "DoorAuthorization" },
+        { record = "Interactions.BNHidePresence",          name = "BNGhost",       part = "AutoBlind"         },
+        { record = "Interactions.BNDisarmICE",             name = "BNNull",        part = "ICEMajor"          },
+        { record = "Interactions.BNSignalNoise",           name = "BNRaven",       part = "ICEPick"           },
+        { record = "Interactions.BNEntropyProtocol",     name = "BNEntropyProtocol",    part = "VulnerableNPCs"    },
+        { record = "Interactions.BNExitProtocol",        name = "BNExitProtocol",        part = "DoorAuthorization" },
+        { record = "Interactions.BNOffloadProtocol",     name = "BNOffloadProtocol",     part = "ICEMedium"         },
+        { record = "Interactions.NetworkFirewallICE",    name = "BNRampart",             part = "FriendlyCameras"   },
+        { record = "Interactions.BNCascadeProtocol",     name = "BNCascade",             part = "MassMadness"       },
     }
 
     for _, entry in ipairs(icons) do

@@ -43,7 +43,6 @@ public struct BreachUnlockFlags {
 
 public abstract class DeviceTypeUtils {
 
-
   public static func GetDeviceType(device: ref<DeviceComponentPS>) -> TargetType {
     if IsDefined(device as PuppetDeviceLinkPS) || IsDefined(device as CommunityProxyPS) {
       return TargetType.NPC;
@@ -91,7 +90,6 @@ public abstract class DeviceTypeUtils {
     return Equals(DeviceTypeUtils.GetDeviceType(device), TargetType.Basic);
   }
 
-
   public static func IsBreached(TargetType: TargetType, sharedPS: ref<SharedGameplayPS>) -> Bool {
     if !IsDefined(sharedPS) {
       return false;
@@ -104,11 +102,10 @@ public abstract class DeviceTypeUtils {
         return BreachStatusUtils.IsCamerasBreached(sharedPS);
       case TargetType.Turret:
         return BreachStatusUtils.IsTurretsBreached(sharedPS);
-      default: // TargetType.Basic
+      default:
         return BreachStatusUtils.IsBasicBreached(sharedPS);
     }
   }
-
 
   public static func ShouldUnlockByFlags(TargetType: TargetType, flags: BreachUnlockFlags) -> Bool {
     switch TargetType {
@@ -118,11 +115,10 @@ public abstract class DeviceTypeUtils {
         return flags.unlockCameras;
       case TargetType.Turret:
         return flags.unlockTurrets;
-      default: // TargetType.Basic
+      default:
         return flags.unlockBasic;
     }
   }
-
 
   public static func IsNPC(TargetType: TargetType) -> Bool {
     return Equals(TargetType, TargetType.NPC);
@@ -139,7 +135,6 @@ public abstract class DeviceTypeUtils {
   public static func IsBasicDevice(TargetType: TargetType) -> Bool {
     return Equals(TargetType, TargetType.Basic);
   }
-
 
   public static func DeviceTypeToString(TargetType: TargetType) -> String {
     switch TargetType {

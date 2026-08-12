@@ -9,7 +9,6 @@ import BetterNetrunning.Logging.*
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.*
 
-
 @if(ModuleExists("HackingExtensions"))
 public class DeviceRemoteBreachStateSystem extends ScriptableSystem {
     private let m_currentDevicePS: wref<ScriptableDeviceComponentPS>;

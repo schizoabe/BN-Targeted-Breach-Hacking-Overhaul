@@ -10,19 +10,18 @@ import BetterNetrunningConfig.*
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
-
 public struct MarkEntry {
   public let entityID:          EntityID;
-  public let creationTimestamp: Float;   // TimeSystem.GetGameTimeStamp() at mark time
-  public let displayName:       String;  // localized entity name, captured at first diagnostic
-  public let iceHitsRequired:   Int32;   // stamped by first diagnostic (Ping/jack-in/breach); 0 = unscanned
+  public let creationTimestamp: Float;
+  public let displayName:       String;
+  public let iceHitsRequired:   Int32;
 }
 
 public enum MarkedSubnetType {
-  Root     = 0,   // Basic devices: doors, terminals, vending, etc.
-  NPC      = 1,   // Human targets (UnlockNPCQuickhacks)
-  Camera   = 2,   // Surveillance cameras (UnlockCameraQuickhacks)
-  Defense  = 3    // Security turrets (UnlockTurretQuickhacks)
+  Root     = 0,
+  NPC      = 1,
+  Camera   = 2,
+  Defense  = 3
 }
 
 public class MarkingStateSystem extends ScriptableSystem {
@@ -39,12 +38,15 @@ public class MarkingStateSystem extends ScriptableSystem {
   private let m_signalNoiseTimer: Float;
 
   private let m_heatICEBonus:  Int32;
-  private let m_lastHeatBand:  Int32; // highest band reached so far (0-5)
+  private let m_lastHeatBand:  Int32;
 
   private let m_apBreachFinalizing: Bool;
 
-  private let m_beamedEntityIDs: array<EntityID>;
+  private let m_breachMode: Int32;
 
+  private let m_firewallArmed: Bool;
+
+  private let m_beamedEntityIDs: array<EntityID>;
 
   private func OnAttach() -> Void {
     ArrayClear(this.m_markedRoot);
@@ -59,8 +61,9 @@ public class MarkingStateSystem extends ScriptableSystem {
     this.m_heatICEBonus          = 0;
     this.m_lastHeatBand          = 0;
     this.m_lastBreachTargetType  = "device";
+    this.m_breachMode            = 0;
+    this.m_firewallArmed         = true;
   }
-
 
   private func GetMarkDurationSeconds() -> Float {
     let gi: GameInstance = this.GetGameInstance();
@@ -68,7 +71,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     let player: ref<PlayerPuppet> = GetPlayer(gi);
 
     if !IsDefined(statsSystem) || !IsDefined(player) {
-      return 180.0; // Safe fallback: 3 minutes
+      return 180.0;
     }
 
     let intelligence: Float = statsSystem.GetStatValue(
@@ -112,13 +115,50 @@ public class MarkingStateSystem extends ScriptableSystem {
   }
 
   private func IsExpired(entry: MarkEntry, currentTime: Float, duration: Float) -> Bool {
-    if entry.creationTimestamp <= 0.0 { return false; } // 0 = never decays (legacy)
+    if entry.creationTimestamp <= 0.0 { return false; }
     return (currentTime - entry.creationTimestamp) > duration;
   }
 
-
   public func SetApBreachFinalizing(v: Bool) -> Void { this.m_apBreachFinalizing = v; }
   public func IsApBreachFinalizing() -> Bool { return this.m_apBreachFinalizing; }
+
+  private func HasCyberdeck() -> Bool {
+    let gi: GameInstance = this.GetGameInstance();
+    let player: ref<PlayerPuppet> = GetPlayer(gi);
+    if !IsDefined(player) { return false; }
+    let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(gi);
+    if !IsDefined(statsSystem) { return false; }
+    return statsSystem.GetStatValue(
+      Cast<StatsObjectID>(player.GetEntityID()),
+      gamedataStatType.Memory
+    ) > 0.0;
+  }
+
+  public func GetBreachMode() -> Int32 { return this.m_breachMode; }
+
+  public func IsScoutMode()  -> Bool { return this.m_breachMode == 0 || !this.HasCyberdeck(); }
+  public func IsAttackMode() -> Bool { return this.m_breachMode == 1 && this.HasCyberdeck(); }
+  public func IsDefendMode() -> Bool { return this.m_breachMode == 2 && this.HasCyberdeck(); }
+
+  public func IsFirewallArmed() -> Bool { return this.m_firewallArmed; }
+
+  public func ToggleFirewall() -> Bool {
+    this.m_firewallArmed = !this.m_firewallArmed;
+    BNInfo("MarkingState", "Firewall " + (this.m_firewallArmed ? "ARMED" : "DISARMED"));
+    return this.m_firewallArmed;
+  }
+
+  public func SetBreachMode(mode: Int32) -> Void {
+    if this.IsAPBreachActive() {
+      BNInfo("MarkingState", "SetBreachMode ignored — breach board active");
+      return;
+    }
+    if mode < 0 { mode = 0; }
+    if mode > 2 { mode = 2; }
+    this.m_breachMode = mode;
+    let name: String = mode == 0 ? "SCOUT" : (mode == 1 ? "ATTACK" : "DEFEND");
+    BNInfo("MarkingState", "Breach mode → " + name);
+  }
 
   public func IsAPBreachActive() -> Bool {
     let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGameInstance())
@@ -133,7 +173,11 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func GetSessionHeat() -> Float { return this.m_sessionHeat; }
 
   public func AddSessionHeat(delta: Float) -> Void {
-    if delta > 0.0 && this.m_hidePresenceTimer > 0.0 { return; }
+    if delta > 0.0 {
+      if this.m_hidePresenceTimer > 0.0 { return; }
+      if      this.m_breachMode == 1 { delta *= 1.5; }
+      else if this.m_breachMode == 2 { delta *= 0.5; }
+    }
     let wasMaxed = this.m_sessionHeat >= 1.0;
     this.m_sessionHeat += delta;
     if this.m_sessionHeat < 0.0 { this.m_sessionHeat = 0.0; }
@@ -168,11 +212,11 @@ public class MarkingStateSystem extends ScriptableSystem {
   }
 
   private static func RollBonusForBand(band: Int32) -> Int32 {
-    if band == 5 { return RandRange(8, 11); } // 8-10
-    if band == 4 { return RandRange(7, 10); } // 7-9
-    if band == 3 { return RandRange(6,  9); } // 6-8  ← Critical
-    if band == 2 { return RandRange(2,  5); } // 2-4
-    if band == 1 { return RandRange(1,  4); } // 1-3
+    if band == 5 { return RandRange(8, 11); }
+    if band == 4 { return RandRange(7, 10); }
+    if band == 3 { return RandRange(6,  9); }
+    if band == 2 { return RandRange(2,  5); }
+    if band == 1 { return RandRange(1,  4); }
     return 0;
   }
 
@@ -184,7 +228,6 @@ public class MarkingStateSystem extends ScriptableSystem {
 
   @if(!ModuleExists("DarkFuture.Needs"))
   private func ReduceNerve(amount: Float) -> Void {}
-
 
   public func GetHidePresenceTimer() -> Float { return this.m_hidePresenceTimer; }
   public func SetHidePresenceTimer(t: Float) -> Void {
@@ -200,7 +243,6 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func SetSignalNoiseTimer(t: Float) -> Void {
     this.m_signalNoiseTimer = t > 0.0 ? t : 0.0;
   }
-
 
   private let m_debugLastICERequired: Int32;
   private let m_debugLastICEApplied:  Int32;
@@ -255,7 +297,6 @@ public class MarkingStateSystem extends ScriptableSystem {
       + "/" + ToString(this.m_debugLastICERequired) + status;
   }
 
-
   public func PruneExpiredMarks() -> Int32 {
     let currentTime: Float = this.GetCurrentTimestamp();
     let duration: Float    = this.GetMarkDurationSeconds();
@@ -288,7 +329,6 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func GetMarkDurationSecondsPublic() -> Float {
     return this.GetMarkDurationSeconds();
   }
-
 
   public func AddMark(entityID: EntityID, subnetType: MarkedSubnetType) -> Void {
     let maxMarks: Int32 = this.GetMaxMarks();
@@ -441,7 +481,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     this.RebuildMarkBeams();
   }
 
-
   public func IsMark(entityID: EntityID, subnetType: MarkedSubnetType) -> Bool {
     if Equals(subnetType, MarkedSubnetType.Root)    { return this.ContainsID(this.m_markedRoot,    entityID); }
     if Equals(subnetType, MarkedSubnetType.NPC)     { return this.ContainsID(this.m_markedNPCs,    entityID); }
@@ -454,6 +493,149 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func HasMarkedNPCs()    -> Bool { return ArraySize(this.m_markedNPCs)    > 0; }
   public func HasMarkedCameras() -> Bool { return ArraySize(this.m_markedCameras) > 0; }
   public func HasMarkedDefense() -> Bool { return ArraySize(this.m_markedDefense) > 0; }
+
+  public func AnyMarkedCameraStamped() -> Bool {
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedCameras) {
+      let entity: ref<Device> = GameInstance.FindEntityByID(gi, this.m_markedCameras[i].entityID) as Device;
+      if IsDefined(entity) {
+        let ps: ref<ScriptableDeviceComponentPS> = entity.GetDevicePS();
+        if IsDefined(ps) && ps.m_betterNetrunningUnlockTimestampCameras > 0.0 {
+          BNDebug("MarkingState", "AnyMarkedCameraStamped: camera[" + ToString(i) + "] stamped → true");
+          return true;
+        }
+      }
+      i += 1;
+    }
+    BNDebug("MarkingState", "AnyMarkedCameraStamped: no stamped cameras found → false");
+    return false;
+  }
+
+  public func AnyMarkedTurretStamped() -> Bool {
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedDefense) {
+      let entity: ref<Device> = GameInstance.FindEntityByID(gi, this.m_markedDefense[i].entityID) as Device;
+      if IsDefined(entity) {
+        let ps: ref<ScriptableDeviceComponentPS> = entity.GetDevicePS();
+        if IsDefined(ps) && ps.m_betterNetrunningUnlockTimestampTurrets > 0.0 {
+          BNDebug("MarkingState", "AnyMarkedTurretStamped: turret[" + ToString(i) + "] stamped → true");
+          return true;
+        }
+      }
+      i += 1;
+    }
+    BNDebug("MarkingState", "AnyMarkedTurretStamped: no stamped turrets found → false");
+    return false;
+  }
+
+  public func AnyMarkedNPCStamped() -> Bool {
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedNPCs) {
+      let puppet: ref<ScriptedPuppet> = GameInstance.FindEntityByID(gi, this.m_markedNPCs[i].entityID) as ScriptedPuppet;
+      if IsDefined(puppet) {
+        let npcPS: ref<ScriptedPuppetPS> = puppet.GetPuppetPS();
+        if IsDefined(npcPS) && npcPS.m_bnNPCIceDefeated {
+          BNDebug("MarkingState", "AnyMarkedNPCStamped: NPC[" + ToString(i) + "] stamped → true");
+          return true;
+        }
+      }
+      i += 1;
+    }
+    BNDebug("MarkingState", "AnyMarkedNPCStamped: no stamped NPCs found → false");
+    return false;
+  }
+
+  public func AllMarkedNPCsStamped() -> Bool {
+    let count: Int32 = ArraySize(this.m_markedNPCs);
+    if count == 0 { return false; }
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedNPCs) {
+      let puppet: ref<ScriptedPuppet> = GameInstance.FindEntityByID(gi, this.m_markedNPCs[i].entityID) as ScriptedPuppet;
+      if IsDefined(puppet) {
+        let npcPS: ref<ScriptedPuppetPS> = puppet.GetPuppetPS();
+        if !IsDefined(npcPS) || !npcPS.m_bnNPCIceDefeated {
+          BNDebug("MarkingState", "AllMarkedNPCsStamped: NPC[" + ToString(i) + "] not stamped → false");
+          return false;
+        }
+      }
+      i += 1;
+    }
+    BNDebug("MarkingState", "AllMarkedNPCsStamped: all " + ToString(count) + " NPC(s) stamped → true");
+    return true;
+  }
+
+  public func AllMarkedTurretsStamped() -> Bool {
+    let count: Int32 = ArraySize(this.m_markedDefense);
+    if count == 0 { return false; }
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedDefense) {
+      let entity: ref<Device> = GameInstance.FindEntityByID(gi, this.m_markedDefense[i].entityID) as Device;
+      if IsDefined(entity) {
+        let ps: ref<ScriptableDeviceComponentPS> = entity.GetDevicePS();
+        let ts: Float = IsDefined(ps) ? ps.m_betterNetrunningUnlockTimestampTurrets : -1.0;
+        if !IsDefined(ps) || ts <= 0.0 {
+          BNDebug("MarkingState", "AllMarkedTurretsStamped: turret[" + ToString(i) + "] not stamped → false");
+          return false;
+        }
+      }
+      i += 1;
+    }
+    BNDebug("MarkingState", "AllMarkedTurretsStamped: all " + ToString(count) + " turret(s) stamped → true");
+    return true;
+  }
+
+  public func AllMarkedRootStamped() -> Bool {
+    let count: Int32 = ArraySize(this.m_markedRoot);
+    if count == 0 { return false; }
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedRoot) {
+      let entity: ref<Device> = GameInstance.FindEntityByID(gi, this.m_markedRoot[i].entityID) as Device;
+      if IsDefined(entity) {
+        let ps: ref<ScriptableDeviceComponentPS> = entity.GetDevicePS();
+        let ts: Float = IsDefined(ps) ? ps.m_betterNetrunningUnlockTimestampBasic : -1.0;
+        if !IsDefined(ps) || ts <= 0.0 {
+          BNDebug("MarkingState", "AllMarkedRootStamped: device[" + ToString(i) + "] not stamped → false");
+          return false;
+        }
+      }
+      i += 1;
+    }
+    BNDebug("MarkingState", "AllMarkedRootStamped: all " + ToString(count) + " root device(s) stamped → true");
+    return true;
+  }
+
+  public func AllMarkedCamerasStamped() -> Bool {
+    let count: Int32 = ArraySize(this.m_markedCameras);
+    if count == 0 {
+      BNDebug("MarkingState", "AllMarkedCamerasStamped: no cameras marked → false");
+      return false;
+    }
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedCameras) {
+      let entity: ref<Device> = GameInstance.FindEntityByID(gi, this.m_markedCameras[i].entityID) as Device;
+      if IsDefined(entity) {
+        let ps: ref<ScriptableDeviceComponentPS> = entity.GetDevicePS();
+        let ts: Float = IsDefined(ps) ? ps.m_betterNetrunningUnlockTimestampCameras : -1.0;
+        BNDebug("MarkingState", "Camera[" + ToString(i) + "] loaded, timestamp=" + ToString(ts));
+        if !IsDefined(ps) || ts <= 0.0 {
+          BNDebug("MarkingState", "AllMarkedCamerasStamped: camera[" + ToString(i) + "] not stamped → false");
+          return false;
+        }
+      } else {
+        BNDebug("MarkingState", "Camera[" + ToString(i) + "] unloaded → skip (fail-open)");
+      }
+      i += 1;
+    }
+    BNDebug("MarkingState", "AllMarkedCamerasStamped: all " + ToString(count) + " camera(s) stamped → true");
+    return true;
+  }
 
   public func HasAnyMarked() -> Bool {
     return this.HasMarkedRoot()
@@ -492,7 +674,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     return this.ExtractIDs(this.m_markedDefense);
   }
 
-
   public func ClearAll() -> Void {
     ArrayClear(this.m_markedRoot);
     ArrayClear(this.m_markedNPCs);
@@ -509,7 +690,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     if Equals(subnetType, MarkedSubnetType.Defense) { ArrayClear(this.m_markedDefense); }
     this.RebuildMarkBeams();
   }
-
 
   public func RefreshMarkBeams() -> Void {
     this.RebuildMarkBeams();
@@ -585,7 +765,6 @@ public class MarkingStateSystem extends ScriptableSystem {
       i += 1;
     }
   }
-
 
   private func RaiseMarkHeat(entityID: EntityID) -> Void {
     let gi: GameInstance = this.GetGameInstance();

@@ -11,8 +11,8 @@ import HackingExtensions.*
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
 
-
 @if(ModuleExists("HackingExtensions"))
+
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
     wrappedMethod();
@@ -47,7 +47,6 @@ private func RegisterBetterNetrunningDaemons() -> Void {
     let unlockTurretAction: ref<DeviceDaemonAction> = new DeviceDaemonAction();
     unlockTurretAction.SetDaemonType(DaemonTypes.Turret());
     hackingSystem.AddProgramAction(BNConstants.PROGRAM_ACTION_BN_UNLOCK_TURRET(), unlockTurretAction);
-
 
     let rbIcepickV1: ref<RemoteBreachIcepickV1Action> = new RemoteBreachIcepickV1Action();
     hackingSystem.AddProgramAction(BNConstants.PROGRAM_ACTION_BN_RB_ICEPICK_V1(), rbIcepickV1);

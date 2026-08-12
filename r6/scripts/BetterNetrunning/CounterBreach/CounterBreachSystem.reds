@@ -10,7 +10,6 @@ import HackingExtensions.*
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
-
 public class CounterBreachSucceededEvent extends OnCustomHackingSucceeded {
 
   public func Execute() -> Void {
@@ -47,7 +46,6 @@ public class CounterBreachFailedEvent extends OnCustomHackingFailed {
     }
   }
 }
-
 
 public class CounterBreachSystem extends ScriptableSystem {
 
@@ -290,6 +288,17 @@ public class CounterBreachSystem extends ScriptableSystem {
     BNInfo("CounterBreach", "ICE trace — " + ToString(alertedCount) + " NPCs alerted within " + ToString(RoundF(radius)) + "m");
   }
 
+  private func GetCurrentRAM(gi: GameInstance) -> Float {
+    let player: ref<PlayerPuppet> = GetPlayer(gi);
+    if !IsDefined(player) { return 0.0; }
+    return GameInstance.GetStatPoolsSystem(gi)
+      .GetStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Memory, false);
+  }
+
+  public func GetFirewallCharges(gi: GameInstance) -> Int32 {
+    return Cast<Int32>(this.GetCurrentRAM(gi)) / 4;
+  }
+
   private func CleanupAbandonListener() -> Void {
     if IsDefined(this.m_abandonListener) {
       let bbMinigame: ref<IBlackboard> =
@@ -320,6 +329,25 @@ public class CounterBreachSystem extends ScriptableSystem {
     }
 
     let gi: GameInstance = this.GetGameInstance();
+
+    let mssT: ref<MarkingStateSystem> =
+      GameInstance.GetScriptableSystemsContainer(gi)
+        .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+    if !IsDefined(mssT) || !mssT.IsDefendMode() {
+      BNInfo("CounterBreach", "Not in Defend mode — ICE retaliation fires automatically");
+      this.ApplyFailConsequence();
+      return;
+    }
+
+    let firewallCharges: Int32 = this.GetFirewallCharges(gi);
+    if firewallCharges <= 0 {
+      BNInfo("CounterBreach", "Defend mode — Firewall depleted (RAM=" + ToString(RoundF(this.GetCurrentRAM(gi))) + "), ICE retaliation lands");
+      this.ApplyFailConsequence();
+      return;
+    }
+    BNInfo("CounterBreach", "Firewall active — " + ToString(firewallCharges) + " charge(s) available (RAM=" + ToString(RoundF(this.GetCurrentRAM(gi))) + ")");
+    this.ShowWarning("FIREWALL DEPLOYED — CANCELLING QUICKHACK");
+
     let hackSystem: ref<CustomHackingSystem> =
       GameInstance.GetScriptableSystemsContainer(gi)
         .Get(n"HackingExtensions.CustomHackingSystem") as CustomHackingSystem;

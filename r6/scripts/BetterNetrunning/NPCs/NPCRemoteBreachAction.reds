@@ -14,7 +14,6 @@ import BetterNetrunning.Perks.*
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.*
 
-
 @if(ModuleExists("HackingExtensions"))
 public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
   public func Execute() -> Void {
@@ -127,7 +126,6 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
   }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
   public func Execute() -> Void {
@@ -179,7 +177,6 @@ public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
   }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 public class OnNPCRemoteBreachFailed extends OnCustomHackingFailed {
   public func Execute() -> Void {
@@ -190,7 +187,6 @@ public class OnNPCRemoteBreachFailed extends OnCustomHackingFailed {
     if IsDefined(stateSystem) { stateSystem.ClearCurrentNPC(); }
   }
 }
-
 
 @if(ModuleExists("HackingExtensions"))
 public class NPCRemoteBreachAction extends CustomAccessBreach {
@@ -203,7 +199,6 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
   public func SetNPC(npcPS: ref<ScriptedPuppetPS>) -> Void {
     this.m_npcPS = npcPS;
   }
-
 
   public func GetCost() -> Int32 { return this.m_calculatedRAMCost; }
 
@@ -231,7 +226,6 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
       currentRAM - Cast<Float>(this.m_calculatedRAMCost), executor, false);
     return true;
   }
-
 
   private func CompleteAction(gameInstance: GameInstance) -> Void {
     if !IsDefined(this.m_npcPS) {
@@ -268,7 +262,6 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
       this.m_minigameDefinition = BNConstants.MINIGAME_NPC_REMOTE_BREACH();
       BNInfo("NPCRemoteBreach", "ICE compromised — showing NPC subnet board");
     }
-
 
     let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
 
@@ -341,7 +334,6 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
   }
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptedPuppet)
 private final func TranslateChoicesIntoQuickSlotCommands(
@@ -359,10 +351,14 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   if !IsDefined(npcPS) { return; }
 
   if !BetterNetrunningSettings.RemoteBreachEnabledNPC() { return; }
-  if npcPS.m_quickHacksExposed { return; }          // already breached
+  if npcPS.m_quickHacksExposed { return; }
 
   let perkSysNRB: ref<BNPerkSystem> = BNPerkSystem.GetInstance(this.GetGame());
   if !IsDefined(perkSysNRB) || perkSysNRB.GetPerkLevel(BNPerk.IntrusionSuite) <= 0 { return; }
+
+  let msNRB: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGame())
+    .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+  if !IsDefined(msNRB) || !msNRB.IsScoutMode() { return; }
 
   let player: ref<PlayerPuppet> = GetPlayer(this.GetGame());
   if !IsDefined(player) { return; }
@@ -401,7 +397,6 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   ArrayPush(Deref(commands), entry);
 }
 
-
 @if(ModuleExists("HackingExtensions"))
 public abstract class NPCRemoteBreachUtils {
 
@@ -427,14 +422,13 @@ public abstract class NPCRemoteBreachUtils {
 
     let action: ref<NPCRemoteBreachAction> = new NPCRemoteBreachAction();
     action.SetNPC(npcPS);
-    action.SetExecutor(player); // required: ProcessRPGAction calls PayCost → GetExecutor() must return player
+    action.SetExecutor(player);
     action.m_calculatedRAMCost = ramCost;
     action.m_networkName       = npcName;
     action.m_isRemote          = true;
     action.m_npcCount          = 1;
     action.m_attempt           = 0;
     action.actionName          = n"NPCRemoteBreachAction";
-
 
     let currentRAM: Float = statPoolSystem.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
     if currentRAM < Cast<Float>(ramCost) {

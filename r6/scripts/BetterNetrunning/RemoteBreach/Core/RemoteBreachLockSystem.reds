@@ -7,8 +7,8 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Integration.*
 import BetterNetrunning.Breach.*
 
-
 public class RemoteBreachLockSystem {
+
   public static func GetNetworkDevices(
     sourceDevicePS: ref<ScriptableDeviceComponentPS>,
     excludeSource: Bool
@@ -122,7 +122,7 @@ public class RemoteBreachLockSystem {
 
     let networkDevices: array<ref<ScriptableDeviceComponentPS>> = RemoteBreachLockSystem.GetNetworkDevices(
       failedDevicePS,
-      true  // excludeSource: Failed device is locked separately in Step 1
+      true
     );
 
     let i: Int32 = 0;
@@ -185,7 +185,7 @@ public class RemoteBreachLockSystem {
       }
     }
 
-    let totalLocked: Int32 = 1 + networkLockedCount + standaloneLockedCount + vehicleLockedCount; // 1 = failed device
+    let totalLocked: Int32 = 1 + networkLockedCount + standaloneLockedCount + vehicleLockedCount;
     BNInfo("RemoteBreachLock", "Locked " + IntToString(totalLocked) + " devices " +
            "(Network: " + IntToString(networkLockedCount) + " [connected network], " +
            "Standalone: " + IntToString(standaloneLockedCount) + " [" + FloatToString(radiusMeters) + "m], " +

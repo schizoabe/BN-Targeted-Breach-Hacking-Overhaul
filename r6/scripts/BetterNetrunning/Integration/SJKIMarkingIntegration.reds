@@ -6,6 +6,7 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Network.*
+import BetterNetrunning.Minigame.*
 
 @addMethod(ScriptableDeviceComponentPS)
 public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
@@ -62,6 +63,7 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
       markingSystem.RecordBreachICEState(iceState.hitsRequired, iceState.hitsApplied);
       markingSystem.ShowRemoteBreachStatus();
     }
+    this.BNHandleSJKIBoardComplete(gi, activePrograms);
     return;
   }
 
@@ -82,6 +84,8 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
   TargetedBreachUtils.UnlockMarkedEntities(markingSystem, unlockFlags, gi);
   BNInfo("SJKIIntegration", "Targeted unlock complete");
 
+  this.BNDispatchOffensiveDaemons();
+
   let ms: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
   if IsDefined(ms) {
@@ -99,4 +103,5 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
     ms.RecordBreachICEState(1, 1);
     ms.ShowRemoteBreachStatus();
   }
+  this.BNHandleSJKIBoardComplete(gi, activePrograms);
 }

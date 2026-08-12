@@ -67,13 +67,11 @@ public func CyberdeckConditionMet(gameInstance: GameInstance, value: Int32) -> B
   return CyberdeckQualityToRank(playerCyberdeckQuality) >= CyberdeckQualityToRank(minQuality);
 }
 
-
 public func IntelligenceConditionMet(gameInstance: GameInstance, value: Int32) -> Bool {
   let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(gameInstance);
   let playerIntelligence: Int32 = Cast(statsSystem.GetStatValue(Cast(GetPlayer(gameInstance).GetEntityID()), gamedataStatType.Intelligence));
   return playerIntelligence >= value;
 }
-
 
 public func NPCRarityToRank(rarity: gamedataNPCRarity) -> Int32 {
   switch rarity {
@@ -105,7 +103,6 @@ public func EnemyRarityConditionMet(gameInstance: GameInstance, enemy: wref<Enti
   let rarity: gamedataNPCRarity = puppet.GetNPCRarity();
   return NPCRarityToRank(rarity) <= value;
 }
-
 
 public func ShouldUnlockHackNPC(gameInstance: GameInstance, enemy: wref<Entity>, alwaysAllow: Bool, cyberdeckValue: Int32, intelligenceValue: Int32, enemyRarityValue: Int32) -> Bool {
   if alwaysAllow {

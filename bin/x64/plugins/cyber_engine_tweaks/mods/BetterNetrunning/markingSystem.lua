@@ -1,10 +1,6 @@
 
 local MarkingSystem                = {}
 
-
-
-
-
 local SYSTEM_CLASS                 = "BetterNetrunning.Marking.MarkingStateSystem"
 local PERK_SYSTEM_CLASS            = "BetterNetrunning.Perks.BNPerkSystem"
 
@@ -12,25 +8,23 @@ local PERK_COLD_TRACE              = 0
 local PERK_TRACE_SCRAMBLER         = 6
 
 local COUNTER_BREACH_SYSTEM_CLASS  = "BetterNetrunning.CounterBreach.CounterBreachSystem"
-local COUNTER_BREACH_THRESHOLD     = 0.95 -- Heat level that arms retaliation (cap is 1.0, use 0.95 for reliable trigger)
-local COUNTER_BREACH_DISARM        = 0.5  -- Heat must drop below this to cancel armed countdown
-local COUNTER_BREACH_COOLDOWN      = 5.0  -- Seconds between counter-breach attempts
-local COUNTER_BREACH_DELAY         = 5.0  -- Warning window before minigame fires
+local COUNTER_BREACH_THRESHOLD     = 0.95
+local COUNTER_BREACH_DISARM        = 0.5
+local COUNTER_BREACH_COOLDOWN      = 5.0
+local COUNTER_BREACH_DELAY         = 5.0
 
-local HEAT_PASSIVE_DECAY_PER_SEC   = 0.001 -- Passive session heat decay per second (very slow)
-
+local HEAT_PASSIVE_DECAY_PER_SEC   = 0.001
 
 local isInitialized                = false
-local counterBreachTimer           = 0.0   -- cooldown between counter-breach boards (starts when board CLOSES)
-local counterBreachPending         = 0.0   -- countdown until counter-breach fires (0 = not armed)
-local counterBreachEngaged         = false -- true after first fire; re-arm threshold drops to DISARM until heat < DISARM
-local counterBreachWasInMinigame   = false -- edge-detect: restart warning window when AP breach board closes
-local counterBreachWasActive       = false -- edge-detect: start cooldown when counter-breach board closes
-local isPlayerInControl            = false -- set by GameplayState listener; false = pause all timers
-local currentMaxHeat               = 0.0   -- session heat, shared with DrawUI
-local panelRefreshTimer            = 0.0   -- countdown to next live panel refresh (0.25s cadence)
-local hudPanelsVisible             = false -- toggle state for BNTestPanel + ICEScoutLog
-
+local counterBreachTimer           = 0.0
+local counterBreachPending         = 0.0
+local counterBreachEngaged         = false
+local counterBreachWasInMinigame   = false
+local counterBreachWasActive       = false
+local isPlayerInControl            = false
+local currentMaxHeat               = 0.0
+local panelRefreshTimer            = 0.0
+local hudPanelsVisible             = false
 
 local function getMarkingSystem()
     local container = Game.GetScriptableSystemsContainer()
@@ -70,12 +64,6 @@ local function getCounterBreachCooldown()
     return COUNTER_BREACH_COOLDOWN
 end
 
-
-
-
-
-
-
 local function hasCyberdeckEquipped()
     local player = Game.GetPlayer()
     if not player then return false end
@@ -94,18 +82,11 @@ local function hasCyberdeckEquipped()
     return ok and result or false
 end
 
-
-
-
-
-
-
 function MarkingSystem.ClearAll()
     local ms = getMarkingSystem()
     if ms then ms:ClearAll() end
     print("[BetterNetrunning] All breach marks cleared")
 end
-
 
 function MarkingSystem.SetPlayerInControl(v)
     isPlayerInControl = v
@@ -160,7 +141,6 @@ function MarkingSystem.Update(deltaTime)
     if ms:HasAnyMarked() then
         ms:PruneExpiredMarksWithHeat(maxHeat)
     end
-
 
     local cbActive = false
     if cbs then pcall(function() cbActive = cbs:IsActive() end) end
@@ -223,16 +203,10 @@ function MarkingSystem.Update(deltaTime)
 
 end
 
-
-
-
 function MarkingSystem.Init()
     isInitialized = true
     print("[BetterNetrunning] Marking system ready")
 end
-
-
-
 
 function MarkingSystem.HK_ClearMarks()
     MarkingSystem.ClearAll()
@@ -263,6 +237,56 @@ function MarkingSystem.HK_ShowNetworkStatus()
     hudPanelsVisible = true
 end
 
+function MarkingSystem.HK_CycleBreachMode()
+    if not hasCyberdeckEquipped() then
+        print("[BetterNetrunning] No cyberdeck equipped - Scout mode only")
+        local cbs = getCounterBreachSystem()
+        if cbs then pcall(function() cbs:ShowWarning("NO CYBERDECK — SCOUT MODE ONLY") end) end
+        return
+    end
+    local ms = getMarkingSystem()
+    if not ms then
+        print("[BetterNetrunning] MarkingStateSystem not found")
+        return
+    end
+    local ok, currentMode = pcall(function() return ms:GetBreachMode() end)
+    if not ok then currentMode = 0 end
+    local nextMode = (currentMode + 1) % 3
+    local ok2, err = pcall(function() ms:SetBreachMode(nextMode) end)
+    if not ok2 then
+        print("[BetterNetrunning] SetBreachMode error: " .. tostring(err))
+        return
+    end
+    local names = { [0] = "SCOUT", [1] = "ATTACK", [2] = "DEFEND" }
+    local label = names[nextMode] or "SCOUT"
+    print("[BetterNetrunning] Breach mode -> " .. label)
+    local cbs = getCounterBreachSystem()
+    if cbs then pcall(function() cbs:ShowWarning("BREACH MODE: " .. label) end) end
+end
+
+function MarkingSystem.HK_ToggleFirewall()
+    if not hasCyberdeckEquipped() then
+        print("[BetterNetrunning] No cyberdeck equipped - firewall unavailable")
+        local cbs = getCounterBreachSystem()
+        if cbs then pcall(function() cbs:ShowWarning("NO CYBERDECK — FIREWALL UNAVAILABLE") end) end
+        return
+    end
+    local ms = getMarkingSystem()
+    if not ms then
+        print("[BetterNetrunning] MarkingStateSystem not found")
+        return
+    end
+    local ok, armed = pcall(function() return ms:ToggleFirewall() end)
+    if not ok then
+        print("[BetterNetrunning] ToggleFirewall error: " .. tostring(armed))
+        return
+    end
+    local label = armed and "WEAPONS HOT" or "WEAPONS COLD"
+    print("[BetterNetrunning] Firewall -> " .. label)
+    local cbs = getCounterBreachSystem()
+    if cbs then pcall(function() cbs:ShowWarning("FIREWALL: " .. label) end) end
+end
+
 function MarkingSystem.HK_ForceJackOut()
     local cbs = getCounterBreachSystem()
     if not cbs then
@@ -276,7 +300,6 @@ function MarkingSystem.HK_ForceJackOut()
         print("[BetterNetrunning] ForceJackOut error: " .. tostring(err))
     end
 end
-
 
 function MarkingSystem.HK_DEV_TriggerCounterBreach()
     local cbs = getCounterBreachSystem()
@@ -351,6 +374,37 @@ function MarkingSystem.HK_DEV_CheckCyberdeck()
         end
     end)
     if not ok then print("[BetterNetrunning] CheckCyberdeck error: " .. tostring(err)) end
+end
+
+function MarkingSystem.HK_DEV_CheckQuickhacks()
+    local player = Game.GetPlayer()
+    if not player then print("[BetterNetrunning] No player"); return end
+    local ok, err = pcall(function()
+        local equipSys = Game.GetScriptableSystemsContainer():Get("EquipmentSystem")
+        if not equipSys then print("[BetterNetrunning] EquipmentSystem not found"); return end
+        local playerData = equipSys:GetPlayerData(player)
+        if not playerData then print("[BetterNetrunning] PlayerData not found"); return end
+        local deckID = playerData:GetActiveItem(gamedataEquipmentArea.SystemReplacementCW)
+        if not ItemID.IsValid(deckID) then print("[BetterNetrunning] No cyberdeck in SystemReplacementCW"); return end
+        print(string.format("[BetterNetrunning] Cyberdeck TDBID: %s", TDBID.ToStringDEBUG(ItemID.GetTDBID(deckID))))
+        local ts = Game.GetTransactionSystem()
+        local deckData = ts:GetItemData(player, deckID)
+        if not deckData then print("[BetterNetrunning] No deck item data"); return end
+        local parts = deckData:GetItemParts()
+        print(string.format("[BetterNetrunning] Cyberdeck has %d installed parts:", #parts))
+        for i = 1, #parts do
+            local itemID = InnerItemData.GetItemID(parts[i])
+            if ItemID.IsValid(itemID) then
+                local tdbid = ItemID.GetTDBID(itemID)
+                local record = TweakDBInterface.GetItemRecord(tdbid)
+                local actionCount = record and record:GetObjectActionsCount() or 0
+                print(string.format("[BetterNetrunning]   [%d] %s  (ObjectActions=%d)", i - 1, TDBID.ToStringDEBUG(tdbid), actionCount))
+            else
+                print(string.format("[BetterNetrunning]   [%d] INVALID", i - 1))
+            end
+        end
+    end)
+    if not ok then print("[BetterNetrunning] CheckQuickhacks error: " .. tostring(err)) end
 end
 
 function MarkingSystem.HK_DEV_ShowTestPanel()

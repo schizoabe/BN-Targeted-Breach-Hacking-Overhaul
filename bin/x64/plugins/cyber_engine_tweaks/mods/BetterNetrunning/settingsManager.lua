@@ -8,6 +8,7 @@ local defaults = {
     RadialUnlockCrossNetwork = true,
     QuickhackUnlockDurationHours = 6,
     MarkBeamsEnabled = true,
+    OffensiveDaemonsEnabled = true,
     RemoteBreachEnabledDevice = true,
     RemoteBreachEnabledComputer = false,
     RemoteBreachEnabledCamera = true,
@@ -53,7 +54,7 @@ local defaults = {
     AlwaysNPCsControl = false,
     AlwaysNPCsUltimate = false,
     EnableDebugLog = false,
-    DebugLogLevel = 2  -- 0=ERROR, 1=WARNING, 2=INFO (default), 3=DEBUG, 4=TRACE
+    DebugLogLevel = 2
 }
 
 local current = {}
@@ -124,6 +125,8 @@ function SettingsManager.OverrideConfigFunctions()
         function() return current.QuickhackUnlockDurationHours end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "MarkBeamsEnabled;",
         function() return current.MarkBeamsEnabled end)
+    Override("BetterNetrunningConfig.BetterNetrunningSettings", "OffensiveDaemonsEnabled;",
+        function() return current.OffensiveDaemonsEnabled end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "RemoteBreachEnabledDevice;",
         function() return current.RemoteBreachEnabledDevice end)
     Override("BetterNetrunningConfig.BetterNetrunningSettings", "RemoteBreachEnabledComputer;",

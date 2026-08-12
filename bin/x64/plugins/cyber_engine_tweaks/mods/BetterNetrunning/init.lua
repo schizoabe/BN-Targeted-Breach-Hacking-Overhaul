@@ -1,4 +1,4 @@
-
+﻿
 local SettingsManager = require("settingsManager")
 local TweakDBSetup = require("tweakdbSetup")
 local NativeSettingsUI = require("nativeSettingsUI")
@@ -9,10 +9,13 @@ registerHotkey("BN_ClearMarks",              "[BN] Clear All Marks",            
 registerHotkey("BN_HideWidgets",             "[BN] Hide HUD Widgets",                             function() MarkingSystem.HK_HideWidgets() end)
 registerHotkey("BN_ShowNetworkStatus",       "[BN] Show Network Status",                          function() MarkingSystem.HK_ShowNetworkStatus() end)
 registerHotkey("BN_ForceJackOut",            "[BN] Force Jack-Out (rescue)",                      function() MarkingSystem.HK_ForceJackOut() end)
+registerHotkey("BN_CycleBreachMode",         "[BN] Cycle Breach Mode (Scout/Attack/Defend)",       function() MarkingSystem.HK_CycleBreachMode() end)
+registerHotkey("BN_ToggleFirewall",          "[BN] Toggle Firewall (Weapons Hot/Cold)",            function() MarkingSystem.HK_ToggleFirewall() end)
 registerHotkey("BN_DEV_TriggerCounterBreach","[BN DEV] Trigger Counter-Breach",                   function() MarkingSystem.HK_DEV_TriggerCounterBreach() end)
 registerHotkey("BN_DEV_PrintHeat",           "[BN DEV] Print session heat",                       function() MarkingSystem.HK_DEV_PrintHeat() end)
 registerHotkey("BN_DEV_PrintICEState",       "[BN DEV] Print ICE state",                          function() MarkingSystem.HK_DEV_PrintICEState() end)
 registerHotkey("BN_DEV_CheckCyberdeck",      "[BN DEV] Check cyberdeck slot",                     function() MarkingSystem.HK_DEV_CheckCyberdeck() end)
+registerHotkey("BN_DEV_CheckQuickhacks",    "[BN DEV] Log installed quickhacks",                 function() MarkingSystem.HK_DEV_CheckQuickhacks() end)
 registerHotkey("BN_DEV_ShowTestPanel",       "[BN DEV] Toggle HUD Panels (Network Status + ICE Log)", function() MarkingSystem.HK_DEV_ShowTestPanel() end)
 
 registerForEvent("onInit", function()
@@ -35,6 +38,11 @@ registerForEvent("onInit", function()
     TweakDBSetup.SetupIcepickVariants()
     TweakDBSetup.SetupAPDaemons()
     TweakDBSetup.SetupSignalNoiseDaemon()
+    TweakDBSetup.SetupOffensiveNPCDaemon()
+    TweakDBSetup.SetupExitProtocol()
+    TweakDBSetup.SetupOffloadProtocol()
+    TweakDBSetup.SetupFirewallMinigame()
+    TweakDBSetup.SetupCascadeProtocol()
     TweakDBSetup.SetupDaemonIcons()
     TweakDBSetup.ApplyBreachingHotkey(SettingsManager.Get("BreachingHotkey"))
 
@@ -59,13 +67,8 @@ registerForEvent("onInit", function()
     print("[Better Netrunning] Initialization complete")
 end)
 
-
 registerForEvent("onUpdate", function(deltaTime)
     MarkingSystem.Update(deltaTime)
 end)
-
-
-
-
 
 return true

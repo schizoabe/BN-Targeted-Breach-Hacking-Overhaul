@@ -10,7 +10,6 @@ protected func ExposeQuickHakcsIfNotConnnectedToAP() -> Bool {
   return vanilla;
 }
 
-
 @wrapMethod(ScriptableDeviceComponentPS)
 protected final func FinalizeGetQuickHackActions(outActions: script_ref<array<ref<DeviceAction>>>, const context: script_ref<GetActionsContext>) -> Void {
   if Equals(this.GetDurabilityState(), EDeviceDurabilityState.NOMINAL)

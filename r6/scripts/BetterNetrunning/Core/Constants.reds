@@ -3,11 +3,9 @@ module BetterNetrunning.Core
 
 public abstract class BNConstants {
 
-
   public static func CLASS_REMOTE_BREACH_DEVICE() -> CName {
     return n"BetterNetrunning.RemoteBreach.Actions.DeviceRemoteBreachAction";
   }
-
 
   public static func CLASS_DEVICE_REMOTE_BREACH_STATE_SYSTEM() -> CName {
     return n"BetterNetrunning.RemoteBreach.Core.DeviceRemoteBreachStateSystem";
@@ -29,11 +27,9 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
     return n"BetterNetrunning.CounterBreach.CounterBreachSystem";
 }
 
-
   public static func CLASS_CUSTOM_HACKING_SYSTEM() -> CName {
     return n"HackingExtensions.CustomHackingSystem";
   }
-
 
   public static func ACTION_REMOTE_BREACH() -> CName {
     return n"RemoteBreach";
@@ -51,7 +47,6 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
     return n"QuickHackDistraction";
   }
 
-
   public static func ACTION_PHYSICAL_BREACH() -> CName {
     return n"PhysicalBreach";
   }
@@ -63,7 +58,6 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
   public static func ACTION_UNCONSCIOUS_BREACH() -> CName {
     return n"BreachUnconsciousOfficer";
   }
-
 
   public static func LOCKEY_QUICKHACKS_LOCKED() -> CName {
     return n"Better-Netrunning-Quickhacks-Locked";
@@ -89,12 +83,9 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
     return "LocKey#27398";
   }
 
-
   public static func DEVICE_NAME_PREFIX() -> String {
     return "Gameplay-Devices-DisplayNames-";
   }
-
-
 
   public static func PROGRAM_UNLOCK_QUICKHACKS() -> TweakDBID {
     return t"MinigameAction.UnlockQuickhacks";
@@ -132,6 +123,35 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
     return t"MinigameAction.BN_CounterBreach";
   }
 
+  public static func PROGRAM_NETWORK_CAMERA_SHUTDOWN() -> TweakDBID {
+    return t"MinigameAction.NetworkCameraShutdown";
+  }
+  public static func PROGRAM_NETWORK_CAMERA_MALFUNCTION() -> TweakDBID {
+    return t"MinigameAction.NetworkCameraMalfunction";
+  }
+
+  public static func PROGRAM_NETWORK_TURRET_SHUTDOWN() -> TweakDBID {
+    return t"MinigameAction.NetworkTurretShutdown";
+  }
+  public static func PROGRAM_NETWORK_TURRET_FRIENDLY() -> TweakDBID {
+    return t"MinigameAction.NetworkTurretFriendly";
+  }
+
+  public static func PROGRAM_BN_ENTROPY_PROTOCOL() -> TweakDBID {
+    return t"MinigameAction.BN_EntropyProtocol";
+  }
+
+  public static func PROGRAM_CASCADE_PROTOCOL() -> TweakDBID {
+    return t"MinigameAction.BN_CascadeProtocol";
+  }
+
+  public static func PROGRAM_BN_EXIT_PROTOCOL() -> TweakDBID {
+    return t"MinigameAction.BN_ExitProtocol";
+  }
+
+  public static func PROGRAM_BN_OFFLOAD_PROTOCOL() -> TweakDBID {
+    return t"MinigameAction.BN_OffloadProtocol";
+  }
 
   public static func PROGRAM_BN_ICEPICK_V1() -> TweakDBID {
     return t"MinigameAction.BNIcepickV1";
@@ -156,7 +176,6 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
   public static func PROGRAM_SIGNAL_NOISE() -> TweakDBID {
     return t"MinigameAction.BNSignalNoise";
   }
-
 
   public static func PROGRAM_ACTION_BN_UNLOCK_BASIC() -> TweakDBID {
     return t"MinigameProgramAction.BN_RemoteBreach_UnlockBasic";
@@ -223,7 +242,6 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
     return t"MinigameProgramAction.RemoteBreachHard";
   }
 
-
   public static func MINIGAME_COMPUTER_BREACH_EASY() -> TweakDBID {
     return t"Minigame.ComputerRemoteBreachEasy";
   }
@@ -248,10 +266,18 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
     return t"DeviceAction.RemoteBreach";
   }
 
-
   public static func IsRemoteBreachAction(className: CName) -> Bool {
     return Equals(className, BNConstants.CLASS_REMOTE_BREACH_DEVICE());
   }
-}
 
+  public static func IsOffensiveDaemon(pid: TweakDBID) -> Bool {
+    if pid == BNConstants.PROGRAM_NETWORK_CAMERA_SHUTDOWN()    { return true; }
+    if pid == BNConstants.PROGRAM_NETWORK_CAMERA_MALFUNCTION() { return true; }
+    if pid == BNConstants.PROGRAM_NETWORK_TURRET_SHUTDOWN()  { return true; }
+    if pid == BNConstants.PROGRAM_NETWORK_TURRET_FRIENDLY()  { return true; }
+    if pid == BNConstants.PROGRAM_BN_ENTROPY_PROTOCOL() { return true; }
+    if pid == BNConstants.PROGRAM_CASCADE_PROTOCOL()    { return true; }
+    return false;
+  }
+}
 

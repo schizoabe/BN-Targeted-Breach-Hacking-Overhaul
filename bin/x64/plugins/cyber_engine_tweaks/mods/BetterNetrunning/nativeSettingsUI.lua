@@ -62,6 +62,11 @@ function NativeSettingsUI.Build(nativeSettings, SettingsManager, TweakDBSetup)
         end
     )
 
+    nativeSettings.addSwitch("/BetterNetrunning/Breaching", "Offensive Daemons", "When all marked cameras have their ICE compromised, adds camera shutdown and malfunction daemons to the breach board.", settings.OffensiveDaemonsEnabled, true, function(state)
+        SettingsManager.Set("OffensiveDaemonsEnabled", state)
+        SettingsManager.Save()
+    end)
+
     nativeSettings.addSwitch("/BetterNetrunning/Breaching", "Mark Beams", "Draws a network beam from V to each marked entity. Beams appear on mark and disappear on unmark.", settings.MarkBeamsEnabled, true, function(state)
         SettingsManager.Set("MarkBeamsEnabled", state)
         SettingsManager.Save()

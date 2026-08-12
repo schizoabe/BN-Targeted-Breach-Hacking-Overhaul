@@ -14,7 +14,6 @@ import HackingExtensions.*
 @if(ModuleExists("HackingExtensions.Programs"))
 import HackingExtensions.Programs.*
 
-
 @if(ModuleExists("HackingExtensions"))
 public abstract class DaemonExecutionUtils {
 
@@ -60,7 +59,6 @@ public abstract class DaemonExecutionUtils {
         return TargetType;
     }
 }
-
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class DeviceDaemonAction extends HackProgramAction {
@@ -114,7 +112,6 @@ public class DeviceDaemonAction extends HackProgramAction {
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class BetterNetrunningDaemonAction extends DeviceDaemonAction {}
-
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {

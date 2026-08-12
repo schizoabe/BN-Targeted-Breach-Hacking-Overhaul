@@ -9,24 +9,20 @@ import BetterNetrunning.Perks.*
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
-
 public abstract class HeatThresholds {
   public static func Low() -> Float  { return 0.3; }
   public static func High() -> Float { return 0.7; }
   public static func Max() -> Float  { return 1.0; }
 }
 
-
 public struct NetworkState {
-  public let hitsRequired: Int32;  // base ICE pool (2-6); 0 = uninitialized (AP)
-  public let hitsApplied:  Int32;  // ICE damage dealt so far
-  public let globalBonus:  Int32;  // heat bonus from MarkingStateSystem (added to base for effective)
-  public let isDefeated:   Bool;   // latched true once hitsApplied >= effective; never resets
+  public let hitsRequired: Int32;
+  public let hitsApplied:  Int32;
+  public let globalBonus:  Int32;
+  public let isDefeated:   Bool;
 }
 
-
 public abstract class NetworkStateUtils {
-
 
   public static func GetNetworkState(
     devicePS:     ref<ScriptableDeviceComponentPS>,
@@ -43,7 +39,6 @@ public abstract class NetworkStateUtils {
     state.globalBonus  = IsDefined(ms) ? ms.GetHeatICEBonus() : 0;
     return state;
   }
-
 
   public static func ResolveWriteTarget(
     devicePS: ref<ScriptableDeviceComponentPS>,
@@ -62,7 +57,6 @@ public abstract class NetworkStateUtils {
     }
     return devicePS;
   }
-
 
   public static func OnEntityMarked(
     devicePS: ref<ScriptableDeviceComponentPS>,
@@ -179,8 +173,8 @@ public abstract class NetworkStateUtils {
       if Equals(pid, BNConstants.PROGRAM_BN_ICEPICK_V1()) {
         let v1Hits: Int32 = 2 + iceAnalystBonus + RandRange(0, 4);
         NetworkStateUtils.ApplyIcepickEffect(writeTarget, gameInstance, v1Hits);
-        if IsDefined(ms) { ms.AddSessionHeat(0.4); }
-        BNInfo("NetworkState", "IcepickV1 (Fracture) — " + ToString(v1Hits) + " ICE hits, session heat +0.40");
+        if IsDefined(ms) { ms.AddSessionHeat(0.2); }
+        BNInfo("NetworkState", "IcepickV1 (Fracture) — " + ToString(v1Hits) + " ICE hits, session heat +0.20");
 
       } else if Equals(pid, BNConstants.PROGRAM_BN_ICEPICK_V2()) {
         NetworkStateUtils.ApplyIcepickEffect(writeTarget, gameInstance, 0);
@@ -222,6 +216,18 @@ public abstract class NetworkStateUtils {
       } else if Equals(pid, BNConstants.PROGRAM_SIGNAL_NOISE()) {
         if IsDefined(ms) { ms.SetSignalNoiseTimer(60.0); }
         BNInfo("NetworkState", "Signal Noise — per-mark heat tick halved for 60s");
+
+      } else if Equals(pid, BNConstants.PROGRAM_BN_OFFLOAD_PROTOCOL()) {
+        let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
+        if IsDefined(player) {
+          let offloadRank: Int32 = IsDefined(perkSys) ? perkSys.GetPerkLevel(BNPerk.OffloadProtocol) : 1;
+          let offloadGain: Float = offloadRank >= 3 ? 6.0 : (offloadRank >= 2 ? 4.0 : 2.0);
+          let statPoolSys: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gameInstance);
+          let playerID: StatsObjectID = Cast<StatsObjectID>(player.GetEntityID());
+          let currentRAM: Float = statPoolSys.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
+          statPoolSys.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.Memory, currentRAM + offloadGain, player, false);
+          BNInfo("NetworkState", "Offload Protocol r" + ToString(offloadRank) + " — RAM +" + ToString(Cast<Int32>(offloadGain)) + " (was " + ToString(currentRAM) + ")");
+        }
       }
 
       i += 1;
@@ -258,7 +264,6 @@ public abstract class NetworkStateUtils {
       }
     }
   }
-
 
   public static func IsSubnetAccessible(state: NetworkState) -> Bool {
     if state.hitsRequired == 0 { return true; }
@@ -321,7 +326,6 @@ public abstract class NetworkStateUtils {
     return total;
   }
 
-
   public static func FormatVulnerabilityMessage(state: NetworkState, sessionHeat: Float) -> String {
     if state.hitsRequired <= 0 {
       return "ICE UNASSESSED — BREACH TO SCAN SUBNET";
@@ -336,7 +340,6 @@ public abstract class NetworkStateUtils {
     return "CRITICAL — ICE NEAR COLLAPSE";
   }
 
-
   private static func GetIceBonusHits(sessionHeat: Float) -> Int32 {
     if sessionHeat >= 0.7 { return 5; }
     if sessionHeat >= 0.6 { return 4; }
@@ -347,7 +350,7 @@ public abstract class NetworkStateUtils {
   }
 
   public static func GetHeatScaledICEHits(gi: GameInstance) -> Int32 {
-    return RandRange(2, 7); // 2-6
+    return RandRange(2, 7);
   }
 
   private static func GetMarkingSystem(gi: GameInstance) -> ref<MarkingStateSystem> {

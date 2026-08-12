@@ -4,7 +4,6 @@ module BetterNetrunning.Perks
 import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 
-
 public enum BNPerk {
   ColdTrace        = 0,
   NeuralTap        = 1,
@@ -20,8 +19,10 @@ public enum BNPerk {
   Sunder           = 11,
   TrackingProtocol = 12,
   IceBreaker       = 13,
+  EntropyProtocol  = 14,
+  CascadeProtocol  = 15,
+  OffloadProtocol  = 16,
 }
-
 
 public abstract class BNPerkData {
 
@@ -41,6 +42,9 @@ public abstract class BNPerkData {
       case BNPerk.Sunder:           return 1;
       case BNPerk.TrackingProtocol: return 3;
       case BNPerk.IceBreaker:       return 2;
+      case BNPerk.EntropyProtocol:  return 3;
+      case BNPerk.CascadeProtocol:  return 1;
+      case BNPerk.OffloadProtocol:  return 3;
       default:                       return 0;
     }
   }
@@ -61,6 +65,9 @@ public abstract class BNPerkData {
       case BNPerk.Sunder:           return "Sunder";
       case BNPerk.TrackingProtocol: return "Tracking Protocol";
       case BNPerk.IceBreaker:       return "Ice Breaker";
+      case BNPerk.EntropyProtocol:  return "Entropy Protocol";
+      case BNPerk.CascadeProtocol:  return "Cascade Protocol";
+      case BNPerk.OffloadProtocol:  return "Offload Protocol";
       default:                       return "Unknown";
     }
   }
@@ -77,10 +84,8 @@ public abstract class BNPerkData {
   }
 }
 
-
 @addField(PlayerPuppetPS)
 public persistent let bnPerkLevels: array<Int32>;
-
 
 @addMethod(PlayerPuppet)
 public func GetBNPerkLevel(perk: BNPerk) -> Int32 {
@@ -111,7 +116,6 @@ public func GetBNPerkLevelInt(idx: Int32) -> Int32 {
 public func SetBNPerkLevelInt(idx: Int32, level: Int32) -> Void {
   this.SetBNPerkLevel(IntEnum<BNPerk>(idx), level);
 }
-
 
 public class BNPerkSystem extends ScriptableSystem {
 
