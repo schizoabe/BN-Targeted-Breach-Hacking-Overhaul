@@ -1,22 +1,3 @@
-# BN_EntropyProtocol — breach daemon injected during physical device breach.
-# Degrades all resistance systems on marked+stamped personnel for 60 seconds.
-# Three tiers, each unlocked by the corresponding GhostNET Offensive Daemons research.
-#
-# Tier I   (rank 1, -25):  entropy_protocol v1.0
-# Tier II  (rank 2, -50):  entropy_protocol v2.0
-# Tier III (rank 3, -100): entropy_protocol v3.0
-#
-# Dispatch: OffensiveDaemonDispatch.reds reads BNPerk.EntropyProtocol level
-# and applies the matching tier record. Only one tier is ever active per NPC.
-#
-# $base: BaseStatusEffect.VulnerableStatusEffect (not Stat_Buff) — Stat_Buff extends
-# plain StatusEffect which has no icon-rendering plumbing.
-# immunityStats cleared — VulnerableImmunity is an unrelated vanilla mechanic.
-#
-# stats: field applies modifiers to the TARGET entity's vanilla stat pool.
-# Values are additive integers — vanilla resistance stats are raw point values,
-# not percentages (a typical NPC has ~17 points of shock/electric resistance).
-
 BaseStatusEffect.BN_EntropyProtocol_I:
   $base: BaseStatusEffect.VulnerableStatusEffect
   immunityStats: []
