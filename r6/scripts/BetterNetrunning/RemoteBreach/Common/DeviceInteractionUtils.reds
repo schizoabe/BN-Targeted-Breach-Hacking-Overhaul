@@ -14,6 +14,7 @@ public abstract class DeviceInteractionUtils {
   }
 
   public static func DisableJackInInteractionForAccessPoint(devicePS: ref<ScriptableDeviceComponentPS>) -> Void {
+
     let masterController: ref<MasterControllerPS> = devicePS as MasterControllerPS;
     if !IsDefined(masterController) { return; }
 

@@ -21,6 +21,7 @@ public abstract class DeviceDistanceUtils {
     device: ref<DeviceComponentPS>,
     gameInstance: GameInstance
   ) -> Vector4 {
+
     if !IsDefined(device) {
       return Vector4(-999999.0, -999999.0, -999999.0, 1.0);
     }

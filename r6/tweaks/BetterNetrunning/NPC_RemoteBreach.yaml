@@ -1,3 +1,4 @@
+
 Interactions.BNNPCRemoteBreach:
   $base: Interactions.RemoteBreach
   caption: LocKey#4820001

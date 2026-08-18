@@ -53,6 +53,7 @@ public final func IsDeviceAlreadyUnlocked() -> Bool {
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   if IsDefined(this as AccessPointControllerPS) { return; }
 
   if this.IsDeviceAlreadyUnlocked() {
@@ -108,6 +109,7 @@ public final func TryAddCustomRemoteBreach(outActions: script_ref<array<ref<Devi
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   if IsDefined(this as AccessPointControllerPS) { return; }
 
   if this.IsDeviceAlreadyUnlocked() {
@@ -115,6 +117,7 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
   }
 
   if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
+
     let i: Int32 = ArraySize(Deref(outActions)) - 1;
     while i >= 0 {
       let action: ref<DeviceAction> = Deref(outActions)[i];
@@ -158,6 +161,7 @@ public final func TryAddMissingCustomRemoteBreach(outActions: script_ref<array<r
 
 @addMethod(ScriptableDeviceComponentPS)
 public final func RemoveCustomRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   let expirationResult: UnlockExpirationResult = UnlockExpirationUtils.CheckUnlockExpiration(this);
 
   if expirationResult.wasExpired {
@@ -204,6 +208,7 @@ private final func RemoveCustomRemoteBreachAction(outActions: script_ref<array<r
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(QuickHackableHelper)
 public static func TranslateActionsIntoQuickSlotCommands(const actions: array<ref<DeviceAction>>, commands: script_ref<array<ref<QuickhackData>>>, gameObject: ref<GameObject>, scriptableComponentPS: ref<ScriptableDeviceComponentPS>) -> Void {
+
   wrappedMethod(actions, commands, gameObject, scriptableComponentPS);
 
   let playerRef: ref<PlayerPuppet> = GetPlayer(gameObject.GetGame());
@@ -218,8 +223,10 @@ public static func TranslateActionsIntoQuickSlotCommands(const actions: array<re
     let action: ref<ScriptableDeviceAction> = Deref(commands)[i].m_action as ScriptableDeviceAction;
 
     if IsDefined(action) && BNConstants.IsRemoteBreachAction(action.GetClassName()) {
+
       let remoteBreachAction: ref<BaseRemoteBreachAction> = action as BaseRemoteBreachAction;
       if IsDefined(remoteBreachAction) {
+
         let canPay: Bool = remoteBreachAction.CanPayCost(playerRef, true);
 
         let playerStatPoolSystem: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(playerRef.GetGame());

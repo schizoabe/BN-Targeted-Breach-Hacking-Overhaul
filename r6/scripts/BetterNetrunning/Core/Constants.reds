@@ -271,10 +271,13 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
   }
 
   public static func IsOffensiveDaemon(pid: TweakDBID) -> Bool {
+
     if pid == BNConstants.PROGRAM_NETWORK_CAMERA_SHUTDOWN()    { return true; }
     if pid == BNConstants.PROGRAM_NETWORK_CAMERA_MALFUNCTION() { return true; }
+
     if pid == BNConstants.PROGRAM_NETWORK_TURRET_SHUTDOWN()  { return true; }
     if pid == BNConstants.PROGRAM_NETWORK_TURRET_FRIENDLY()  { return true; }
+
     if pid == BNConstants.PROGRAM_BN_ENTROPY_PROTOCOL() { return true; }
     if pid == BNConstants.PROGRAM_CASCADE_PROTOCOL()    { return true; }
     return false;

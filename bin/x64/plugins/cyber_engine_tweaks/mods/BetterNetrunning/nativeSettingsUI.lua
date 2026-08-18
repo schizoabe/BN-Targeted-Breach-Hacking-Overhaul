@@ -42,6 +42,27 @@ function NativeSettingsUI.Build(nativeSettings, SettingsManager, TweakDBSetup)
         end
     )
 
+    nativeSettings.addKeyBinding("/BetterNetrunning/Controls", "Clear All Marks", "Clears all breach marks and hides the HUD panels.", settings.HotkeyKey_ClearMarks, "IK_None", false, function(key)
+        SettingsManager.Set("HotkeyKey_ClearMarks", key)
+        SettingsManager.Save()
+        NativeSettingsUI.PushHotkeys(SettingsManager)
+    end)
+    nativeSettings.addKeyBinding("/BetterNetrunning/Controls", "Force Jack-Out", "Emergency escape from a stuck breach board.", settings.HotkeyKey_ForceJackOut, "IK_None", false, function(key)
+        SettingsManager.Set("HotkeyKey_ForceJackOut", key)
+        SettingsManager.Save()
+        NativeSettingsUI.PushHotkeys(SettingsManager)
+    end)
+    nativeSettings.addKeyBinding("/BetterNetrunning/Controls", "Cycle Breach Mode", "Cycles between Scout, Attack, and Defend modes (requires cyberdeck).", settings.HotkeyKey_CycleBreachMode, "IK_None", false, function(key)
+        SettingsManager.Set("HotkeyKey_CycleBreachMode", key)
+        SettingsManager.Save()
+        NativeSettingsUI.PushHotkeys(SettingsManager)
+    end)
+    nativeSettings.addKeyBinding("/BetterNetrunning/Controls", "Toggle HUD Panels", "Shows or hides the Network Status and ICE Log panels.", settings.HotkeyKey_ToggleHUDPanels, "IK_None", false, function(key)
+        SettingsManager.Set("HotkeyKey_ToggleHUDPanels", key)
+        SettingsManager.Save()
+        NativeSettingsUI.PushHotkeys(SettingsManager)
+    end)
+
     nativeSettings.addSwitch("/BetterNetrunning/Breaching", GetLocKey("DisplayName-BetterNetrunning-EnableClassicMode"), GetLocKey("Description-BetterNetrunning-EnableClassicMode"), settings.EnableClassicMode, false, function(state)
         SettingsManager.Set("EnableClassicMode", state)
         SettingsManager.Save()
@@ -474,6 +495,7 @@ function NativeSettingsUI.RebuildDebugOptions(nativeSettings, SettingsManager)
 end
 
 function NativeSettingsUI.ClearDebugOptions(nativeSettings)
+
     if debugOptionTable ~= nil then
         nativeSettings.removeOption(debugOptionTable)
         debugOptionTable = nil
@@ -497,6 +519,18 @@ function NativeSettingsUI.CreateDebugOptions(nativeSettings, SettingsManager)
             SettingsManager.Save()
         end)
     end
+end
+
+function NativeSettingsUI.PushHotkeys(SettingsManager)
+    local inputSys = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.Core.BNInputKeySystem")
+    if not inputSys then return end
+    local function get(key) return tostring(SettingsManager.Get(key) or "IK_None") end
+    inputSys:ApplyHotkeys(
+        get("HotkeyKey_ClearMarks"),
+        get("HotkeyKey_ForceJackOut"),
+        get("HotkeyKey_CycleBreachMode"),
+        get("HotkeyKey_ToggleHUDPanels")
+    )
 end
 
 return NativeSettingsUI

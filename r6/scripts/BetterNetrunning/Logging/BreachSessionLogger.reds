@@ -7,6 +7,7 @@ import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 
 public class BreachSessionStats {
+
   public let breachType: String;
   public let breachTarget: String;
   public let timestamp: Float;
@@ -196,6 +197,7 @@ private static func LogDaemonList(
   showIcon: Bool,
   additionalSuffix: String
 ) -> Void {
+
   if ArraySize(daemons) == 0 {
     BNInfo("BreachStats", "│   " + emptyMessage);
     return;
@@ -227,25 +229,31 @@ private static func LogDaemonList(
 }
 
 private static func GetSubnetDaemonIcon(programID: TweakDBID) -> String {
+
   if Equals(programID, BNConstants.PROGRAM_UNLOCK_QUICKHACKS())
       || Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_BASIC()) {
     return "🔌";
   }
+
   else if Equals(programID, BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS())
       || Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_CAMERA()) {
     return "📷";
   }
+
   else if Equals(programID, BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS())
       || Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_TURRET()) {
     return "🔫";
   }
+
   else if Equals(programID, BNConstants.PROGRAM_UNLOCK_NPC_QUICKHACKS())
       || Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_NPC()) {
     return "👤";
   }
+
   else if Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_VEHICLE()) {
     return "🚗";
   }
+
   else {
     return "";
   }

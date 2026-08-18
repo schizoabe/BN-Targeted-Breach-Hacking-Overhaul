@@ -12,6 +12,7 @@ import BetterNetrunning.RadialUnlock.*
 
 @replaceMethod(ScriptableDeviceComponentPS)
 public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, const context: script_ref<GetActionsContext>) -> Void {
+
   if this.m_disableQuickHacks || this.IsDisabled() {
     return;
   }
@@ -23,6 +24,7 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
 
   while i >= 0 {
     let action: ref<DeviceAction> = outActions[i];
+
     if IsDefined(action) && Equals(action.actionName, BNConstants.ACTION_REMOTE_BREACH()) {
       let className: CName = action.GetClassName();
 
@@ -55,13 +57,16 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
   let isRemoteBreachLocked: Bool = BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this);
 
   if this.IsLockedViaSequencer() {
+
     if isRemoteBreachLocked {
       ScriptableDeviceComponentPS.SetActionsInactiveAll(outActions, BNConstants.LOCKEY_NO_NETWORK_ACCESS(), BNConstants.ACTION_REMOTE_BREACH());
     } else {
       ScriptableDeviceComponentPS.SetActionsInactiveAll(outActions, LocKeyToString(BNConstants.LOCKEY_QUICKHACKS_LOCKED()), BNConstants.ACTION_REMOTE_BREACH());
     }
+
     RemoteBreachRAMUtils.CheckAndLockRemoteBreachRAM(outActions);
   } else if !BetterNetrunningSettings.EnableClassicMode() && !isUnsecuredNetwork {
+
     this.SetActionsInactiveUnbreached(outActions);
   }
 

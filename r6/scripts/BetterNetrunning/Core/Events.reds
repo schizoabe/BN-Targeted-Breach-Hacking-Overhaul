@@ -99,6 +99,7 @@ public abstract class BreachStatusUtils {
   }
 
   public static func IsBreachedWithExpiration(unlockTimestamp: Float, gameInstance: GameInstance) -> Bool {
+
     if unlockTimestamp <= 0.0 {
       return false;
     }

@@ -24,6 +24,7 @@ public abstract class DaemonFilterUtils {
     }
 
     public static func IsConnectedToNetwork(entity: wref<GameObject>) -> Bool {
+
         if DaemonFilterUtils.IsRegularDevice(entity) {
             return true;
         }
@@ -73,6 +74,7 @@ public abstract class DaemonFilterUtils {
             } else if Equals(programID, BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS()) {
                 flags.unlockTurrets = true;
             }
+
             else if Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_BASIC()) {
                 flags.unlockBasic = true;
             } else if Equals(programID, BNConstants.PROGRAM_ACTION_BN_UNLOCK_NPC()) {

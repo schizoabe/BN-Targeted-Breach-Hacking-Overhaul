@@ -14,6 +14,7 @@ import BetterNetrunning.RadialUnlock.*
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func ApplyBetterNetrunningDeviceFilters(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   this.ReplaceVanillaRemoteBreachWithCustom(outActions);
 
   this.RemoveRemoteBreachIfUnlocked(outActions);
@@ -22,18 +23,21 @@ private final func ApplyBetterNetrunningDeviceFilters(outActions: script_ref<arr
 @if(!ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func ApplyBetterNetrunningDeviceFilters(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   this.RemoveRemoteBreachIfUnlocked(outActions);
 }
 
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func ReplaceVanillaRemoteBreachWithCustom(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   if this.IsBreached() {
     this.RemoveVanillaRemoteBreachActions(outActions);
     return;
   }
 
   if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
+
     return;
   }
 
@@ -62,6 +66,7 @@ private final func ReplaceVanillaRemoteBreachWithCustom(outActions: script_ref<a
 @if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   if !this.IsBreached() {
     return;
   }
@@ -87,6 +92,7 @@ private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref
 @if(!ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   if !this.IsBreached() {
     return;
   }
@@ -112,13 +118,16 @@ private final func TryAddMissingCustomRemoteBreachWrapper(outActions: script_ref
 @if(!ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func TryAddMissingCustomRemoteBreachWrapper(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
 }
 
 @addMethod(ScriptableDeviceComponentPS)
 private final func ShouldProcessQuickHackActions(outActions: script_ref<array<ref<DeviceAction>>>) -> Bool {
+
   if NotEquals(this.GetDurabilityState(), EDeviceDurabilityState.NOMINAL) {
     return false;
   }
+
   if this.m_disableQuickHacks {
     if ArraySize(Deref(outActions)) > 0 {
       ArrayClear(Deref(outActions));
@@ -131,12 +140,15 @@ private final func ShouldProcessQuickHackActions(outActions: script_ref<array<re
 @if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptableDeviceComponentPS)
 protected final func MarkActionsAsQuickHacks(actionsToMark: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   wrappedMethod(actionsToMark);
 
   let i: Int32 = 0;
   while i < ArraySize(Deref(actionsToMark)) {
+
     let customBreachAction: ref<CustomAccessBreach> = Deref(actionsToMark)[i] as CustomAccessBreach;
     if IsDefined(customBreachAction) {
+
       customBreachAction.SetAsQuickHack();
     }
 
@@ -146,6 +158,7 @@ protected final func MarkActionsAsQuickHacks(actionsToMark: script_ref<array<ref
 
 @addMethod(ScriptableDeviceComponentPS)
 private final func ApplyCommonQuickHackRestrictions(outActions: script_ref<array<ref<DeviceAction>>>, const context: script_ref<GetActionsContext>) -> Void {
+
   if this.IsUnpowered() {
     ScriptableDeviceComponentPS.SetActionsInactiveAll(outActions, BNConstants.LOCKEY_NOT_POWERED());
   }

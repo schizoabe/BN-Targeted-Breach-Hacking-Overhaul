@@ -23,6 +23,7 @@ public abstract class DaemonExecutionUtils {
         strategy: ref<IDaemonUnlockStrategy>,
         daemonTypeStr: String
     ) -> Void {
+
         let sharedPS: ref<SharedGameplayPS> = sourcePS as SharedGameplayPS;
         if !IsDefined(sharedPS) {
             BNError("ProcessDaemonWithStrategy", "Cannot cast to SharedGameplayPS");
@@ -52,6 +53,7 @@ public abstract class DaemonExecutionUtils {
         } else if Equals(daemonTypeStr, DaemonTypes.Turret()) {
             TargetType = TargetType.Turret;
         } else {
+
             TargetType = TargetType.Basic;
         }
 
@@ -131,6 +133,7 @@ public abstract class RemoteBreachIcepickActionBase extends HackProgramAction {
     }
 
     if IsDefined(devicePS) {
+
       this.ApplyHeatDelta(gi);
       return;
     }

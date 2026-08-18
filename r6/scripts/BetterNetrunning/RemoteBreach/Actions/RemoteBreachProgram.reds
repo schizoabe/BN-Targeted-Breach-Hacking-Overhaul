@@ -72,6 +72,7 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
         let devicePS: ref<ScriptableDeviceComponentPS> = this.GetHackedDevice();
 
         if IsDefined(devicePS) {
+
             devicePS.FinalizeNetrunnerDive(HackingMinigameState.Failed);
         }
 
@@ -106,14 +107,17 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachEasyProgramAction extends RemoteBreachProgramActionBase {
+
 }
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachMediumProgramAction extends RemoteBreachProgramActionBase {
+
 }
 
 @if(ModuleExists("HackingExtensions.Programs"))
 public class RemoteBreachHardProgramAction extends RemoteBreachProgramActionBase {
+
 }
 
 @if(ModuleExists("HackingExtensions"))

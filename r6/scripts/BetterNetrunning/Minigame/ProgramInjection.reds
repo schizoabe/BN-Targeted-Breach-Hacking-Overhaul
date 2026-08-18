@@ -32,6 +32,7 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
       return;
     }
     devicePS     = gameDevice.GetDevicePS();
+
     let implicitCast: ref<SharedGameplayPS> = devicePS;
     device       = implicitCast;
     gameInstance = gameDevice.GetGame();
@@ -96,6 +97,7 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
   if IsDefined(devicePS) {
     networkState = NetworkStateUtils.GetNetworkState(devicePS, gameInstance);
   }
+
   let subnetOpen: Bool = IsDefined(this.m_entity as AccessPoint)
     || NetworkStateUtils.IsSubnetAccessible(networkState)
     || (IsDefined(markingSystem) && markingSystem.GetDisarmICETimer() > 0.0);

@@ -1,3 +1,4 @@
+
 BaseStatusEffect.BN_EntropyProtocol_I:
   $base: BaseStatusEffect.VulnerableStatusEffect
   immunityStats: []

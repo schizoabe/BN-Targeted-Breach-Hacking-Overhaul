@@ -74,6 +74,7 @@ local function hasCyberdeckEquipped()
         if not playerData then return false end
         local itemID = playerData:GetActiveItem(gamedataEquipmentArea.SystemReplacementCW)
         if not ItemID.IsValid(itemID) then return false end
+
         local tdbStr = TDBID.ToStringDEBUG(ItemID.GetTDBID(itemID))
         local cyberwareType = TweakDB:GetFlat(TDBID.Create(tdbStr .. ".cyberwareType"))
         if not cyberwareType then return false end
@@ -260,6 +261,7 @@ function MarkingSystem.HK_CycleBreachMode()
     local names = { [0] = "SCOUT", [1] = "ATTACK", [2] = "DEFEND" }
     local label = names[nextMode] or "SCOUT"
     print("[BetterNetrunning] Breach mode -> " .. label)
+
     local cbs = getCounterBreachSystem()
     if cbs then pcall(function() cbs:ShowWarning("BREACH MODE: " .. label) end) end
 end

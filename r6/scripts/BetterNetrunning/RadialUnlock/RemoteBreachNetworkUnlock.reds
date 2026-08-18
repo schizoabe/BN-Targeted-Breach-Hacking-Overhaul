@@ -26,6 +26,7 @@ private func ApplyUnconsciousNPCNetworkUnlockWithStats(
   unlockFlags: BreachUnlockFlags,
   stats: ref<BreachSessionStats>
 ) -> Void {
+
   BreachStatisticsCollector.CollectNetworkDeviceStats(networkDevices, unlockFlags, stats);
 
   let i: Int32 = 0;
@@ -37,6 +38,7 @@ private func ApplyUnconsciousNPCNetworkUnlockWithStats(
       if DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags) {
         let sharedPS: ref<SharedGameplayPS> = device as SharedGameplayPS;
         if IsDefined(sharedPS) {
+
           let currentTime: Float = TimeUtils.GetCurrentTimestamp(this.GetGame());
           TimeUtils.SetDeviceUnlockTimestamp(sharedPS, TargetType, currentTime);
 
@@ -57,6 +59,7 @@ private func ApplyRemoteBreachNetworkUnlockWithStats(
   unlockFlags: BreachUnlockFlags,
   stats: ref<BreachSessionStats>
 ) -> Void {
+
   BreachStatisticsCollector.CollectNetworkDeviceStats(networkDevices, unlockFlags, stats);
 
   let i: Int32 = 0;
@@ -70,6 +73,7 @@ private func ApplyRemoteBreachNetworkUnlockWithStats(
         if DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags) {
           let sharedPS: ref<SharedGameplayPS> = scriptableDevice;
           if IsDefined(sharedPS) {
+
             let currentTime: Float = TimeUtils.GetCurrentTimestamp(this.GetGame());
             TimeUtils.SetDeviceUnlockTimestamp(sharedPS, TargetType, currentTime);
           }
@@ -168,6 +172,7 @@ private func ApplyRemoteBreachDeviceUnlockWithStats(
   unlockFlags: BreachUnlockFlags,
   stats: ref<BreachSessionStats>
 ) -> Void {
+
   if !IsDefined(targetDevice) {
     BNError("[RemoteBreach]", "Target device is not defined, cannot unlock");
     return;

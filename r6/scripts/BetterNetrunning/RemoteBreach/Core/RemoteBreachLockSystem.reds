@@ -25,6 +25,7 @@ public class RemoteBreachLockSystem {
       let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
 
       if ArraySize(apControllers) > 0 {
+
         let i: Int32 = 0;
         while i < ArraySize(apControllers) {
           let apPS: ref<AccessPointControllerPS> = apControllers[i];
@@ -39,6 +40,7 @@ public class RemoteBreachLockSystem {
               if !IsDefined(devicePS) {
                 j += 1;
               } else if excludeSource && devicePS == sourceDevicePS {
+
                 j += 1;
               } else {
                 ArrayPush(result, devicePS);
@@ -49,8 +51,10 @@ public class RemoteBreachLockSystem {
           i += 1;
         }
       } else {
+
         let masterPS: ref<MasterControllerPS> = sourceDevicePS as MasterControllerPS;
         if IsDefined(masterPS) {
+
           let networkDevices: array<ref<DeviceComponentPS>>;
           masterPS.GetChildren(networkDevices);
 
@@ -99,6 +103,7 @@ public class RemoteBreachLockSystem {
     failedPosition: Vector4,
     gameInstance: GameInstance
   ) -> Void {
+
     if !IsDefined(failedDevicePS) {
       BNError("RemoteBreachLock", "RecordRemoteBreachFailure called with null device PS");
       return;
@@ -150,11 +155,13 @@ public class RemoteBreachLockSystem {
           let apControllers: array<ref<AccessPointControllerPS>> = sharedPS.GetAccessPoints();
 
           if ArraySize(apControllers) == 0 {
+
             if NotEquals(devicePS.GetID(), failedDeviceID) {
               sharedPS.m_betterNetrunningRemoteBreachFailedTimestamp = currentTime;
               standaloneLockedCount += 1;
             }
           } else {
+
             if NotEquals(devicePS.GetID(), failedDeviceID) {
               sharedPS.m_betterNetrunningRemoteBreachFailedTimestamp = currentTime;
               networkLockedCount += 1;
@@ -175,6 +182,7 @@ public class RemoteBreachLockSystem {
         let vehiclePS: ref<VehicleComponentPS> = nearbyVehicles[k];
 
         if IsDefined(vehiclePS) {
+
           if NotEquals(vehiclePS.GetID(), failedDeviceID) {
             vehiclePS.m_betterNetrunningRemoteBreachFailedTimestamp = currentTime;
             vehicleLockedCount += 1;

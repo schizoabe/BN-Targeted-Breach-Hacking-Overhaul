@@ -80,6 +80,7 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
     }
 
     if !IsDefined(sharedPS) || !NetworkStateUtils.IsSubnetAccessible(netState) {
+
         action.m_isICEBoard = true;
         action.SetProperties(
             this.GetDeviceName(),
@@ -93,6 +94,7 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
         BNInfo("RemoteBreachDevice",
             "ICE intact (" + ToString(netState.hitsApplied) + "/" + ToString(netState.hitsRequired) + ") — showing ICE board");
     } else {
+
         let difficulty: GameplayDifficulty = RemoteBreachActionHelper.GetCurrentDifficulty();
         let targetType: MinigameTargetType;
         if IsDefined(this as ComputerControllerPS) { targetType = MinigameTargetType.Computer; }
@@ -116,6 +118,7 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
     if IsDefined(container) {
         let hackSystem: ref<CustomHackingSystem> = container.Get(BNConstants.CLASS_CUSTOM_HACKING_SYSTEM()) as CustomHackingSystem;
         if IsDefined(hackSystem) {
+
             let scanBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
             let scanEntity: wref<Entity> = this.GetOwnerEntityWeak() as Entity;
             if IsDefined(scanBB) && IsDefined(scanEntity) {
@@ -133,6 +136,7 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
 protected func GetQuickHackActions(out actions: array<ref<DeviceAction>>, const context: script_ref<GetActionsContext>) -> Void {
     let gi: GameInstance = this.GetGameInstance();
     wrappedMethod(actions, context);
+
     RemoteBreachActionHelper.RemoveTweakDBRemoteBreach(actions, n"DeviceRemoteBreachAction");
     RemoteBreachActionHelper.RemoveTweakDBRemoteBreach(actions, n"RemoteBreachAction");
     RemoteBreachActionHelper.RemoveTweakDBRemoteBreach(actions, n"VehicleRemoteBreachAction");

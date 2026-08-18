@@ -10,6 +10,7 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.CounterBreach.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Perks.*
+import BetterNetrunning.Systems.*
 
 @if(ModuleExists("HackingExtensions"))
 import HackingExtensions.*
@@ -95,6 +96,7 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
 
     if iceFullyBroken {
       npcPS.m_bnNPCIceDefeated = true;
+
       if npcPS.IsConnectedToAccessPoint() {
         let deviceLink: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
         if IsDefined(deviceLink) {
@@ -102,6 +104,7 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
         }
       }
       npcPS.m_quickHacksExposed = true;
+
       npcPS.BN_StampSJKIBreached();
       let exposeEvent: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
       exposeEvent.isRemote = true;
@@ -158,6 +161,7 @@ public class OnNPCRemoteBreachSucceeded extends OnCustomHackingSucceeded {
     }
 
     npcPS.m_quickHacksExposed = true;
+
     npcPS.BN_StampSJKIBreached();
 
     let exposeEvent: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
@@ -234,7 +238,12 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
     }
 
     if this.m_npcPS.m_bnNPCIceHitsRequired == 0 {
-      this.m_npcPS.m_bnNPCIceHitsRequired = StateSystemUtils.GetHeatScaledICEHits(gameInstance);
+      let iceEntity: wref<ScriptedPuppet> = this.m_npcPS.GetOwnerEntityWeak() as ScriptedPuppet;
+      if IsDefined(iceEntity) && NPCRarityToRank(iceEntity.GetNPCRarity()) >= 4 {
+        this.m_npcPS.m_bnNPCIceHitsRequired = 6;
+      } else {
+        this.m_npcPS.m_bnNPCIceHitsRequired = StateSystemUtils.GetHeatScaledICEHits(gameInstance);
+      }
       BNInfo("NPCRemoteBreach",
         "NPC ICE initialized: " + ToString(this.m_npcPS.m_bnNPCIceHitsRequired) + " hits required");
     }
@@ -381,7 +390,7 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   entry.m_costRaw             = action.m_calculatedRAMCost;
   entry.m_ICELevel            = 0.0;
   entry.m_ICELevelVisible     = false;
-  entry.m_networkBreached     = false;
+  entry.m_networkBreached     = npcPS.m_bnNPCIceDefeated;
   entry.m_actionMatchesTarget = true;
 
   if canPay {

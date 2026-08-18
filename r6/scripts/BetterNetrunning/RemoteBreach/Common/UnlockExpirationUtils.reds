@@ -25,12 +25,15 @@ public abstract class UnlockExpirationUtils {
     if IsDefined(devicePS as VehicleComponentPS) {
       UnlockExpirationUtils.CheckVehicleExpiration(devicePS, unlockDurationHours, gameInstance, result);
     }
+
     else if DaemonFilterUtils.IsCamera(devicePS) {
       UnlockExpirationUtils.CheckCameraExpiration(devicePS, unlockDurationHours, gameInstance, result);
     }
+
     else if DaemonFilterUtils.IsTurret(devicePS) {
       UnlockExpirationUtils.CheckTurretExpiration(devicePS, unlockDurationHours, gameInstance, result);
     }
+
     else {
       UnlockExpirationUtils.CheckBasicDeviceExpiration(devicePS, unlockDurationHours, gameInstance, result);
     }
@@ -58,6 +61,7 @@ public abstract class UnlockExpirationUtils {
     let durationSeconds: Float = Cast<Float>(unlockDurationHours) * 3600.0;
 
     if elapsedTime > durationSeconds {
+
       devicePS.m_betterNetrunningUnlockTimestampBasic = 0.0;
       result.wasExpired = true;
       result.expiredDeviceType = n"Vehicle";
@@ -86,6 +90,7 @@ public abstract class UnlockExpirationUtils {
     let durationSeconds: Float = Cast<Float>(unlockDurationHours) * 3600.0;
 
     if elapsedTime > durationSeconds {
+
       devicePS.m_betterNetrunningUnlockTimestampCameras = 0.0;
       result.wasExpired = true;
       result.expiredDeviceType = n"Camera";
@@ -114,6 +119,7 @@ public abstract class UnlockExpirationUtils {
     let durationSeconds: Float = Cast<Float>(unlockDurationHours) * 3600.0;
 
     if elapsedTime > durationSeconds {
+
       devicePS.m_betterNetrunningUnlockTimestampTurrets = 0.0;
       result.wasExpired = true;
       result.expiredDeviceType = n"Turret";
@@ -142,6 +148,7 @@ public abstract class UnlockExpirationUtils {
     let durationSeconds: Float = Cast<Float>(unlockDurationHours) * 3600.0;
 
     if elapsedTime > durationSeconds {
+
       devicePS.m_betterNetrunningUnlockTimestampBasic = 0.0;
       result.wasExpired = true;
       result.expiredDeviceType = n"Basic";

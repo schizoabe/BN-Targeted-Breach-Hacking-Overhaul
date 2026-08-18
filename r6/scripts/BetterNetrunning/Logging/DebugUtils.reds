@@ -110,6 +110,7 @@ public abstract class DebugUtils {
     let deviceLinkPS: ref<SharedGameplayPS> = npcPS.GetDeviceLink();
 
     if !IsDefined(deviceLinkPS) {
+
       BNWarn(context, "NPC is connected to AP but DeviceLink is null (unexpected timing issue)");
       return;
     }

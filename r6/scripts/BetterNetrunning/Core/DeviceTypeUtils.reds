@@ -44,6 +44,7 @@ public struct BreachUnlockFlags {
 public abstract class DeviceTypeUtils {
 
   public static func GetDeviceType(device: ref<DeviceComponentPS>) -> TargetType {
+
     if IsDefined(device as PuppetDeviceLinkPS) || IsDefined(device as CommunityProxyPS) {
       return TargetType.NPC;
     }

@@ -119,11 +119,13 @@ public abstract class TargetedBreachUtils {
                         TargetedBreachUtils.UnlockNPC(puppet, currentTime, persistency, entityID);
                         unlocked = true;
                     } else {
+
                         let vehicle: ref<VehicleObject> = entity as VehicleObject;
                         if IsDefined(vehicle) {
                             TargetedBreachUtils.UnlockVehicle(vehicle, currentTime, gameInstance);
                             unlocked = true;
                         } else {
+
                             let device: ref<Device> = entity as Device;
                             if IsDefined(device) {
                                 TargetedBreachUtils.UnlockDevice(device, targetType, currentTime, persistency);

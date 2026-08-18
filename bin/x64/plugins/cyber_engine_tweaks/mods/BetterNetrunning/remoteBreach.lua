@@ -2,6 +2,7 @@
 RemoteBreach = {}
 
 function RemoteBreach.Setup()
+
     local CustomHackingSystem = GetMod("CustomHackingSystem")
 
     if not CustomHackingSystem then

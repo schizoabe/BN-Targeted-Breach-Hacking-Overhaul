@@ -43,9 +43,9 @@ public class BNFirewallFailedEvent extends OnCustomHackingFailed {
     GameInstance.GetTimeSystem(this.gameInstance).UnsetTimeDilation(n"BNFirewall");
     if IsDefined(this.m_listener) {
       this.m_listener.m_bnFirewallEngaged = false;
-      this.m_listener.ForceClose();
+
     }
-    BNInfo("Firewall", "Firewall minigame failed — hack lands");
+    BNInfo("Firewall", "Firewall minigame failed — upload resumes, hack lands");
   }
 }
 
@@ -161,6 +161,7 @@ protected cb func OnStatPoolAdded() -> Bool {
     cbs.ShowWarning("FIREWALL DEPLOYED — CANCELLING QUICKHACK");
     BNInfo("Firewall", "Firewall engaged — charges=" + ToString(charges));
   } else {
+
     GameInstance.GetTimeSystem(gi).UnsetTimeDilation(n"BNFirewall");
     BNWarn("Firewall", "Firewall minigame failed to launch — another minigame already active");
   }

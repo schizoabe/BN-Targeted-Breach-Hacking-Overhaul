@@ -17,6 +17,7 @@ protected func OnIncapacitated() -> Void {
     GameInstance.GetDelaySystem(this.GetGame()).DelayEvent(this, incapacitatedEvent, 0.50);
   }
   this.m_securitySupportListener = null;
+
   this.EnableLootInteractionWithDelay(this);
   this.EnableInteraction(n"Grapple", false);
   this.EnableInteraction(n"TakedownLayer", false);
@@ -45,6 +46,7 @@ protected func OnIncapacitated() -> Void {
 public final const func GetValidChoices(const actions: script_ref<array<wref<ObjectAction_Record>>>, const context: script_ref<GetActionsContext>, objectActionsCallbackController: wref<gameObjectActionsCallbackController>, checkPlayerQuickHackList: Bool, choices: script_ref<array<InteractionChoice>>) -> Void {
   if BetterNetrunningSettings.AllowBreachingUnconsciousNPCs()
       && !this.m_betterNetrunningWasDirectlyBreached {
+
     let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
     let neuralTapOwned: Bool = true;
     if IsDefined(player) {

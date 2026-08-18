@@ -29,6 +29,7 @@ public final const func CheckConnectedClassTypes() -> ConnectedClassTypes {
 
   let i: Int32 = 0;
   while i < ArraySize(slaves) {
+
     if data.surveillanceCamera && data.securityTurret && data.puppet {
       break;
     }
@@ -42,6 +43,7 @@ public final const func CheckConnectedClassTypes() -> ConnectedClassTypes {
 
 @addMethod(AccessPointControllerPS)
 private final func UpdateDeviceTypeData(slave: ref<DeviceComponentPS>, out data: ConnectedClassTypes) -> Void {
+
   let slavePS: ref<ScriptableDeviceComponentPS> = slave as ScriptableDeviceComponentPS;
   if IsDefined(slavePS) {
     if !data.surveillanceCamera && DaemonFilterUtils.IsCamera(slavePS) {

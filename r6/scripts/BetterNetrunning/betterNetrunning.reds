@@ -17,6 +17,7 @@ import BetterNetrunning.Perks.*
 
 @wrapMethod(MinigameGenerationRuleScalingPrograms)
 public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgramData>>) -> Void {
+
   if IsDefined(this.m_entity) {
     this.m_blackboardSystem.Get(GetAllBlackboardDefs().HackingMinigame)
       .SetVariant(GetAllBlackboardDefs().HackingMinigame.Entity, ToVariant(this.m_entity));
@@ -60,6 +61,7 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     if IsDefined(devRBSS) && IsDefined(devRBSS.GetCurrentDevice()) && this.m_isRemoteBreach {
       let device: ref<Device> = this.m_entity as Device;
       if IsDefined(device) && Equals(device.GetDevicePS().GetID(), devRBSS.GetCurrentDevice().GetID()) {
+
         let perkSysRB: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
         if !IsDefined(perkSysRB) || perkSysRB.GetPerkLevel(BNPerk.IntrusionSuite) <= 0 {
           ArrayClear(Deref(programs));
@@ -431,6 +433,7 @@ private final func EnsureIcepickFallback(programs: script_ref<array<MinigameProg
   if GameInstance.IsValid(gi) {
     perkSysFB = BNPerkSystem.GetInstance(gi);
   }
+
   let hasPerkSys: Bool = IsDefined(perkSysFB);
 
   if !iceAlreadyBroken {

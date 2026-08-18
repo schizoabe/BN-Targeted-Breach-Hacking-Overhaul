@@ -28,6 +28,7 @@ enum NetworkClassification {
 }
 
 public abstract class EntityUnlockProcessor {
+
     protected let m_origin: Vector4;
     protected let m_radiusSq: Float;
     protected let m_breachedAPID: PersistentID;
@@ -59,6 +60,7 @@ public abstract class EntityUnlockProcessor {
     }
 
     public func ProcessEntity(part: TS_TargetPartInfo) -> Void {
+
         let entity: wref<GameObject>;
         if !DeviceUnlockUtils.ExtractAndValidateEntity(
             part, this.m_origin, this.m_radiusSq, entity
@@ -111,10 +113,12 @@ public abstract class EntityUnlockProcessor {
 }
 
 public class DeviceUnlockProcessor extends EntityUnlockProcessor {
+
     private let m_device: ref<Device>;
     private let m_devicePS: ref<ScriptableDeviceComponentPS>;
 
     protected func CastToSpecificType(entity: wref<GameObject>) -> Bool {
+
         this.m_device = entity as Device;
         if !IsDefined(this.m_device) { return false; }
 
@@ -139,6 +143,7 @@ public class DeviceUnlockProcessor extends EntityUnlockProcessor {
 }
 
 public class VehicleUnlockProcessor extends EntityUnlockProcessor {
+
     private let m_vehicle: ref<VehicleObject>;
 
     protected func CastToSpecificType(entity: wref<GameObject>) -> Bool {
@@ -147,6 +152,7 @@ public class VehicleUnlockProcessor extends EntityUnlockProcessor {
     }
 
     protected func ClassifyNetwork() -> NetworkClassification {
+
         return NetworkClassification.PureStandalone;
     }
 
@@ -159,10 +165,12 @@ public class VehicleUnlockProcessor extends EntityUnlockProcessor {
 }
 
 public class NPCUnlockProcessor extends EntityUnlockProcessor {
+
     private let m_puppet: ref<ScriptedPuppet>;
     private let m_npcPS: ref<ScriptedPuppetPS>;
 
     protected func CastToSpecificType(entity: wref<GameObject>) -> Bool {
+
         this.m_puppet = entity as ScriptedPuppet;
         if !IsDefined(this.m_puppet) { return false; }
 
@@ -262,9 +270,11 @@ public abstract class DeviceUnlockUtils {
         let npcPuppet: wref<ScriptedPuppet> = breachEntity as ScriptedPuppet;
 
         if IsDefined(npcPuppet) {
+
             setup.sourcePos = npcPuppet.GetWorldPosition();
             setup.originType = "NPC";
         } else {
+
             setup.sourcePos = sourceEntity.GetWorldPosition();
             setup.originType = "Device";
         }
@@ -331,6 +341,7 @@ public abstract class DeviceUnlockUtils {
         breachRadius: Float,
         out entity: wref<GameObject>
     ) -> Bool {
+
         entity = TS_TargetPartInfo.GetComponent(part).GetEntity() as GameObject;
         if !IsDefined(entity) {
             return false;
@@ -517,6 +528,7 @@ public abstract class DeviceUnlockUtils {
         out standaloneUnlocked: Int32,
         out crossNetworkUnlocked: Int32
     ) -> Void {
+
         let deviceProcessor: ref<DeviceUnlockProcessor> = new DeviceUnlockProcessor();
         deviceProcessor.Initialize(origin, radiusSq, breachedAPID, gameInstance, unlockFlags);
 
@@ -603,6 +615,7 @@ public abstract class DeviceUnlockUtils {
         radius: Float,
         out processedIDs: array<PersistentID>
     ) -> Void {
+
         if !IsDefined(accessPoint) { return; }
 
         let puppets: array<ref<PuppetDeviceLinkPS>> = accessPoint.GetPuppets();
@@ -612,11 +625,14 @@ public abstract class DeviceUnlockUtils {
             let puppetLink: ref<PuppetDeviceLinkPS> = puppets[i];
 
             if IsDefined(puppetLink) && puppetLink.IsConnected() {
+
                 let npcObject: wref<GameObject> = puppetLink.GetOwnerEntityWeak() as GameObject;
                 if IsDefined(npcObject) && npcObject.IsActive() {
+
                     let npcPos: Vector4 = npcObject.GetWorldPosition();
                     let distance: Float = Vector4.Distance(origin, npcPos);
                     if distance <= radius {
+
                         ArrayPush(processedIDs, puppetLink.GetID());
                     }
                 }

@@ -12,6 +12,7 @@ import BetterNetrunning.Network.*
 
 @wrapMethod(AccessPointControllerPS)
 private final func RefreshSlaves(const devices: script_ref<array<ref<DeviceComponentPS>>>) -> Void {
+
   let isUnconsciousNPCBreach: Bool = this.IsUnconsciousNPCBreach();
 
   if !isUnconsciousNPCBreach {
@@ -121,6 +122,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
       let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
 
       if !DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags) {
+
         let currentTimestamp: Float = 0.0;
         switch TargetType {
           case TargetType.NPC:
@@ -169,6 +171,7 @@ private final func RollbackIncorrectVanillaUnlocks(const devices: script_ref<arr
 
 @addMethod(AccessPointControllerPS)
 private final func ExecuteNPCBreachPingIfNeeded(minigamePrograms: array<TweakDBID>) -> Void {
+
 }
 
 @addMethod(AccessPointControllerPS)
@@ -189,10 +192,14 @@ private final func ApplyBreachUnlockToDevicesWithStats(
         ) as MarkingStateSystem;
 
     if IsDefined(markingSystem) && markingSystem.HasAnyMarked() {
+
         BNInfo("BreachProcessing", "Targeted breach — propagating only to marked entities");
+
         this.DeductRAMForMarkedEntities(markingSystem, gameInstance);
         this.ApplyTargetedBreachUnlock(markingSystem, unlockFlags, gameInstance);
+
     } else {
+
         BreachStatisticsCollector.CollectNetworkDeviceStats(Deref(devices), unlockFlags, stats);
         let i: Int32 = 0;
         while i < ArraySize(Deref(devices)) {

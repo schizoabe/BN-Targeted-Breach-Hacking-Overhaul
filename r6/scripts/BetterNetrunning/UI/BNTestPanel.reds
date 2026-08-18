@@ -9,10 +9,12 @@ public class BNTestPanel {
     private let m_canvas:        ref<inkCanvas>;
     private let m_animProxy:     ref<inkAnimProxy>;
     private let m_isVisible:     Bool;
+
     private let m_bg:            ref<inkImage>;
     private let m_frame:         ref<inkImage>;
     private let m_sidebar:       ref<inkImage>;
     private let m_footerFluff:   ref<inkImage>;
+
     private let m_deckLine:      ref<inkText>;
     private let m_modeLine:      ref<inkText>;
     private let m_marksLine:     ref<inkText>;
@@ -21,11 +23,14 @@ public class BNTestPanel {
     private let m_hideLabel:     ref<inkText>;
     private let m_disarmLabel:   ref<inkText>;
     private let m_counterLabel:  ref<inkText>;
+
     private let m_div3:          ref<inkRectangle>;
+
     private let m_signalTrack:   ref<inkRectangle>;
     private let m_hideTrack:     ref<inkRectangle>;
     private let m_disarmTrack:   ref<inkRectangle>;
     private let m_counterTrack:  ref<inkRectangle>;
+
     private let m_heatFill:      ref<inkRectangle>;
     private let m_signalFill:    ref<inkRectangle>;
     private let m_hideFill:      ref<inkRectangle>;
@@ -573,6 +578,13 @@ public class BNTestPanel {
         }
     }
 
+    public func SetScanDim(scanning: Bool) -> Void {
+        BNInfo("ScanDim", "SetScanDim(panel): scanning=" + ToString(scanning) + " canvasDefined=" + ToString(IsDefined(this.m_canvas)) + " isVisible=" + ToString(this.m_isVisible));
+        if !IsDefined(this.m_canvas) || !this.m_isVisible { return; }
+        this.m_canvas.SetOpacity(scanning ? 0.12 : 1.0);
+        BNInfo("ScanDim", "SetScanDim(panel): opacity set to " + ToString(scanning ? 0.12 : 1.0));
+    }
+
     public func Hide() -> Void {
         if !IsDefined(this.m_canvas) { return; }
         this.m_isVisible = false;
@@ -604,11 +616,50 @@ public class BNTestPanel {
     }
 }
 
+public class BNScanListener extends IScriptable {
+    private let m_sys: wref<BNTestPanelSystem>;
+
+    public func Init(sys: ref<BNTestPanelSystem>) -> Void {
+        this.m_sys = sys;
+    }
+
+    public cb func OnQuickhackPanelOpen(value: Bool) -> Void {
+        BNInfo("ScanDim", "OnQuickhackPanelOpen: value=" + ToString(value) + " sysDefined=" + ToString(IsDefined(this.m_sys)));
+        if IsDefined(this.m_sys) { this.m_sys.SetScanDim(value); }
+    }
+}
+
 public class BNTestPanelSystem extends ScriptableSystem {
-    private let m_panel: ref<BNTestPanel>;
+    private let m_panel:       ref<BNTestPanel>;
+    private let m_scanListener: ref<BNScanListener>;
+    private let m_scanHandle:   ref<CallbackHandle>;
 
     public func RegisterPanel(p: ref<BNTestPanel>) -> Void {
         this.m_panel = p;
+    }
+
+    public func RegisterScanListener(gi: GameInstance) -> Void {
+        let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi)
+            .Get(GetAllBlackboardDefs().UI_QuickSlotsData);
+        BNInfo("ScanDim", "RegisterScanListener: bbDefined=" + ToString(IsDefined(bb)));
+        if !IsDefined(bb) { return; }
+        let listener = new BNScanListener();
+        listener.Init(this);
+        this.m_scanListener = listener;
+        this.m_scanHandle = bb.RegisterListenerBool(
+            GetAllBlackboardDefs().UI_QuickSlotsData.quickhackPanelOpen,
+            listener,
+            n"OnQuickhackPanelOpen"
+        );
+        BNInfo("ScanDim", "RegisterScanListener: handle registered, handleDefined=" + ToString(IsDefined(this.m_scanHandle)));
+    }
+
+    public func SetScanDim(scanning: Bool) -> Void {
+        BNInfo("ScanDim", "SetScanDim(sys): scanning=" + ToString(scanning) + " panelDefined=" + ToString(IsDefined(this.m_panel)));
+        if IsDefined(this.m_panel) { this.m_panel.SetScanDim(scanning); }
+        let logSys: ref<ICEScoutLogSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance())
+            .Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
+        if IsDefined(logSys) { logSys.SetScanDim(scanning); }
     }
 
     public func ShowTestPanel(counterBreachTime: Float) -> Void {
@@ -658,6 +709,7 @@ protected cb func OnGameAttached() -> Bool {
     canvas.Reparent(hudRoot);
 
     sys.RegisterPanel(BNTestPanel.Create(canvas));
+    sys.RegisterScanListener(gi);
     BNInfo("UI", "BNTestPanel injected");
 
     return result;

@@ -18,14 +18,17 @@ import HackingExtensions.Programs.*
 @if(ModuleExists("HackingExtensions"))
 public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
     public let m_calculatedRAMCost: Int32;
+
     public let m_isICEBoard: Bool;
 
     public func SetProperties(networkName: String, npcCount: Int32, attemptsCount: Int32, isRemote: Bool, isSuicide: Bool, minigameDefinition: TweakDBID, targetHack: ref<IScriptable>) -> Void {
+
         super.SetProperties(networkName, npcCount, attemptsCount, isRemote, isSuicide, minigameDefinition, targetHack);
 
     }
 
     public func CompleteAction(gameInstance: GameInstance) -> Void {
+
         let devicePS: ref<ScriptableDeviceComponentPS> = this.GetTargetDevice();
         if IsDefined(devicePS) {
             DebugUtils.LogRemoteBreachTarget(devicePS, "RemoteBreach");
@@ -68,6 +71,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
         let customHackSystem: ref<CustomHackingSystem> = container.Get(BNConstants.CLASS_CUSTOM_HACKING_SYSTEM()) as CustomHackingSystem;
 
         if IsDefined(customHackSystem) {
+
             let emptyData: array<Variant>;
 
             let onSucceed: ref<OnCustomHackingSucceeded> = this.CreateSuccessCallback();
@@ -107,6 +111,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
     }
 
     public func GetCost() -> Int32 {
+
         return this.m_calculatedRAMCost;
     }
 
@@ -160,6 +165,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
     }
 
     public func IsPossible(target: wref<GameObject>, opt actionRecord: wref<ObjectAction_Record>, opt objectActionsCallbackController: wref<gameObjectActionsCallbackController>) -> Bool {
+
         if !super.IsPossible(target, actionRecord, objectActionsCallbackController) {
             return false;
         }
@@ -175,6 +181,7 @@ public abstract class BaseRemoteBreachAction extends CustomAccessBreach {
     }
 
     public func GetTargetDevice() -> wref<ScriptableDeviceComponentPS> {
+
         if IsDefined(this.m_targetHack) {
             let device: ref<Device> = this.m_targetHack as Device;
             if IsDefined(device) {

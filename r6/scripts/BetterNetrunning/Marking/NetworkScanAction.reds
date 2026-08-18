@@ -149,7 +149,7 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   entry.m_costRaw             = ramCost;
   entry.m_ICELevel            = 0.0;
   entry.m_ICELevelVisible     = false;
-  entry.m_networkBreached     = false;
+  entry.m_networkBreached     = npcPS.m_bnNPCIceDefeated;
   entry.m_actionMatchesTarget = true;
 
   if isMarked {
@@ -250,7 +250,7 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
       subnetType = MarkedSubnetType.Root;
     }
 
-    let sharedPS: ref<SharedGameplayPS> = this.m_devicePS as SharedGameplayPS;
+    let sharedPS: ref<SharedGameplayPS> = this.m_devicePS;
     if IsDefined(sharedPS) && sharedPS.m_bnIceHitsRequired == 0 {
       sharedPS.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gameInstance);
     }

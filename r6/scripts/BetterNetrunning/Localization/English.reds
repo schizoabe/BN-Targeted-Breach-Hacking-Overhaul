@@ -4,6 +4,7 @@ import Codeware.Localization.*
 
 public class English extends ModLocalizationPackage {
   protected func DefineTexts() -> Void {
+
     this.Text("Category-Controls", "Controls");
     this.Text("DisplayName-BetterNetrunning-BreachingHotkey", "Unconscious Breaching Hotkey");
     this.Text("Description-BetterNetrunning-BreachingHotkey", "Select which hotkey to assign Breach for unconscious NPCs.");

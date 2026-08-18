@@ -14,6 +14,7 @@ public func ShouldRemoveNetworkPrograms(actionID: TweakDBID, connectedToNetwork:
 }
 
 public func ShouldRemoveDeviceBackdoorPrograms(actionID: TweakDBID, entity: wref<GameObject>) -> Bool {
+
   if !DaemonFilterUtils.IsRegularDevice(entity) {
     return false;
   }
@@ -23,23 +24,29 @@ public func ShouldRemoveDeviceBackdoorPrograms(actionID: TweakDBID, entity: wref
 }
 
 public func ShouldRemoveAccessPointPrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, isRemoteBreach: Bool) -> Bool {
+
   if isRemoteBreach {
     return false;
   }
+
   if BNConstants.IsOffensiveDaemon(actionID) {
     return false;
   }
+
   if actionID == BNConstants.PROGRAM_BN_EXIT_PROTOCOL() {
     return false;
   }
+
   return NotEquals(miniGameActionRecord.Type().Type(), gamedataMinigameActionType.AccessPoint)
       && !IsUnlockQuickhackAction(actionID);
 }
 
 public func ShouldRemoveNonNetrunnerPrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, isRemoteBreach: Bool, entity: wref<GameObject>) -> Bool {
+
   if !IsRemoteNonNetrunner(isRemoteBreach, entity) {
     return false;
   }
+
   return Equals(miniGameActionRecord.Type().Type(), gamedataMinigameActionType.AccessPoint)
       || actionID == BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS()
       || actionID == BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS();

@@ -18,6 +18,7 @@ public func ApplyDNRDaemonGating(
   player: wref<PlayerPuppet>,
   entity: wref<Entity>
 ) -> Void {
+
   let dnrSubnetsBreached: Bool = IsDefined(devPS)
     && BreachStatusUtils.IsBasicBreached(devPS)
     && BreachStatusUtils.IsNPCsBreached(devPS);
@@ -54,4 +55,5 @@ public func ApplyDNRDaemonGating(
   player: wref<PlayerPuppet>,
   entity: wref<Entity>
 ) -> Void {
+
 }

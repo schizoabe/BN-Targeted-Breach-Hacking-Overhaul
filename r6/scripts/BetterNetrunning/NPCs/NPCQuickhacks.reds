@@ -10,6 +10,7 @@ import BetterNetrunning.Breach.*
 
 @wrapMethod(ScriptedPuppetPS)
 public func OnSetExposeQuickHacks(evt: ref<SetExposeQuickHacks>) -> EntityNotificationType {
+
   if !this.IsConnectedToAccessPoint() {
     BNInfo("NPCQuickhacks", "OnSetExposeQuickHacks: standalone NPC — allowing vanilla");
     return wrappedMethod(evt);
@@ -33,6 +34,7 @@ public func OnSetExposeQuickHacks(evt: ref<SetExposeQuickHacks>) -> EntityNotifi
 
 @wrapMethod(ScriptedPuppetPS)
 public final const func GetAllChoices(const actions: script_ref<array<wref<ObjectAction_Record>>>, const context: script_ref<GetActionsContext>, puppetActions: script_ref<array<ref<PuppetAction>>>) -> Void {
+
   let permissions: NPCHackPermissions = this.CalculateNPCHackPermissions();
 
   wrappedMethod(actions, context, puppetActions);
@@ -67,9 +69,12 @@ private final func ApplyBetterNetrunningQuickhackFilter(
     if IsDefined(action as AccessBreach) {
       ArrayErase(Deref(puppetActions), i);
     } else {
+
       if this.ShouldQuickhackBeInactive(action, permissions) {
+
         this.SetQuickhackInactiveReason(action, attiudeTowardsPlayer);
       } else {
+
         action.SetActive();
       }
     }
@@ -92,6 +97,7 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
   if !isConnectedToNetwork {
     permissions.isBreached = true;
   } else if !permissions.isBreached {
+
     let deviceLink: ref<SharedGameplayPS> = this.GetDeviceLink();
     if IsDefined(deviceLink) && deviceLink.m_betterNetrunningUnlockTimestampNPCs > 0.0 {
       let unlockDurationHours: Int32 = BetterNetrunningSettings.QuickhackUnlockDurationHours();
@@ -120,6 +126,7 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
 
 @addMethod(ScriptedPuppetPS)
 private final func ShouldQuickhackBeInactive(puppetAction: ref<PuppetAction>, permissions: NPCHackPermissions) -> Bool {
+
   if permissions.isBreached || this.IsWhiteListedForHacks() {
     return false;
   }
@@ -154,6 +161,7 @@ private final func ShouldQuickhackBeInactive(puppetAction: ref<PuppetAction>, pe
 
 @addMethod(ScriptedPuppetPS)
 private final func SetQuickhackInactiveReason(puppetAction: ref<PuppetAction>, attiudeTowardsPlayer: EAIAttitude) -> Void {
+
   let isRemoteBreachLocked: Bool = BreachLockUtils.IsNPCLockedByRemoteBreachFailure(this);
 
   if isRemoteBreachLocked {

@@ -8,6 +8,7 @@ public abstract class TracePositionOverhaulGating {
 
   @if(ModuleExists("TracePositionOverhaul"))
   public static func IsValidTraceSource(npc: wref<NPCPuppet>) -> Bool {
+
     if !IsDefined(npc) { return false; }
     if !ScriptedPuppet.IsAlive(npc) { return false; }
     if ScriptedPuppet.IsDefeated(npc) { return false; }
@@ -21,6 +22,7 @@ public abstract class TracePositionOverhaulGating {
 
   @if(!ModuleExists("TracePositionOverhaul"))
   public static func IsValidTraceSource(npc: wref<NPCPuppet>) -> Bool {
+
     if !IsDefined(npc) { return false; }
     if !ScriptedPuppet.IsAlive(npc) { return false; }
     if ScriptedPuppet.IsDefeated(npc) { return false; }
@@ -72,6 +74,7 @@ public abstract class TracePositionOverhaulGating {
     gameInstance: GameInstance,
     radius: Float
   ) -> array<ref<GameObject>> {
+
     let npcs: array<ref<GameObject>>;
     return npcs;
   }
@@ -81,6 +84,7 @@ public abstract class TracePositionOverhaulGating {
     gameInstance: GameInstance,
     radius: Float
   ) -> wref<NPCPuppet> {
+
     let npcs: array<ref<GameObject>> = TracePositionOverhaulGating.GetNPCsInRadius(player, gameInstance, radius);
 
     if ArraySize(npcs) == 0 {

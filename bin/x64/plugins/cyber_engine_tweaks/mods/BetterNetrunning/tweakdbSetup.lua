@@ -42,6 +42,7 @@ function TweakDBSetup.SetupAccessPrograms()
 end
 
 function TweakDBSetup.CreateAccessProgram(interactionName, actionName, caption, description, icon, complexity)
+
     TweakDB:CloneRecord("Interactions."..interactionName, "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions."..interactionName..".caption", caption)
     TweakDB:SetFlat("Interactions."..interactionName..".captionIcon", icon)
@@ -98,6 +99,7 @@ function TweakDBSetup.ApplyBreachingHotkey(hotkey)
 end
 
 function TweakDBSetup.SetupCounterBreachMinigame()
+
     TweakDB:CloneRecord("Interactions.NetworkCounterBreachICE", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.NetworkCounterBreachICE.caption",
         LocKey("Better-Netrunning-Counter-Breach-ICE-Name"))
@@ -125,6 +127,7 @@ function TweakDBSetup.SetupCounterBreachMinigame()
 end
 
 function TweakDBSetup.SetupIcepickVariants()
+
     TweakDB:CloneRecord("Interactions.BNIcepickV1", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.BNIcepickV1.caption",
         LocKey("Better-Netrunning-Icepick-V1-Name"))
@@ -165,6 +168,7 @@ function TweakDBSetup.SetupIcepickVariants()
 end
 
 function TweakDBSetup.SetupAPDaemons()
+
     TweakDB:CloneRecord("Interactions.BNHidePresence", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.BNHidePresence.caption",
         LocKey("Better-Netrunning-HidePresence-Name"))
@@ -225,6 +229,7 @@ function TweakDBSetup.SetupOffensiveNPCDaemon()
 end
 
 function TweakDBSetup.SetupFirewallMinigame()
+
     TweakDB:CloneRecord("Interactions.NetworkFirewallICE", "Interactions.NetworkGainAccessProgram")
     TweakDB:SetFlat("Interactions.NetworkFirewallICE.caption",
         LocKey("Better-Netrunning-Firewall-ICE-Name"))
@@ -318,6 +323,7 @@ function TweakDBSetup.SetupDaemonIcons()
     }
 
     for _, entry in ipairs(icons) do
+
         local uiIconPath = "CustomUIIcon." .. entry.part
         if TweakDB:GetRecord(uiIconPath) == nil then
             TweakDB:CreateRecord(uiIconPath, "gamedataUIIcon_Record")

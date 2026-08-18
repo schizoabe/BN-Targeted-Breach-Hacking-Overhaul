@@ -1,3 +1,4 @@
+
 module FilthyAccessPoints
 
 public class FilthyAccessPointsTutorialSystem extends ScriptableSystem {
@@ -8,5 +9,6 @@ public class FilthyAccessPointsTutorialSystem extends ScriptableSystem {
     }
 
     public func ShowTutorial(player: ref<GameObject>) -> Void {
+
     }
 }

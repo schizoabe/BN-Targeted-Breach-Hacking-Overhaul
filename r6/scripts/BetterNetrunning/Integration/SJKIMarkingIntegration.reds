@@ -10,6 +10,7 @@ import BetterNetrunning.Minigame.*
 
 @addMethod(ScriptableDeviceComponentPS)
 public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
+
   let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi)
     .Get(GetAllBlackboardDefs().HackingMinigame);
 
@@ -48,6 +49,7 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
 
   if !IsDefined(markingSystem) || !markingSystem.HasAnyMarked() {
     BNInfo("SJKIIntegration", "No marks — propagation skipped");
+
     if IsDefined(markingSystem) {
       let deviceName: String = "DEVICE";
       let owner: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;

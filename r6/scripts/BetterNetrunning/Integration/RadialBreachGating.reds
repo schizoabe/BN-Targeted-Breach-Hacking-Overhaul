@@ -26,6 +26,7 @@ public static func GetRadialBreachRange(gameInstance: GameInstance) -> Float {
 
 @addMethod(AccessPointControllerPS)
 public final func GetBreachPosition() -> Vector4 {
+
   let apEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
   if IsDefined(apEntity) {
     return apEntity.GetWorldPosition();
@@ -43,6 +44,7 @@ public final func GetBreachPosition() -> Vector4 {
 @if(ModuleExists("RadialBreach"))
 @addMethod(AccessPointControllerPS)
 public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref<DeviceComponentPS>>>, unlockFlags: BreachUnlockFlags) -> Void {
+
   let breachPosition: Vector4 = this.GetBreachPosition();
   let maxDistance: Float = GetRadialBreachRange(this.GetGameInstance());
   let shouldUseRadialFiltering: Bool = breachPosition.X >= -999000.0;
@@ -55,6 +57,7 @@ public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref
                              DeviceDistanceUtils.IsDeviceWithinRadius(device, breachPosition, maxDistance, this.GetGameInstance());
 
     if withinRadius {
+
       this.ProcessSingleDeviceUnlock(device, unlockFlags);
     }
     i += 1;
@@ -64,6 +67,7 @@ public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref
 @if(!ModuleExists("RadialBreach"))
 @addMethod(AccessPointControllerPS)
 public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref<DeviceComponentPS>>>, unlockFlags: BreachUnlockFlags) -> Void {
+
   let i: Int32 = 0;
   while i < ArraySize(Deref(devices)) {
     let device: ref<DeviceComponentPS> = Deref(devices)[i];
@@ -74,6 +78,7 @@ public final func ApplyBreachUnlockToDevices(const devices: script_ref<array<ref
 
 @addMethod(AccessPointControllerPS)
 private final func ProcessSingleDeviceUnlock(device: ref<DeviceComponentPS>, unlockFlags: BreachUnlockFlags) -> Void {
+
   this.ApplyDeviceTypeUnlock(device, unlockFlags);
 
   let currentTime: Float = TimeUtils.GetCurrentTimestamp(this.GetGameInstance());
@@ -144,10 +149,12 @@ public final func ApplyRemoteBreachNetworkUnlock(
     let device: ref<DeviceComponentPS> = networkDevices[i];
 
     if IsDefined(device) {
+
       let withinRadius: Bool = !shouldUseRadialFiltering ||
                                DeviceDistanceUtils.IsDeviceWithinRadius(device, breachPosition, maxDistance, this.GetGame());
 
       if withinRadius {
+
         if this.ApplyRemoteBreachDeviceUnlockInternal(device, unlockFlags) {
           unlockedCount += 1;
         } else {
@@ -177,6 +184,7 @@ public final func ApplyRemoteBreachNetworkUnlock(
     let device: ref<DeviceComponentPS> = networkDevices[i];
 
     if IsDefined(device) {
+
       if this.ApplyRemoteBreachDeviceUnlockInternal(device, unlockFlags) {
         unlockedCount += 1;
       } else {

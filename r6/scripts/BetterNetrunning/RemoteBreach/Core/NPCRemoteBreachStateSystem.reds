@@ -28,3 +28,8 @@ public class NPCRemoteBreachStateSystem extends ScriptableSystem {
     this.m_currentNPC = null;
   }
 }
+
+@wrapMethod(ScriptedPuppetPS)
+public const func IsBreached() -> Bool {
+  return wrappedMethod() || this.m_bnNPCIceDefeated;
+}

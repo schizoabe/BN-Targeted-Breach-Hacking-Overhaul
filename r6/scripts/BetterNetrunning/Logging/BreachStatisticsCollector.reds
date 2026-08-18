@@ -14,6 +14,7 @@ public abstract class BreachStatisticsCollector {
         unlockFlags: BreachUnlockFlags,
         stats: ref<BreachSessionStats>
     ) -> Void {
+
         stats.networkDeviceCount = ArraySize(networkDevices);
 
         if ArraySize(networkDevices) == 0 {
@@ -37,6 +38,7 @@ public abstract class BreachStatisticsCollector {
         unlockFlags: BreachUnlockFlags,
         stats: ref<BreachSessionStats>
     ) -> Void {
+
         let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
 
         let shouldUnlock: Bool = DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags);

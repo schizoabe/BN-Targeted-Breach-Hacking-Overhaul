@@ -5,6 +5,7 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 
 public enum BNPerk {
+
   ColdTrace        = 0,
   NeuralTap        = 1,
   SubnetSpecialist = 2,
@@ -13,12 +14,14 @@ public enum BNPerk {
   GhostRun         = 5,
   TraceScrambler   = 6,
   ZeroSignature    = 7,
+
   DisarmICE        = 8,
   HidePresence     = 9,
   Purge            = 10,
   Sunder           = 11,
   TrackingProtocol = 12,
   IceBreaker       = 13,
+
   EntropyProtocol  = 14,
   CascadeProtocol  = 15,
   OffloadProtocol  = 16,

@@ -62,6 +62,7 @@ public abstract class NetworkStateUtils {
     devicePS: ref<ScriptableDeviceComponentPS>,
     gameInstance: GameInstance
   ) -> Void {
+
   }
 
   public static func OnBreachEntered(
@@ -74,6 +75,7 @@ public abstract class NetworkStateUtils {
       BNInfo("NetworkState",
         "ICE health initialized: " + ToString(sharedPS.m_bnIceHitsRequired) + " hits required");
     }
+
     if IsDefined(sharedPS) {
       let ms: ref<MarkingStateSystem> = NetworkStateUtils.GetMarkingSystem(gameInstance);
       if IsDefined(ms) {
@@ -127,6 +129,7 @@ public abstract class NetworkStateUtils {
     let globalBonus: Int32 = IsDefined(ms) ? ms.GetHeatICEBonus() : 0;
 
     if hits > 0 {
+
       if sharedPS.m_bnIceHitsRequired <= 0 {
         sharedPS.m_bnIceHitsRequired = RandRange(2, 7);
       }
@@ -145,6 +148,7 @@ public abstract class NetworkStateUtils {
         + " +bonus=" + ToString(globalBonus) + ")"
         + (sharedPS.m_bnIceDefeated ? " [DEFEATED]" : ""));
     }
+
     if IsDefined(ms) {
       let effective: Int32 = sharedPS.m_bnIceHitsRequired + globalBonus;
       ms.RecordBreachICEState(effective, sharedPS.m_bnIceHitsApplied);
@@ -187,6 +191,7 @@ public abstract class NetworkStateUtils {
         BNInfo("NetworkState", "IcepickV3 (Sunder) — " + ToString(v3Hits) + " ICE hits, no heat change");
 
       } else if Equals(pid, t"MinigameAction.NetworkLowerICEMedium") {
+
         let legacyHits: Int32 = 2 + RandRange(0, 4);
         NetworkStateUtils.ApplyIcepickEffect(writeTarget, gameInstance, legacyHits);
         if IsDefined(ms) { ms.AddSessionHeat(0.2); }
@@ -199,6 +204,7 @@ public abstract class NetworkStateUtils {
         if IsDefined(ms) { ms.AddSessionHeat(0.05); }
 
       } else if Equals(pid, BNConstants.PROGRAM_HIDE_PRESENCE()) {
+
         let ghostRunRank: Int32 = IsDefined(perkSys) ? perkSys.GetPerkLevel(BNPerk.GhostRun) : 0;
         let ghostRunBonus: Float = ghostRunRank >= 2 ? 60.0 : (ghostRunRank >= 1 ? 30.0 : 0.0);
         if IsDefined(ms) {
@@ -208,6 +214,7 @@ public abstract class NetworkStateUtils {
         BNInfo("NetworkState", "Hide Presence — heat zeroed, suppressed for " + ToString(Cast<Int32>(60.0 + ghostRunBonus)) + "s");
 
       } else if Equals(pid, BNConstants.PROGRAM_DISARM_ICE()) {
+
         let iceBreakerRank: Int32 = IsDefined(perkSys) ? perkSys.GetPerkLevel(BNPerk.IceBreaker) : 0;
         let iceBreakerBonus: Float = iceBreakerRank >= 2 ? 60.0 : (iceBreakerRank >= 1 ? 30.0 : 0.0);
         if IsDefined(ms) { ms.SetDisarmICETimer(60.0 + iceBreakerBonus); }
@@ -247,6 +254,7 @@ public abstract class NetworkStateUtils {
     let breachPuppet: ref<ScriptedPuppet> = breachEntity as ScriptedPuppet;
     if IsDefined(breachPuppet) && breachPuppet.IsIncapacitated() {
       let player: ref<PlayerPuppet> = GetPlayer(gameInstance);
+
       if IsDefined(player) {
         RPGManager.GiveReward(gameInstance, t"RPGActionRewards.Hacking",
           Cast<StatsObjectID>(breachPuppet.GetEntityID()));

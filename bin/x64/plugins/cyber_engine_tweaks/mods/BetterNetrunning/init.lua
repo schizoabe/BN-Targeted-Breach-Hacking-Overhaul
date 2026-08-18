@@ -5,19 +5,6 @@ local NativeSettingsUI = require("nativeSettingsUI")
 local RemoteBreach = require("remoteBreach")
 local MarkingSystem = require("markingSystem")
 
-registerHotkey("BN_ClearMarks",              "[BN] Clear All Marks",                              function() MarkingSystem.HK_ClearMarks() end)
-registerHotkey("BN_HideWidgets",             "[BN] Hide HUD Widgets",                             function() MarkingSystem.HK_HideWidgets() end)
-registerHotkey("BN_ShowNetworkStatus",       "[BN] Show Network Status",                          function() MarkingSystem.HK_ShowNetworkStatus() end)
-registerHotkey("BN_ForceJackOut",            "[BN] Force Jack-Out (rescue)",                      function() MarkingSystem.HK_ForceJackOut() end)
-registerHotkey("BN_CycleBreachMode",         "[BN] Cycle Breach Mode (Scout/Attack/Defend)",       function() MarkingSystem.HK_CycleBreachMode() end)
-registerHotkey("BN_ToggleFirewall",          "[BN] Toggle Firewall (Weapons Hot/Cold)",            function() MarkingSystem.HK_ToggleFirewall() end)
-registerHotkey("BN_DEV_TriggerCounterBreach","[BN DEV] Trigger Counter-Breach",                   function() MarkingSystem.HK_DEV_TriggerCounterBreach() end)
-registerHotkey("BN_DEV_PrintHeat",           "[BN DEV] Print session heat",                       function() MarkingSystem.HK_DEV_PrintHeat() end)
-registerHotkey("BN_DEV_PrintICEState",       "[BN DEV] Print ICE state",                          function() MarkingSystem.HK_DEV_PrintICEState() end)
-registerHotkey("BN_DEV_CheckCyberdeck",      "[BN DEV] Check cyberdeck slot",                     function() MarkingSystem.HK_DEV_CheckCyberdeck() end)
-registerHotkey("BN_DEV_CheckQuickhacks",    "[BN DEV] Log installed quickhacks",                 function() MarkingSystem.HK_DEV_CheckQuickhacks() end)
-registerHotkey("BN_DEV_ShowTestPanel",       "[BN DEV] Toggle HUD Panels (Network Status + ICE Log)", function() MarkingSystem.HK_DEV_ShowTestPanel() end)
-
 registerForEvent("onInit", function()
     print("[Better Netrunning] Initializing...")
 
@@ -48,13 +35,30 @@ registerForEvent("onInit", function()
 
     MarkingSystem.Init()
 
-    local GameplayState = GetMod('GameplayState')
-    if GameplayState then
-        GameplayState.OnStateChange(function(inControl)
+    local Engine = GetMod('0-Engine')
+    if Engine then
+        local BN = Engine.Register('BetterNetrunning')
+
+        BN.WhenReady(function()
+            NativeSettingsUI.PushHotkeys(SettingsManager)
+            MarkingSystem.SetPlayerInControl(true)
+        end)
+
+        local function UpdatePlayerInControl()
+            local state    = Engine.GetState()
+            local tier     = state.blackboard and state.blackboard.psm and state.blackboard.psm.sceneTier or 1
+            local inControl = Engine.IsPlaying() and not state.inMenu and tier < 3
             MarkingSystem.SetPlayerInControl(inControl)
-        end, 'BetterNetrunning')
+        end
+
+        BN.Subscribe('MenuOpen',         function() MarkingSystem.SetPlayerInControl(false) end)
+        BN.Subscribe('MenuClose',        function()
+            NativeSettingsUI.PushHotkeys(SettingsManager)
+            UpdatePlayerInControl()
+        end)
+        BN.Subscribe('SceneTierChanged', UpdatePlayerInControl)
     else
-        print('[Better Netrunning] WARNING: GameplayState mod not found -- timers will tick during menus')
+        print('[Better Netrunning] WARNING: 0-Engine not found -- timers will tick during menus and hotkeys need a reload to apply')
         MarkingSystem.SetPlayerInControl(true)
     end
 

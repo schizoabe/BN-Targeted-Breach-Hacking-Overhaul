@@ -89,6 +89,7 @@ private static func LogWithLevel(level: LogLevel, context: String, message: Stri
   let loggerState: ref<LoggerStateSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"BetterNetrunning.Logging.LoggerStateSystem") as LoggerStateSystem;
 
   if !IsDefined(loggerState) {
+
     let levelPrefix: String = GetLevelPrefix(level);
     let fullMessage: String = levelPrefix + " [" + context + "] " + message;
     ModLog(n"BetterNetrunning", fullMessage);

@@ -20,6 +20,7 @@ public enum BreachType {
 
 @wrapMethod(ScriptableDeviceComponentPS)
 public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
+
   if NotEquals(state, HackingMinigameState.Failed) && NotEquals(state, HackingMinigameState.Succeeded) {
     wrappedMethod(state);
     return;
@@ -97,6 +98,8 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
   this.BNReopenBreachBoard(gi);
 }
 
+public class BNReopenBoardEvent extends Event {}
+
 @addMethod(ScriptableDeviceComponentPS)
 private final func BNReopenBreachBoard(gi: GameInstance) -> Void {
   let bbMinigame: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
@@ -104,27 +107,18 @@ private final func BNReopenBreachBoard(gi: GameInstance) -> Void {
   let emptyPrograms: array<TweakDBID>;
   bbMinigame.SetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms, ToVariant(emptyPrograms), true);
 
-  let cb: ref<BNReopenBoardCallback> = new BNReopenBoardCallback();
-  cb.m_gi = gi;
-  cb.m_ps = this;
-  GameInstance.GetDelaySystem(gi).DelayCallback(cb, 0.5, false);
+  let reopenEvt: ref<BNReopenBoardEvent> = new BNReopenBoardEvent();
+  GameInstance.GetDelaySystem(gi).DelayPSEvent(this.GetID(), this.GetClassName(), reopenEvt, 0.5, false);
 }
 
-public class BNReopenBoardCallback extends DelayCallback {
-  public let m_gi: GameInstance;
-  public let m_ps: wref<ScriptableDeviceComponentPS>;
+@addMethod(ScriptableDeviceComponentPS)
+public func OnBNReopenBoardEvent(evt: ref<BNReopenBoardEvent>) -> EntityNotificationType {
+  let gi: GameInstance = this.GetGameInstance();
 
-  public func Call() -> Void {
-    let ps: ref<ScriptableDeviceComponentPS> = this.m_ps;
-    if !IsDefined(ps) {
-      BNError("BreachLoop", "PS weak ref expired — cannot reopen board");
-      return;
-    }
-
-    let bbNetwork: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.m_gi).Get(GetAllBlackboardDefs().NetworkBlackboard);
-    bbNetwork.SetString(GetAllBlackboardDefs().NetworkBlackboard.NetworkName, "");
-    ps.BNReInitiateDive(this.m_gi);
-  }
+  let bbNetwork: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().NetworkBlackboard);
+  bbNetwork.SetString(GetAllBlackboardDefs().NetworkBlackboard.NetworkName, "");
+  this.BNReInitiateDive(gi);
+  return EntityNotificationType.DoNotNotifyEntity;
 }
 
 @addField(ScriptableDeviceComponentPS)
@@ -182,6 +176,7 @@ public final func BNReInitiateDiveSJKI(gi: GameInstance) -> Void {}
 
 @addMethod(ScriptableDeviceComponentPS)
 public final func BNReInitiateDive(gi: GameInstance) -> Void {
+
   if this.m_bnSJKILooping {
     this.BNReInitiateDiveSJKI(gi);
     return;
@@ -203,6 +198,7 @@ public final func BNReInitiateDive(gi: GameInstance) -> Void {
 
 @wrapMethod(AccessPointControllerPS)
 public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
+
   if Equals(state, HackingMinigameState.Succeeded) {
     wrappedMethod(state);
     return;
@@ -239,6 +235,7 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
 
 @wrapMethod(AccessPointControllerPS)
 public func OnNPCBreachEvent(evt: ref<NPCBreachEvent>) -> EntityNotificationType {
+
   if Equals(evt.state, HackingMinigameState.Succeeded) {
     this.SetIsBreached(true);
     this.RefreshSlaves_Event();
@@ -246,6 +243,7 @@ public func OnNPCBreachEvent(evt: ref<NPCBreachEvent>) -> EntityNotificationType
   }
 
   if Equals(evt.state, HackingMinigameState.Failed) {
+
     this.m_minigameAttempt += 1;
 
     BNInfo("BreachPenalty", "Unconscious NPC breach failed - NPC alert suppressed (SendMinigameFailedToAllNPCs skipped)");
@@ -263,6 +261,7 @@ private func DetectBreachType() -> BreachType {
   }
 
   if this.HasPersonalLinkSlot() {
+
     return BreachType.AccessPoint;
   }
 
@@ -300,10 +299,12 @@ private func IsBreachPenaltyEnabledForType(breachType: BreachType) -> Bool {
   if Equals(breachType, BreachType.RemoteBreach) {
     return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
   }
+
   return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
 }
 
 private static func ShouldApplyBreachPenalty(breachType: BreachType) -> Bool {
+
   if !BetterNetrunningSettings.BreachFailurePenaltyEnabled() {
     return false;
   }
@@ -327,6 +328,7 @@ public static func ApplyFailurePenalty(
   gameInstance: GameInstance,
   breachType: BreachType
 ) -> Void {
+
   ApplyBreachFailurePenaltyVFX(player, gameInstance);
 
   let deviceEntity: wref<GameObject> = devicePS.GetOwnerEntityWeak() as GameObject;
@@ -337,9 +339,12 @@ public static func ApplyFailurePenalty(
   }
 
   if Equals(breachType, BreachType.RemoteBreach) {
+
     RecordBreachFailureByType(player, devicePS, deviceEntity.GetWorldPosition(), gameInstance, breachType);
   } else if Equals(breachType, BreachType.AccessPoint) {
+
     if RecordBreachFailureTimestamp(devicePS, gameInstance) {
+
       DeviceInteractionUtils.DisableJackInInteractionForAccessPoint(devicePS);
       BNDebug("BreachPenalty", "Disabled JackIn interaction for failed AP breach");
     }
@@ -353,11 +358,13 @@ public static func ApplyFailurePenalty(
   npcPuppet: ref<ScriptedPuppet>,
   gameInstance: GameInstance
 ) -> Void {
+
   ApplyBreachFailurePenaltyVFX(player, gameInstance);
 
   if IsDefined(npcPuppet) {
     let npcPS: ref<ScriptedPuppetPS> = npcPuppet.GetPuppetPS();
     if RecordBreachFailureTimestamp(npcPS, gameInstance) {
+
       npcPuppet.DetermineInteractionStateByTask();
       BNDebug("BreachPenalty", "Queued interaction state refresh for NPC");
     }
@@ -417,6 +424,7 @@ private static func RecordBreachFailureByType(
   gameInstance: GameInstance,
   breachType: BreachType
 ) -> Void {
+
   if Equals(breachType, BreachType.RemoteBreach) {
     RemoteBreachLockSystem.RecordRemoteBreachFailure(player, devicePS, failedPosition, gameInstance);
     return;
@@ -435,6 +443,7 @@ private static func TriggerTraceAttempt(
   player: ref<PlayerPuppet>,
   gameInstance: GameInstance
 ) -> Void {
+
   if !IsDefined(player) {
     BNError("BreachPenalty", "Player not found, cannot trigger trace");
     return;
@@ -453,6 +462,7 @@ private static func TriggerTraceAttempt(
   let searchRadius: Float = GetRadialBreachRange(gameInstance);
   let netrunner: wref<NPCPuppet> = TracePositionOverhaulGating.FindNearestValidTraceSource(player, gameInstance, searchRadius);
   if IsDefined(netrunner) {
+
     let result: Bool = NPCPuppet.RevealPlayerPositionIfNeeded(
       netrunner,
       player.GetEntityID(),
@@ -469,6 +479,7 @@ private static func TriggerTraceAttempt(
 
 @wrapMethod(ScriptableDeviceComponentPS)
 public func SetHasPersonalLinkSlot(isPersonalLinkSlotPresent: Bool) -> Void {
+
   if !isPersonalLinkSlotPresent {
     wrappedMethod(isPersonalLinkSlotPresent);
     return;
@@ -478,6 +489,7 @@ public func SetHasPersonalLinkSlot(isPersonalLinkSlotPresent: Bool) -> Void {
   BNDebug("BreachPenalty", "SetHasPersonalLinkSlot(true) called - Lock status: " + ToString(isLocked));
 
   if isLocked {
+
     wrappedMethod(false);
     BNInfo("BreachPenalty", "Prevented JackIn restoration on load (device locked by AP breach failure)");
     return;

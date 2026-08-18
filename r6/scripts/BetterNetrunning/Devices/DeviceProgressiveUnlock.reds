@@ -40,6 +40,7 @@ public final func IsBreached() -> Bool {
 
 @addMethod(ScriptableDeviceComponentPS)
 public final func SetActionsInactiveUnbreached(actions: script_ref<array<ref<DeviceAction>>>) -> Void {
+
   let deviceInfo: DeviceBreachInfo = this.GetDeviceBreachInfo();
 
   let permissions: DevicePermissions = this.CalculateDevicePermissions(deviceInfo);
@@ -85,6 +86,7 @@ private final func CalculateDevicePermissions(deviceInfo: DeviceBreachInfo) -> D
 
 @addMethod(ScriptableDeviceComponentPS)
 private final func ApplyPermissionsToActions(actions: script_ref<array<ref<DeviceAction>>>, deviceInfo: DeviceBreachInfo, permissions: DevicePermissions) -> Void {
+
   let isRemoteBreachLocked: Bool = BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this);
 
   RemoteBreachRAMUtils.CheckAndLockRemoteBreachRAM(actions);
@@ -96,12 +98,14 @@ private final func ApplyPermissionsToActions(actions: script_ref<array<ref<Devic
     if IsDefined(sAction) {
       if !this.ShouldAllowAction(sAction, deviceInfo.isCamera, deviceInfo.isTurret, permissions.allowCameras, permissions.allowTurrets, permissions.allowBasicDevices, permissions.allowPing, permissions.allowDistraction) {
         sAction.SetInactive();
+
         if isRemoteBreachLocked {
           sAction.SetInactiveReason(BNConstants.LOCKEY_NO_NETWORK_ACCESS());
         } else {
           sAction.SetInactiveReason(LocKeyToString(BNConstants.LOCKEY_QUICKHACKS_LOCKED()));
         }
       } else {
+
         sAction.SetActive();
       }
     }
@@ -156,6 +160,7 @@ private final func RemoveVanillaRemoteBreachActions(outActions: script_ref<array
 
 @wrapMethod(ScriptableDeviceComponentPS)
 protected final func FinalizeGetQuickHackActions(outActions: script_ref<array<ref<DeviceAction>>>, const context: script_ref<GetActionsContext>) -> Void {
+
   if !this.ShouldProcessQuickHackActions(outActions) {
     return;
   }

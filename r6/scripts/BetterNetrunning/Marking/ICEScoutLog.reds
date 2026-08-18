@@ -224,6 +224,12 @@ public class ICEScoutLog {
     this.m_animProxy = this.m_canvas.PlayAnimation(def);
   }
 
+  public func SetScanDim(scanning: Bool) -> Void {
+    BNInfo("ScanDim", "SetScanDim(log): scanning=" + ToString(scanning) + " canvasDefined=" + ToString(IsDefined(this.m_canvas)) + " isVisible=" + ToString(this.m_isVisible));
+    if !IsDefined(this.m_canvas) || !this.m_isVisible { return; }
+    this.m_canvas.SetOpacity(scanning ? 0.12 : 1.0);
+  }
+
   public func Hide() -> Void {
     if !IsDefined(this.m_canvas) { return; }
     this.m_isVisible = false;
@@ -302,9 +308,10 @@ public class ICEScoutLog {
         }
       }
     } else {
+
       let vehicle: ref<VehicleObject> = GameInstance.FindEntityByID(gi, entry.entityID) as VehicleObject;
       if IsDefined(vehicle) {
-        let vps: ref<SharedGameplayPS> = vehicle.GetVehiclePS() as SharedGameplayPS;
+        let vps: ref<SharedGameplayPS> = vehicle.GetVehiclePS();
         if IsDefined(vps) {
           hitsApplied  = vps.m_bnIceHitsApplied;
           if hitsRequired == 0 { hitsRequired = vps.m_bnIceHitsRequired; }
@@ -335,6 +342,7 @@ public class ICEScoutLog {
       if IsDefined(ps) {
         hitsApplied  = ps.m_bnNPCIceHitsApplied;
         if hitsRequired == 0 { hitsRequired = ps.m_bnNPCIceHitsRequired; }
+
         if ps.m_bnNPCIceDefeated {
           return entry.displayName + ": "
               + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", FULLY COMPROMISED\n";
@@ -399,6 +407,7 @@ public class ICEScoutLogSystem extends ScriptableSystem {
     let gi: GameInstance = this.GetGameInstance();
 
     if this.m_log.IsVisible() {
+
       this.m_log.ShowIfNew(gi);
       return;
     }
@@ -426,6 +435,10 @@ public class ICEScoutLogSystem extends ScriptableSystem {
 
   public func Hide() -> Void {
     if IsDefined(this.m_log) { this.m_log.Hide(); }
+  }
+
+  public func SetScanDim(scanning: Bool) -> Void {
+    if IsDefined(this.m_log) { this.m_log.SetScanDim(scanning); }
   }
 }
 

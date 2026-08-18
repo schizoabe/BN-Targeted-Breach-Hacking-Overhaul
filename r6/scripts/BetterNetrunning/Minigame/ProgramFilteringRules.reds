@@ -7,6 +7,7 @@ import BetterNetrunning.Integration.*
 import BetterNetrunning.Logging.*
 
 public func ShouldRemoveBreachedPrograms(actionID: TweakDBID, entity: wref<GameObject>) -> Bool {
+
   if !IsDefined(entity as Device) {
     return false;
   }
@@ -80,6 +81,7 @@ private func HandleTemporaryUnlock(
   sharedPS: ref<SharedGameplayPS>,
   TargetType: TargetType
 ) -> Bool {
+
   if !BreachStatusUtils.IsBreached(unlockTimestamp) {
     return false;
   }
@@ -91,6 +93,7 @@ private func HandleTemporaryUnlock(
   let elapsedTime: Float = currentTime - unlockTimestamp;
 
   if elapsedTime > durationSeconds {
+
     ResetDeviceTimestamp(sharedPS, TargetType);
     return false;
   }
@@ -111,6 +114,7 @@ private func ResetDeviceTimestamp(sharedPS: ref<SharedGameplayPS>, TargetType: T
 }
 
 public func ShouldRemoveDeviceTypePrograms(actionID: TweakDBID, miniGameActionRecord: wref<MinigameAction_Record>, data: ConnectedClassTypes) -> Bool {
+
   if !BetterNetrunningSettings.UnlockIfNoAccessPoint() {
     return false;
   }
@@ -118,9 +122,11 @@ public func ShouldRemoveDeviceTypePrograms(actionID: TweakDBID, miniGameActionRe
   if (Equals(miniGameActionRecord.Category().Type(), gamedataMinigameCategory.CameraAccess) || actionID == BNConstants.PROGRAM_UNLOCK_CAMERA_QUICKHACKS()) && !data.surveillanceCamera {
     return true;
   }
+
   if (Equals(miniGameActionRecord.Category().Type(), gamedataMinigameCategory.TurretAccess) || actionID == BNConstants.PROGRAM_UNLOCK_TURRET_QUICKHACKS()) && !data.securityTurret {
     return true;
   }
+
   if (Equals(miniGameActionRecord.Type().Type(), gamedataMinigameActionType.NPC) || actionID == BNConstants.PROGRAM_UNLOCK_NPC_QUICKHACKS()) && !data.puppet {
     return true;
   }
@@ -128,6 +134,7 @@ public func ShouldRemoveDeviceTypePrograms(actionID: TweakDBID, miniGameActionRe
 }
 
 public func ShouldRemoveOutOfRangeDevicePrograms(actionID: TweakDBID, gameInstance: GameInstance, breachPosition: Vector4, breachEntity: wref<GameObject>) -> Bool {
+
   if breachPosition.X < -999000.0 {
     return false;
   }
@@ -229,10 +236,12 @@ private func ScanRadialDevices(
     let obj: wref<GameObject> = radialObjects[i];
 
     if IsDefined(obj) {
+
       let npc: ref<NPCPuppet> = obj as NPCPuppet;
       if IsDefined(npc) {
         result.hasNPCs = true;
       } else {
+
         let device: ref<Device> = obj as Device;
         if IsDefined(device) {
           let devicePS: ref<ScriptableDeviceComponentPS> = device.GetDevicePS();
@@ -252,6 +261,7 @@ private func ScanRadialDevices(
   accessPointPS: ref<AccessPointControllerPS>,
   out result: DeviceTypesInRange
 ) -> Void {
+
   result.hasNPCs = true;
 }
 
@@ -266,9 +276,11 @@ private func ClassifyDeviceByType(
   if IsDefined(devicePS as SurveillanceCameraControllerPS) {
     result.hasCameras = true;
   }
+
   else if IsDefined(devicePS as SecurityTurretControllerPS) {
     result.hasTurrets = true;
   }
+
   else {
     result.hasBasicDevices = true;
   }
@@ -286,6 +298,7 @@ public static func ApplyNetworkConnectivityFilter(
   entity: wref<Entity>,
   programs: script_ref<array<MinigameProgramData>>
 ) -> Void {
+
   let networkInfo: ConnectedClassTypes = GetNetworkTopology(entity);
 
   BNDebug("ApplyNetworkConnectivityFilter",
@@ -323,6 +336,7 @@ private static func GetNetworkTopology(entity: wref<Entity>) -> ConnectedClassTy
       result = puppet.GetMasterConnectedClassTypes();
     }
   } else {
+
     let device: ref<Device> = entity as Device;
     if IsDefined(device) {
       result = device.GetDevicePS().CheckMasterConnectedClassTypes();

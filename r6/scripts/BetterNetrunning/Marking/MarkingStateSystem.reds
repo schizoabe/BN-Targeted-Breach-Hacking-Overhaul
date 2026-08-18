@@ -6,6 +6,7 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Perks.*
 import BetterNetrunningConfig.*
+import BetterNetrunning.Systems.*
 
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
@@ -174,7 +175,9 @@ public class MarkingStateSystem extends ScriptableSystem {
 
   public func AddSessionHeat(delta: Float) -> Void {
     if delta > 0.0 {
+
       if this.m_hidePresenceTimer > 0.0 { return; }
+
       if      this.m_breachMode == 1 { delta *= 1.5; }
       else if this.m_breachMode == 2 { delta *= 0.5; }
     }
@@ -247,6 +250,7 @@ public class MarkingStateSystem extends ScriptableSystem {
   private let m_debugLastICERequired: Int32;
   private let m_debugLastICEApplied:  Int32;
   private let m_debugLastDeviceName:  String;
+
   private let m_lastBreachTargetType: String;
 
   public func RecordBreachICEState(required: Int32, applied: Int32) -> Void {
@@ -426,7 +430,7 @@ public class MarkingStateSystem extends ScriptableSystem {
 
     let vehicle: ref<VehicleObject> = entity as VehicleObject;
     if IsDefined(vehicle) {
-      let sharedPS: ref<SharedGameplayPS> = vehicle.GetVehiclePS() as SharedGameplayPS;
+      let sharedPS: ref<SharedGameplayPS> = vehicle.GetVehiclePS();
       if IsDefined(sharedPS) {
         if sharedPS.m_bnIceHitsRequired == 0 {
           sharedPS.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
@@ -453,7 +457,11 @@ public class MarkingStateSystem extends ScriptableSystem {
           let npcPS: ref<ScriptedPuppetPS> = puppet.GetPuppetPS() as ScriptedPuppetPS;
           if IsDefined(npcPS) {
             if npcPS.m_bnNPCIceHitsRequired == 0 {
-              npcPS.m_bnNPCIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
+              if NPCRarityToRank(puppet.GetNPCRarity()) >= 4 {
+                npcPS.m_bnNPCIceHitsRequired = 6;
+              } else {
+                npcPS.m_bnNPCIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
+              }
             }
             iceHitsRequired = npcPS.m_bnNPCIceHitsRequired;
           }
@@ -757,6 +765,7 @@ public class MarkingStateSystem extends ScriptableSystem {
         if IsDefined(device) {
           linkData.fxResource = device.GetDefaultNetworkBeamResource();
         } else {
+
           linkData.fxResource = entity.GetFxResourceByKey(n"pingNetworkLink");
         }
         networkSys.RegisterNetworkLink(linkData);
@@ -841,6 +850,7 @@ public class MarkingStateSystem extends ScriptableSystem {
       let elapsed: Float   = currentTime - arr[i].creationTimestamp;
       let remaining: Float = duration - elapsed;
       if remaining < 0.0 { remaining = 0.0; }
+
       if currentOldest < 0.0 || remaining < currentOldest {
         currentOldest = remaining;
       }
