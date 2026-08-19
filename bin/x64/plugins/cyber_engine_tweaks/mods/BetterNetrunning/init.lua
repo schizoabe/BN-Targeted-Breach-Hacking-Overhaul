@@ -40,8 +40,18 @@ registerForEvent("onInit", function()
         local BN = Engine.Register('BetterNetrunning')
 
         BN.WhenReady(function()
+            MarkingSystem.CacheSystems()
             NativeSettingsUI.PushHotkeys(SettingsManager)
             MarkingSystem.SetPlayerInControl(true)
+        end)
+
+        BN.Subscribe('PlayerInvalidated', function()
+            MarkingSystem.InvalidateSystems()
+            MarkingSystem.SetPlayerInControl(false)
+        end)
+
+        BN.SetInterval(0.25, function()
+            MarkingSystem.RefreshPanels()
         end)
 
         local function UpdatePlayerInControl()

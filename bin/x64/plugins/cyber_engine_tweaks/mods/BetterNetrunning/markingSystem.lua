@@ -23,22 +23,30 @@ local counterBreachWasInMinigame   = false
 local counterBreachWasActive       = false
 local isPlayerInControl            = false
 local currentMaxHeat               = 0.0
-local panelRefreshTimer            = 0.0
 local hudPanelsVisible             = false
 
+local cachedMS         = nil
+local cachedCBS        = nil
+local cachedPerkSys    = nil
+local cachedHeatDecay  = HEAT_PASSIVE_DECAY_PER_SEC
+local cachedCBCooldown = COUNTER_BREACH_COOLDOWN
+
 local function getMarkingSystem()
+    if cachedMS then return cachedMS end
     local container = Game.GetScriptableSystemsContainer()
     if not container then return nil end
     return container:Get(SYSTEM_CLASS)
 end
 
 local function getCounterBreachSystem()
+    if cachedCBS then return cachedCBS end
     local container = Game.GetScriptableSystemsContainer()
     if not container then return nil end
     return container:Get(COUNTER_BREACH_SYSTEM_CLASS)
 end
 
 local function getPerkSystem()
+    if cachedPerkSys then return cachedPerkSys end
     local container = Game.GetScriptableSystemsContainer()
     if not container then return nil end
     return container:Get(PERK_SYSTEM_CLASS)
@@ -96,11 +104,11 @@ end
 function MarkingSystem.Update(deltaTime)
     if not isInitialized then return end
 
-    local ms = getMarkingSystem()
+    local ms = cachedMS
     if not ms then return end
 
     local shouldTick = isPlayerInControl
-    local cbs        = getCounterBreachSystem()
+    local cbs        = cachedCBS
     local inMinigame = false
     if cbs then pcall(function() inMinigame = cbs:IsMinigameActive() end) end
 
@@ -117,27 +125,12 @@ function MarkingSystem.Update(deltaTime)
     end
 
     if shouldTick and hideTimer <= 0 then
-        pcall(function() ms:AddSessionHeat(-getHeatDecayPerSec() * deltaTime) end)
+        pcall(function() ms:AddSessionHeat(-cachedHeatDecay * deltaTime) end)
     end
 
     local maxHeat = 0.0
     pcall(function() maxHeat = ms:GetSessionHeat() end)
     currentMaxHeat = maxHeat
-
-    panelRefreshTimer = panelRefreshTimer - deltaTime
-    if panelRefreshTimer <= 0 then
-        panelRefreshTimer = 0.25
-        local logSys = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.Marking.ICEScoutLogSystem")
-        if logSys then
-            local ok, vis = pcall(function() return logSys:IsVisible() end)
-            if ok and type(vis) == "boolean" then hudPanelsVisible = vis end
-        end
-        if hudPanelsVisible then
-            local testSys = Game.GetScriptableSystemsContainer():Get("BetterNetrunning.UI.BNTestPanelSystem")
-            if testSys then pcall(function() testSys:Refresh(counterBreachPending) end) end
-            if logSys  then pcall(function() logSys:Refresh() end) end
-        end
-    end
 
     if ms:HasAnyMarked() then
         ms:PruneExpiredMarksWithHeat(maxHeat)
@@ -147,7 +140,7 @@ function MarkingSystem.Update(deltaTime)
     if cbs then pcall(function() cbActive = cbs:IsActive() end) end
 
     if counterBreachWasActive and not cbActive then
-        counterBreachTimer = getCounterBreachCooldown()
+        counterBreachTimer = cachedCBCooldown
         print('[BetterNetrunning] Counter-breach ended -- cooldown ' .. counterBreachTimer .. 's before next')
     end
     counterBreachWasActive = cbActive
@@ -207,6 +200,42 @@ end
 function MarkingSystem.Init()
     isInitialized = true
     print("[BetterNetrunning] Marking system ready")
+end
+
+function MarkingSystem.CacheSystems()
+    local container = Game.GetScriptableSystemsContainer()
+    if not container then return end
+    cachedMS      = container:Get(SYSTEM_CLASS)
+    cachedCBS     = container:Get(COUNTER_BREACH_SYSTEM_CLASS)
+    cachedPerkSys = container:Get(PERK_SYSTEM_CLASS)
+    cachedHeatDecay  = getHeatDecayPerSec()
+    cachedCBCooldown = getCounterBreachCooldown()
+    print("[BetterNetrunning] Systems cached (heatDecay=" .. cachedHeatDecay .. " cbCooldown=" .. cachedCBCooldown .. ")")
+end
+
+function MarkingSystem.InvalidateSystems()
+    cachedMS         = nil
+    cachedCBS        = nil
+    cachedPerkSys    = nil
+    cachedHeatDecay  = HEAT_PASSIVE_DECAY_PER_SEC
+    cachedCBCooldown = COUNTER_BREACH_COOLDOWN
+    print("[BetterNetrunning] System cache cleared")
+end
+
+function MarkingSystem.RefreshPanels()
+    if not isInitialized then return end
+    local container = Game.GetScriptableSystemsContainer()
+    if not container then return end
+    local logSys = container:Get("BetterNetrunning.Marking.ICEScoutLogSystem")
+    if logSys then
+        local ok, vis = pcall(function() return logSys:IsVisible() end)
+        if ok and type(vis) == "boolean" then hudPanelsVisible = vis end
+    end
+    if hudPanelsVisible then
+        local testSys = container:Get("BetterNetrunning.UI.BNTestPanelSystem")
+        if testSys then pcall(function() testSys:Refresh(counterBreachPending) end) end
+        if logSys  then pcall(function() logSys:Refresh() end) end
+    end
 end
 
 function MarkingSystem.HK_ClearMarks()
