@@ -1,0 +1,35 @@
+
+UIIcon.BNFracture:
+  $type: gamedataUIIcon_Record
+  atlasResourcePath: base\gameplay\gui\fullscreen\hacking_minigame\atlas_minigame_programs.inkatlas
+  atlasPartName: DataMineAdvanced
+
+UIIcon.BNSunder:
+  $type: gamedataUIIcon_Record
+  atlasResourcePath: base\gameplay\gui\fullscreen\hacking_minigame\atlas_minigame_programs.inkatlas
+  atlasPartName: DataMineMaster
+
+ChoiceCaptionParts.BNFractureIcon:
+  $type: gamedataChoiceCaptionIconPart_Record
+  enumName: DataMineAdvanced
+  texturePartID: UIIcon.BNFracture
+
+ChoiceCaptionParts.BNSunderIcon:
+  $type: gamedataChoiceCaptionIconPart_Record
+  enumName: DataMineMaster
+  texturePartID: UIIcon.BNSunder
+
+UIIcon.BNAutoBlind:
+  $type: gamedataUIIcon_Record
+  atlasResourcePath: base\gameplay\gui\fullscreen\hacking_minigame\atlas_minigame_programs.inkatlas
+  atlasPartName: AutoBlind
+
+ChoiceCaptionParts.BNGhostIcon:
+  $type: gamedataChoiceCaptionIconPart_Record
+  enumName: AutoBlind
+  texturePartID: UIIcon.BNAutoBlind
+
+ChoiceCaptionParts.BNRavenIcon:
+  $type: gamedataChoiceCaptionIconPart_Record
+  enumName: ICEPick
+  texturePartID: UIIcon.ICEMinor

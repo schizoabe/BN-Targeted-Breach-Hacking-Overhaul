@@ -19,18 +19,6 @@ registerForEvent("onInit", function()
         print("[Better Netrunning] NativeSettings not found")
     end
 
-    TweakDBSetup.SetupAccessPrograms()
-    TweakDBSetup.SetupUnconsciousBreach()
-    TweakDBSetup.SetupCounterBreachMinigame()
-    TweakDBSetup.SetupIcepickVariants()
-    TweakDBSetup.SetupAPDaemons()
-    TweakDBSetup.SetupSignalNoiseDaemon()
-    TweakDBSetup.SetupOffensiveNPCDaemon()
-    TweakDBSetup.SetupExitProtocol()
-    TweakDBSetup.SetupOffloadProtocol()
-    TweakDBSetup.SetupFirewallMinigame()
-    TweakDBSetup.SetupCascadeProtocol()
-    TweakDBSetup.SetupDaemonIcons()
     TweakDBSetup.ApplyBreachingHotkey(SettingsManager.Get("BreachingHotkey"))
 
     MarkingSystem.Init()
@@ -83,6 +71,7 @@ end)
 
 registerForEvent("onUpdate", function(deltaTime)
     MarkingSystem.Update(deltaTime)
+    MarkingSystem.TickRefresh(deltaTime)
 end)
 
 return true

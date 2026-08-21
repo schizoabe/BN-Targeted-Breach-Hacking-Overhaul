@@ -1,0 +1,56 @@
+
+Interactions.NetworkBasicAccess:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820003
+  description: LocKey#4820004
+  captionIcon: ChoiceCaptionParts.BreachProtocolIcon
+
+MinigameAction.UnlockQuickhacks:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.NetworkBasicAccess
+  objectActionType: ObjectActionType.MinigameUpload
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 20.0
+
+Interactions.NetworkNPCAccess:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820005
+  description: LocKey#4820006
+  captionIcon: ChoiceCaptionParts.PingIcon
+
+MinigameAction.UnlockNPCQuickhacks:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.NetworkNPCAccess
+  objectActionType: ObjectActionType.MinigameUpload
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 60.0
+
+Interactions.NetworkCameraAccess:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820007
+  description: LocKey#4820008
+  captionIcon: ChoiceCaptionParts.CameraShutdownIcon
+
+MinigameAction.UnlockCameraQuickhacks:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.NetworkCameraAccess
+  objectActionType: ObjectActionType.MinigameUpload
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 40.0
+
+Interactions.NetworkTurretAccess:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820009
+  description: LocKey#4820010
+  captionIcon: ChoiceCaptionParts.TurretShutdownIcon
+
+MinigameAction.UnlockTurretQuickhacks:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.NetworkTurretAccess
+  objectActionType: ObjectActionType.MinigameUpload
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 70.0

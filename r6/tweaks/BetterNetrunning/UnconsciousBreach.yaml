@@ -1,0 +1,27 @@
+
+Takedown.BreachUnconsciousOfficer:
+  instigatorPrereqs:
+    - !override
+    - QuickHack.RemoteBreach_inline0
+    - QuickHack.QuickHack_inline3
+    - Takedown.GeneralStateChecks
+    - Takedown.IsPlayerInExploration
+    - Takedown.IsPlayerInAcceptableGroundLocomotionState
+    - Takedown.PlayerNotInSafeZone
+    - Takedown.GameplayRestrictions
+    - Takedown.BreachUnconsciousOfficer_inline0
+    - Takedown.BreachUnconsciousOfficer_inline1
+    - Takedown.BreachUnconsciousOfficer_inline2
+  targetActivePrereqs:
+    - !override
+    - Prereqs.QuickHackUploadingPrereq
+  targetPrereqs:
+    - !override
+    - Takedown.BreachUnconsciousOfficer_inline4
+  startEffects:
+    - !override
+    - QuickHack.QuickHack_inline12
+    - QuickHack.QuickHack_inline13
+  completionEffects: []
+  actionName: RemoteBreach
+  activationTime: []

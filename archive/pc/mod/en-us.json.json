@@ -160,7 +160,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Masks all network activity. Heat generation is suppressed.",
+              "femaleVariant": "Masks all network activity.",
               "maleVariant": "",
               "primaryKey": "4820021",
               "secondaryKey": "Better-Netrunning-HidePresence-Description"
@@ -174,7 +174,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Disables ICE across the network.",
+              "femaleVariant": "Nulls ICE across the network.",
               "maleVariant": "",
               "primaryKey": "4820023",
               "secondaryKey": "Better-Netrunning-DisarmICE-Description"
@@ -258,7 +258,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Routes surplus RAM from the breached node into your own pool during Defend mode.",
+              "femaleVariant": "Offloads processing to breached node.",
               "maleVariant": "",
               "primaryKey": "4820043",
               "secondaryKey": "Better-Netrunning-OffloadProtocol-Description"

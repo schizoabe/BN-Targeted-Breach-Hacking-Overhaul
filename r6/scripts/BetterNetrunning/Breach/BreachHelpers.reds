@@ -155,6 +155,10 @@ private final func HandleUnconsciousBreachSuccess(gi: GameInstance) -> Void {
     markingSystem.ShowRemoteBreachStatus();
   }
 
+  if IsDefined(markingSystem) && markingSystem.GetSignalNoiseTimer() > 0.0 {
+    markingSystem.ShowHUDPanel();
+  }
+
   RPGManager.GiveReward(gi, t"RPGActionRewards.Hacking", Cast<StatsObjectID>(this.GetEntityID()));
 }
 

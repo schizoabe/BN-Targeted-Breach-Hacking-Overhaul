@@ -1,0 +1,39 @@
+
+Interactions.BNHidePresence:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820020
+  description: LocKey#4820021
+  captionIcon: ChoiceCaptionParts.BNGhostIcon
+
+MinigameAction.BNHidePresence:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNHidePresence
+  completionEffects: []
+  type: MinigameAction.AccessPoint
+  complexity: 70.0
+
+Interactions.BNDisarmICE:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820022
+  description: LocKey#4820023
+  captionIcon: ChoiceCaptionParts.ICEMajorIcon
+
+MinigameAction.BNDisarmICE:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNDisarmICE
+  completionEffects: []
+  type: MinigameAction.AccessPoint
+  complexity: 70.0
+
+Interactions.BNSignalNoise:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820024
+  description: LocKey#4820025
+  captionIcon: ChoiceCaptionParts.BNRavenIcon
+
+MinigameAction.BNSignalNoise:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNSignalNoise
+  completionEffects: []
+  type: MinigameAction.AccessPoint
+  complexity: 30.0

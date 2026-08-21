@@ -92,10 +92,14 @@ public class BNInputActions {
         let bootSys = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.UI.BNBootSystem") as BNBootSystem;
         let visible = IsDefined(logSys) && logSys.IsVisible();
         if visible {
+
             if IsDefined(bootSys) { bootSys.Abort(); }
             if IsDefined(testSys) { testSys.Hide(); }
             if IsDefined(logSys)  { logSys.Hide(); }
         } else {
+
+            let player = GameInstance.GetPlayerSystem(gi).GetLocalPlayerMainGameObject() as PlayerPuppet;
+            if !BNInputActions.HasCyberdeck(player) { return; }
             if IsDefined(bootSys) { bootSys.Show(); }
             if IsDefined(testSys) { testSys.ShowTestPanel(0.0); }
             if IsDefined(logSys)  { logSys.Show(); }

@@ -4,6 +4,7 @@ module BetterNetrunning.Marking
 import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Network.*
+import BetterNetrunning.UI.*
 import BetterNetrunning.Utils.*
 
 @if(ModuleExists("HackingExtensions"))
@@ -55,9 +56,11 @@ public class BNMarkNPCAction extends CustomAccessBreach {
     mss.AddMarkFromEntity(this.m_npcPS.GetMyEntityID(), MarkedSubnetType.NPC);
     BNInfo("NetworkScan", "NPC marked: " + EntityID.ToDebugString(this.m_npcPS.GetMyEntityID()));
 
-    let logSys: ref<ICEScoutLogSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance)
-      .Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
+    let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
+    let logSys: ref<ICEScoutLogSystem> = container.Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
     if IsDefined(logSys) { logSys.ShowIfNew(); }
+    let testSys: ref<BNTestPanelSystem> = container.Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
+    if IsDefined(testSys) { testSys.ShowTestPanel(0.0); }
   }
 }
 
@@ -270,9 +273,11 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
     mss.AddMarkNamed(deviceEntity.GetEntityID(), subnetType, displayName, iceHitsRequired);
     BNInfo("NetworkScan", "Device marked: " + displayName);
 
-    let logSys: ref<ICEScoutLogSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance)
-      .Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
+    let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
+    let logSys: ref<ICEScoutLogSystem> = container.Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
     if IsDefined(logSys) { logSys.ShowIfNew(); }
+    let testSys: ref<BNTestPanelSystem> = container.Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
+    if IsDefined(testSys) { testSys.ShowTestPanel(0.0); }
   }
 }
 

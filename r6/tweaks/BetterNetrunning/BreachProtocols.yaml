@@ -1,0 +1,52 @@
+
+Interactions.BNExitProtocol:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820040
+  description: LocKey#4820041
+  captionIcon: ChoiceCaptionParts.DoorAuthorizationIcon
+
+MinigameAction.BN_ExitProtocol:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNExitProtocol
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 70.0
+
+Interactions.BNOffloadProtocol:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820042
+  description: LocKey#4820043
+  captionIcon: ChoiceCaptionParts.ICEMediumIcon
+
+MinigameAction.BN_OffloadProtocol:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNOffloadProtocol
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 30.0
+
+Interactions.BNCascadeProtocol:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820048
+  description: LocKey#4820049
+  captionIcon: ChoiceCaptionParts.MassMadnessIcon
+
+MinigameAction.BN_CascadeProtocol:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNCascadeProtocol
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 60.0
+
+Interactions.BNEntropyProtocol:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820038
+  description: LocKey#4820039
+  captionIcon: ChoiceCaptionParts.VulnerableNPCsIcon
+
+MinigameAction.BN_EntropyProtocol:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNEntropyProtocol
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 60.0

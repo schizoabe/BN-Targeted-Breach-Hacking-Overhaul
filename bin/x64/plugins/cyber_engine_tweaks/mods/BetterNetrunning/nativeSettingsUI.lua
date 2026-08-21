@@ -193,6 +193,10 @@ function NativeSettingsUI.Build(nativeSettings, SettingsManager, TweakDBSetup)
 
     NativeSettingsUI.CreateDebugOptions(nativeSettings, SettingsManager)
 
+    nativeSettings.addSwitch("/BetterNetrunning/Debug", "Dev: All Perks Max", "Instantly sets every BN perk to max rank. Toggle off to zero all perks.", false, false, function(state)
+        NativeSettingsUI.ApplyDevPerks(state)
+    end)
+
     print("[Better Netrunning] NativeSettings UI built successfully")
 end
 
@@ -531,6 +535,22 @@ function NativeSettingsUI.PushHotkeys(SettingsManager)
         get("HotkeyKey_CycleBreachMode"),
         get("HotkeyKey_ToggleHUDPanels")
     )
+end
+
+local BN_PERK_MAX = { [0]=3, [1]=2, [2]=3, [3]=3, [4]=1, [5]=2, [6]=3, [7]=1,
+                      [8]=1, [9]=1, [10]=1, [11]=1, [12]=3, [13]=2, [14]=3, [15]=1, [16]=3 }
+
+function NativeSettingsUI.ApplyDevPerks(enable)
+    local player = Game.GetPlayer()
+    if not player then
+        print("[Better Netrunning] Dev perks: no player found")
+        return
+    end
+    for idx, maxLevel in pairs(BN_PERK_MAX) do
+        local level = enable and maxLevel or 0
+        player:SetBNPerkLevelInt(idx, level)
+    end
+    print("[Better Netrunning] Dev perks: " .. (enable and "ALL MAX" or "ALL ZEROED"))
 end
 
 return NativeSettingsUI

@@ -24,6 +24,7 @@ local counterBreachWasActive       = false
 local isPlayerInControl            = false
 local currentMaxHeat               = 0.0
 local hudPanelsVisible             = false
+local panelRefreshTimer            = 0.0
 
 local cachedMS         = nil
 local cachedCBS        = nil
@@ -235,6 +236,37 @@ function MarkingSystem.RefreshPanels()
         local testSys = container:Get("BetterNetrunning.UI.BNTestPanelSystem")
         if testSys then pcall(function() testSys:Refresh(counterBreachPending) end) end
         if logSys  then pcall(function() logSys:Refresh() end) end
+    end
+end
+
+function MarkingSystem.TickRefresh(deltaTime)
+    if not isInitialized then return end
+
+    if not cachedMS then
+        local container = Game.GetScriptableSystemsContainer()
+        if container then
+            cachedMS = container:Get(SYSTEM_CLASS)
+            if cachedMS then
+                cachedCBS        = container:Get(COUNTER_BREACH_SYSTEM_CLASS)
+                cachedPerkSys    = container:Get(PERK_SYSTEM_CLASS)
+                cachedHeatDecay  = getHeatDecayPerSec()
+                cachedCBCooldown = getCounterBreachCooldown()
+                print("[BetterNetrunning] System cache recovered via TickRefresh fallback")
+            end
+        end
+    end
+
+    if cachedMS and not isPlayerInControl then
+        local ok, breachOpen = pcall(function() return cachedMS:IsAPBreachActive() end)
+        if ok and type(breachOpen) == "boolean" and not breachOpen then
+            isPlayerInControl = true
+        end
+    end
+
+    panelRefreshTimer = panelRefreshTimer + deltaTime
+    if panelRefreshTimer >= 0.25 then
+        panelRefreshTimer = panelRefreshTimer - 0.25
+        MarkingSystem.RefreshPanels()
     end
 end
 

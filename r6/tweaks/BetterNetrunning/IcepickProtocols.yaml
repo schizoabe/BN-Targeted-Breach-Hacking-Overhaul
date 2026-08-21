@@ -1,0 +1,39 @@
+
+Interactions.BNIcepickV1:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820014
+  description: LocKey#4820015
+  captionIcon: ChoiceCaptionParts.BNFractureIcon
+
+MinigameAction.BNIcepickV1:
+  $base: MinigameAction.NetworkLowerICEMedium
+  objectActionUI: Interactions.BNIcepickV1
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 20.0
+
+Interactions.BNIcepickV2:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820016
+  description: LocKey#4820017
+  captionIcon: ChoiceCaptionParts.ICEMediumIcon
+
+MinigameAction.BNIcepickV2:
+  $base: MinigameAction.NetworkLowerICEMedium
+  objectActionUI: Interactions.BNIcepickV2
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 40.0
+
+Interactions.BNIcepickV3:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820018
+  description: LocKey#4820019
+  captionIcon: ChoiceCaptionParts.BNSunderIcon
+
+MinigameAction.BNIcepickV3:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNIcepickV3
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 70.0

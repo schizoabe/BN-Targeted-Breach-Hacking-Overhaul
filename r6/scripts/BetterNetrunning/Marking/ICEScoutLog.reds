@@ -416,10 +416,6 @@ public class ICEScoutLogSystem extends ScriptableSystem {
         .Get(n"BetterNetrunning.UI.BNBootSystem") as BNBootSystem;
     if IsDefined(bootSys) { bootSys.Show(); }
 
-    let testSys: ref<BNTestPanelSystem> = GameInstance.GetScriptableSystemsContainer(gi)
-        .Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
-    if IsDefined(testSys) { testSys.ShowTestPanel(0.0); }
-
     this.m_log.Show(gi);
   }
 

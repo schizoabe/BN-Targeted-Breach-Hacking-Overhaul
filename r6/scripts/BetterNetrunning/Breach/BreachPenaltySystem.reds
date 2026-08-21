@@ -46,6 +46,11 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     return;
   }
 
+  if !this.m_bnDaemonsInjected {
+    wrappedMethod(state);
+    return;
+  }
+
   let gi: GameInstance = this.GetGameInstance();
   let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gi);
   let markingSystem: ref<MarkingStateSystem> = container.Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;

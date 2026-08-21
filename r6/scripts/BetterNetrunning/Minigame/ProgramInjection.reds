@@ -10,6 +10,9 @@ import BetterNetrunning.Network.*
 import BetterNetrunning.Integration.*
 import BetterNetrunning.Perks.*
 
+@addField(ScriptableDeviceComponentPS)
+public let m_bnDaemonsInjected: Bool;
+
 @addMethod(MinigameGenerationRuleScalingPrograms)
 public final func InjectBetterNetrunningPrograms(programs: script_ref<array<MinigameProgramData>>) -> Void {
 
@@ -42,6 +45,8 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
     BNError("ProgramInjection", "SharedGameplayPS is null — skipping injection");
     return;
   }
+
+  if IsDefined(devicePS) { devicePS.m_bnDaemonsInjected = true; }
 
   let exitProg: MinigameProgramData;
   exitProg.actionID    = BNConstants.PROGRAM_BN_EXIT_PROTOCOL();

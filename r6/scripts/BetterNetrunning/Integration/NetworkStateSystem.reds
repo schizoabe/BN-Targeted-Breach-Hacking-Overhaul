@@ -271,6 +271,12 @@ public abstract class NetworkStateUtils {
         BNInfo("NetworkState", "Neural Tap r2 — unconscious NPC spared after breach");
       }
     }
+
+    let anyTimerActive: Bool = IsDefined(ms)
+        && (ms.GetHidePresenceTimer() > 0.0
+            || ms.GetDisarmICETimer() > 0.0
+            || ms.GetSignalNoiseTimer() > 0.0);
+    if anyTimerActive { ms.ShowHUDPanel(); }
   }
 
   public static func IsSubnetAccessible(state: NetworkState) -> Bool {

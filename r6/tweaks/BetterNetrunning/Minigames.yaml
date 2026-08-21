@@ -1,0 +1,52 @@
+
+Interactions.NetworkCounterBreachICE:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820012
+  description: LocKey#4820013
+  captionIcon: ChoiceCaptionParts.DoorAuthorizationIcon
+
+MinigameAction.BNCounterBreachICE:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.NetworkCounterBreachICE
+  completionEffects: []
+
+MinigameProgram.BNCounterBreach:
+  $base: minigame_v2.DefaultItemMinigame_inline0
+  program: MinigameAction.BNCounterBreachICE
+  charactersChain: [-1, -1, -1, -1, -1]
+
+CustomHackingSystemMinigame.BNCounterBreach:
+  $base: minigame_v2.DefaultMinigame
+  timeLimit: 12.0
+  gridSize: 5
+  bufferSize: 5
+  extraDifficulty: 20
+  overrideProgramsList:
+    - MinigameProgram.BNCounterBreach
+  forbiddenProgramsList: []
+
+Interactions.NetworkFirewallICE:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#4820044
+  description: LocKey#4820045
+  captionIcon: ChoiceCaptionParts.FriendlyCamerasIcon
+
+MinigameAction.BNFirewallICE:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.NetworkFirewallICE
+  completionEffects: []
+
+MinigameProgram.BNFirewall:
+  $base: minigame_v2.DefaultItemMinigame_inline0
+  program: MinigameAction.BNFirewallICE
+  charactersChain: [-1, -1, -1, -1, -1]
+
+CustomHackingSystemMinigame.BNFirewall:
+  $base: minigame_v2.DefaultMinigame
+  timeLimit: 10.0
+  gridSize: 5
+  bufferSize: 5
+  extraDifficulty: 25
+  overrideProgramsList:
+    - MinigameProgram.BNFirewall
+  forbiddenProgramsList: []

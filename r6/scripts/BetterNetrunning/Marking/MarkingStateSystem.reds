@@ -5,6 +5,7 @@ import BetterNetrunning.Logging.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Perks.*
+import BetterNetrunning.UI.*
 import BetterNetrunningConfig.*
 import BetterNetrunning.Systems.*
 
@@ -245,6 +246,12 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func GetSignalNoiseTimer() -> Float { return this.m_signalNoiseTimer; }
   public func SetSignalNoiseTimer(t: Float) -> Void {
     this.m_signalNoiseTimer = t > 0.0 ? t : 0.0;
+  }
+
+  public func ShowHUDPanel() -> Void {
+    let testSys: ref<BNTestPanelSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance())
+        .Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
+    if IsDefined(testSys) { testSys.ShowTestPanel(0.0); }
   }
 
   private let m_debugLastICERequired: Int32;
