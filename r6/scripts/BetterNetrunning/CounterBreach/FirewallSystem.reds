@@ -26,6 +26,28 @@ public class BNFirewallSucceededEvent extends OnCustomHackingSucceeded {
       BNFirewallUtils.ReflectHack(gi, this.m_npcPuppet, this.m_actionID);
     }
 
+    if IsDefined(this.m_npcPuppet) && !this.m_npcPuppet.IsDead() {
+      let npcPS: ref<ScriptedPuppetPS> = this.m_npcPuppet.GetPuppetPS();
+      if IsDefined(npcPS) {
+        npcPS.BN_StampSJKIBreached();
+        if npcPS.m_bnNPCIceHitsRequired <= 0 { npcPS.m_bnNPCIceHitsRequired = 1; }
+        npcPS.m_bnNPCIceHitsApplied = npcPS.m_bnNPCIceHitsRequired;
+        npcPS.m_bnNPCIceDefeated = true;
+        let exposeEvt: ref<SetExposeQuickHacks> = new SetExposeQuickHacks();
+        exposeEvt.isRemote = true;
+        npcPS.GetPersistencySystem().QueueEntityEvent(
+          PersistentID.ExtractEntityID(npcPS.GetID()), exposeEvt);
+        let mss: ref<MarkingStateSystem> =
+          GameInstance.GetScriptableSystemsContainer(gi)
+            .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+        if IsDefined(mss) {
+          mss.AddMarkNamed(this.m_npcPuppet.GetEntityID(), MarkedSubnetType.NPC,
+            this.m_npcPuppet.GetDisplayName(), npcPS.m_bnNPCIceHitsRequired);
+        }
+        BNInfo("Firewall", "Reflect: netrunner ICE stamped + marked for Cascade");
+      }
+    }
+
     let cbs: ref<CounterBreachSystem> =
       GameInstance.GetScriptableSystemsContainer(gi)
         .Get(BNConstants.CLASS_COUNTER_BREACH_SYSTEM()) as CounterBreachSystem;

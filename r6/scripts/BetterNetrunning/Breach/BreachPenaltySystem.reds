@@ -46,6 +46,12 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     return;
   }
 
+  if Equals(this.DetectBreachType(), BreachType.RemoteBreach) {
+    BNInfo("BreachLoop", "Remote breach succeeded — exiting cleanly (no loop)");
+    wrappedMethod(state);
+    return;
+  }
+
   if !this.m_bnDaemonsInjected {
     wrappedMethod(state);
     return;
@@ -92,9 +98,8 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     if IsDefined(loopPlayer) && markedCount > 0 {
       let statPools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gi);
       let playerID: StatsObjectID = Cast<StatsObjectID>(loopPlayer.GetEntityID());
-      let curRAM: Float = statPools.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
-      statPools.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.Memory,
-        MaxF(0.0, curRAM - Cast<Float>(markedCount)), loopPlayer, false);
+      statPools.RequestChangingStatPoolValue(
+        playerID, gamedataStatPoolType.Memory, -Cast<Float>(markedCount), loopPlayer, false);
     }
     TargetedBreachUtils.UnlockMarkedEntities(markingSystem, unlockFlags, gi);
     BNInfo("BreachLoop", "Targeted breach unlock applied mid-loop");

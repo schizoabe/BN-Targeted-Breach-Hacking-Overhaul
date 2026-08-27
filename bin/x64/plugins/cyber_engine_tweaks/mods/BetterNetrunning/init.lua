@@ -69,6 +69,20 @@ registerForEvent("onInit", function()
     print("[Better Netrunning] Initialization complete")
 end)
 
+registerHotkey("BetterNetrunning_ClearAllMarks", "[BN Debug] Clear All Marks + Beams", function()
+    local container = Game.GetScriptableSystemsContainer()
+    local ms = container:Get("BetterNetrunning.Marking.MarkingStateSystem")
+    if ms then
+        ms:ClearAll()
+        ms:RefreshMarkBeams()
+    end
+    local testSys = container:Get("BetterNetrunning.UI.BNTestPanelSystem")
+    local logSys  = container:Get("BetterNetrunning.Marking.ICEScoutLogSystem")
+    if testSys then testSys:Hide() end
+    if logSys  then logSys:Hide()  end
+    print("[Better Netrunning] Debug: all marks and beams cleared")
+end)
+
 registerForEvent("onUpdate", function(deltaTime)
     MarkingSystem.Update(deltaTime)
     MarkingSystem.TickRefresh(deltaTime)

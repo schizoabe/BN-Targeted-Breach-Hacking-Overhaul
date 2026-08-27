@@ -195,11 +195,6 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
       }
       cbs.SetLastBreachWasStandalone(isStandalone);
 
-      if isStandalone && IsDefined(breachDevicePS) {
-        let netState: NetworkState = NetworkStateUtils.GetNetworkState(breachDevicePS, gameInstance);
-        let sessionHeat: Float = IsDefined(markingSystem) ? markingSystem.GetSessionHeat() : 0.0;
-        cbs.ShowWarning(NetworkStateUtils.FormatVulnerabilityMessage(netState, sessionHeat));
-      }
     }
   }
 

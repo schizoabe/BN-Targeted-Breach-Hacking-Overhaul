@@ -8,6 +8,7 @@ local defaults = {
     HotkeyKey_ForceJackOut    = "IK_None",
     HotkeyKey_CycleBreachMode = "IK_None",
     HotkeyKey_ToggleHUDPanels = "IK_None",
+    HotkeyKey_CycleCascadeQH  = "IK_None",
 
     EnableClassicMode = false,
     AllowBreachUnconscious = true,

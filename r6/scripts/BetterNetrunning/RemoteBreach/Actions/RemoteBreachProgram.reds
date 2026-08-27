@@ -50,12 +50,12 @@ public abstract class RemoteBreachProgramActionBase extends HackProgramAction {
 
         this.m_lastBreachRange = this.GetBreachRangeForDifficulty();
 
+        this.m_devicePS.FinalizeNetrunnerDive(HackingMinigameState.Succeeded);
+
         let stateSystem: ref<DeviceRemoteBreachStateSystem> = StateSystemUtils.GetDeviceStateSystem(gameInstance);
         if IsDefined(stateSystem) {
             stateSystem.ClearCurrentDevice();
         }
-
-        this.m_devicePS.FinalizeNetrunnerDive(HackingMinigameState.Succeeded);
     }
 
     protected func ExecuteProgramFailure() -> Void {

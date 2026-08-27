@@ -231,6 +231,7 @@ public abstract class NetworkStateUtils {
           let offloadGain: Float = offloadRank >= 3 ? 6.0 : (offloadRank >= 2 ? 4.0 : 2.0);
           let statPoolSys: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gameInstance);
           let playerID: StatsObjectID = Cast<StatsObjectID>(player.GetEntityID());
+
           let currentRAM: Float = statPoolSys.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
           statPoolSys.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.Memory, currentRAM + offloadGain, player, false);
           BNInfo("NetworkState", "Offload Protocol r" + ToString(offloadRank) + " — RAM +" + ToString(Cast<Int32>(offloadGain)) + " (was " + ToString(currentRAM) + ")");

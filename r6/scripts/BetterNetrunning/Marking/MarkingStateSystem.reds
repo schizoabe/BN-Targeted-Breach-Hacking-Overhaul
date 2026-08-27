@@ -48,6 +48,8 @@ public class MarkingStateSystem extends ScriptableSystem {
 
   private let m_firewallArmed: Bool;
 
+  private let m_cascadeQHIndex: Int32;
+
   private let m_beamedEntityIDs: array<EntityID>;
 
   private func OnAttach() -> Void {
@@ -65,6 +67,7 @@ public class MarkingStateSystem extends ScriptableSystem {
     this.m_lastBreachTargetType  = "device";
     this.m_breachMode            = 0;
     this.m_firewallArmed         = true;
+    this.m_cascadeQHIndex        = 0;
   }
 
   private func GetMarkDurationSeconds() -> Float {
@@ -141,6 +144,9 @@ public class MarkingStateSystem extends ScriptableSystem {
   public func IsScoutMode()  -> Bool { return this.m_breachMode == 0 || !this.HasCyberdeck(); }
   public func IsAttackMode() -> Bool { return this.m_breachMode == 1 && this.HasCyberdeck(); }
   public func IsDefendMode() -> Bool { return this.m_breachMode == 2 && this.HasCyberdeck(); }
+
+  public func GetCascadeQHIndex() -> Int32 { return this.m_cascadeQHIndex; }
+  public func SetCascadeQHIndex(idx: Int32) -> Void { this.m_cascadeQHIndex = idx; }
 
   public func IsFirewallArmed() -> Bool { return this.m_firewallArmed; }
 
@@ -296,6 +302,54 @@ public class MarkingStateSystem extends ScriptableSystem {
     let record: ref<Item_Record> = TweakDBInterface.GetItemRecord(ItemID.GetTDBID(deckID));
     if !IsDefined(record) { return s"CYBERDECK"; }
     return GetLocalizedTextByKey(record.DisplayName());
+  }
+
+  public func GetCascadeQuickhackName() -> String {
+    let gi: GameInstance = this.GetGameInstance();
+    let player: ref<PlayerPuppet> = GetPlayer(gi);
+    if !IsDefined(player) { return ""; }
+    let deckID: ItemID = EquipmentSystem.GetData(player).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
+    if !EquipmentSystem.IsItemCyberdeck(deckID) { return ""; }
+
+    let deckData: wref<gameItemData> = GameInstance.GetTransactionSystem(gi).GetItemData(player, deckID);
+    let qhActions: array<wref<ObjectAction_Record>>;
+    if IsDefined(deckData) {
+      let parts: array<InnerItemData>;
+      deckData.GetItemParts(parts);
+      let pi: Int32 = 0;
+      while pi < ArraySize(parts) {
+        let part: InnerItemData = parts[pi];
+        if ItemID.IsValid(InnerItemData.GetItemID(part)) {
+          let programRec: ref<Item_Record> = InnerItemData.GetStaticData(part);
+          if IsDefined(programRec) {
+            let progActions: array<wref<ObjectAction_Record>>;
+            programRec.ObjectActions(progActions);
+
+            let ai: Int32 = 0;
+            let foundForProgram: Bool = false;
+            while ai < ArraySize(progActions) && !foundForProgram {
+              let pact: wref<ObjectAction_Record> = progActions[ai];
+              if IsDefined(pact) && IsDefined(pact.ObjectActionType()) &&
+                 Equals(pact.ObjectActionType().Type(), gamedataObjectActionType.PuppetQuickHack) {
+                ArrayPush(qhActions, pact);
+                foundForProgram = true;
+              }
+              ai += 1;
+            }
+          }
+        }
+        pi += 1;
+      }
+    }
+    let count: Int32 = ArraySize(qhActions);
+    if count == 0 { return ""; }
+    let selected: wref<ObjectAction_Record> = qhActions[this.m_cascadeQHIndex % count];
+    let uiFlatID: TweakDBID = selected.GetID();
+    TDBID.Append(uiFlatID, t"objectActionUI");
+    let uiID: TweakDBID = FromVariant<TweakDBID>(TweakDBInterface.GetFlat(uiFlatID));
+    TDBID.Append(uiID, t"caption");
+    let captionCN: CName = FromVariant<CName>(TweakDBInterface.GetFlat(uiID));
+    return IsNameValid(captionCN) ? GetLocalizedTextByKey(captionCN) : NameToString(selected.ActionName());
   }
 
   public func GetDebugICEString() -> String {

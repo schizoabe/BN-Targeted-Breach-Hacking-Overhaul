@@ -6,10 +6,11 @@ import BetterNetrunning.UI.*
 
 public class BNInputKeySystem extends ScriptableSystem {
 
-    private let m_clearMarksKey:      EInputKey;
-    private let m_forceJackOutKey:    EInputKey;
-    private let m_cycleBreachModeKey: EInputKey;
-    private let m_toggleHUDPanelsKey: EInputKey;
+    private let m_clearMarksKey:        EInputKey;
+    private let m_forceJackOutKey:      EInputKey;
+    private let m_cycleBreachModeKey:   EInputKey;
+    private let m_toggleHUDPanelsKey:   EInputKey;
+    private let m_cycleCascadeQHKey:    EInputKey;
 
     public static func GetInstance(gi: GameInstance) -> ref<BNInputKeySystem> {
         return GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.Core.BNInputKeySystem") as BNInputKeySystem;
@@ -36,6 +37,8 @@ public class BNInputKeySystem extends ScriptableSystem {
             BNInputActions.CycleBreachMode(gi, BNInputActions.HasCyberdeck(player));
         } else if Equals(key, this.m_toggleHUDPanelsKey) {
             BNInputActions.ToggleHUDPanels(gi);
+        } else if Equals(key, this.m_cycleCascadeQHKey) {
+            BNInputActions.CycleCascadeQH(gi);
         }
     }
 
@@ -44,6 +47,10 @@ public class BNInputKeySystem extends ScriptableSystem {
         this.m_forceJackOutKey    = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", forceJackOut)));
         this.m_cycleBreachModeKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", cycleBreachMode)));
         this.m_toggleHUDPanelsKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", toggleHUDPanels)));
+    }
+
+    public func ApplyCascadeHotkey(cycleCascadeQH: String) -> Void {
+        this.m_cycleCascadeQHKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", cycleCascadeQH)));
     }
 }
 
@@ -84,6 +91,71 @@ public class BNInputActions {
         else if nextMode == 1 { label = "ATTACK"; }
         else                  { label = "DEFEND"; }
         if IsDefined(cbs) { cbs.ShowWarning("BREACH MODE: " + label); }
+    }
+
+    public static func CycleCascadeQH(gi: GameInstance) -> Void {
+        let cbs: ref<CounterBreachSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.CounterBreach.CounterBreachSystem") as CounterBreachSystem;
+        let ms: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.Marking.MarkingStateSystem") as MarkingStateSystem;
+        if !IsDefined(ms) { return; }
+
+        let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(gi).GetLocalPlayerMainGameObject() as PlayerPuppet;
+        if !IsDefined(player) { return; }
+        let deckID: ItemID = EquipmentSystem.GetData(player).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
+        if !EquipmentSystem.IsItemCyberdeck(deckID) {
+            if IsDefined(cbs) { cbs.ShowWarning("CASCADE: NO CYBERDECK"); }
+            return;
+        }
+
+        let deckData: wref<gameItemData> = GameInstance.GetTransactionSystem(gi).GetItemData(player, deckID);
+        let qhActions: array<wref<ObjectAction_Record>>;
+        if IsDefined(deckData) {
+            let parts: array<InnerItemData>;
+            deckData.GetItemParts(parts);
+            let pi: Int32 = 0;
+            while pi < ArraySize(parts) {
+                let part: InnerItemData = parts[pi];
+                if ItemID.IsValid(InnerItemData.GetItemID(part)) {
+                    let programRec: ref<Item_Record> = InnerItemData.GetStaticData(part);
+                    if IsDefined(programRec) {
+                        let progActions: array<wref<ObjectAction_Record>>;
+                        programRec.ObjectActions(progActions);
+
+                        let ai: Int32 = 0;
+                        let foundForProgram: Bool = false;
+                        while ai < ArraySize(progActions) && !foundForProgram {
+                            let pact: wref<ObjectAction_Record> = progActions[ai];
+                            if IsDefined(pact) && IsDefined(pact.ObjectActionType()) &&
+                               Equals(pact.ObjectActionType().Type(), gamedataObjectActionType.PuppetQuickHack) {
+                                ArrayPush(qhActions, pact);
+                                foundForProgram = true;
+                            }
+                            ai += 1;
+                        }
+                    }
+                }
+                pi += 1;
+            }
+        }
+        let count: Int32 = ArraySize(qhActions);
+        if count == 0 {
+            if IsDefined(cbs) { cbs.ShowWarning("CASCADE: NO QUICKHACK AVAILABLE"); }
+            return;
+        }
+
+        let newIdx: Int32 = (ms.GetCascadeQHIndex() + 1) % count;
+        ms.SetCascadeQHIndex(newIdx);
+
+        let selectedAction: wref<ObjectAction_Record> = qhActions[newIdx];
+        let uiFlatID: TweakDBID = selectedAction.GetID();
+        TDBID.Append(uiFlatID, t"objectActionUI");
+        let uiID: TweakDBID = FromVariant<TweakDBID>(TweakDBInterface.GetFlat(uiFlatID));
+        TDBID.Append(uiID, t"caption");
+        let captionCN: CName = FromVariant<CName>(TweakDBInterface.GetFlat(uiID));
+        let name: String = IsNameValid(captionCN) ? GetLocalizedTextByKey(captionCN) : NameToString(selectedAction.ActionName());
+
+        let testSys: ref<BNTestPanelSystem> = GameInstance.GetScriptableSystemsContainer(gi)
+            .Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
+        if IsDefined(testSys) { testSys.Refresh(0.0); }
     }
 
     public static func ToggleHUDPanels(gi: GameInstance) -> Void {

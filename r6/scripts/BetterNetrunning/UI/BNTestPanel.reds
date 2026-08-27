@@ -16,6 +16,7 @@ public class BNTestPanel {
     private let m_footerFluff:   ref<inkImage>;
 
     private let m_deckLine:      ref<inkText>;
+    private let m_quickhackLine: ref<inkText>;
     private let m_modeLine:      ref<inkText>;
     private let m_marksLine:     ref<inkText>;
     private let m_heatLabel:     ref<inkText>;
@@ -116,12 +117,23 @@ public class BNTestPanel {
         deckLine.Reparent(canvas);
         this.m_deckLine = deckLine;
 
+        let quickhackLine = new inkText();
+        quickhackLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
+        quickhackLine.SetFontSize(10);
+        quickhackLine.SetLetterCase(textLetterCase.UpperCase);
+        quickhackLine.SetAnchor(inkEAnchor.TopLeft);
+        quickhackLine.SetMargin(new inkMargin(txtX, 42.0, 12.0, 0.0));
+        quickhackLine.SetTintColor(new HDRColor(0.50, 0.20, 0.65, 0.55));
+        quickhackLine.SetText("CASCADE ... ?");
+        quickhackLine.Reparent(canvas);
+        this.m_quickhackLine = quickhackLine;
+
         let modeLine = new inkText();
         modeLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
         modeLine.SetFontSize(10);
         modeLine.SetLetterCase(textLetterCase.UpperCase);
         modeLine.SetAnchor(inkEAnchor.TopLeft);
-        modeLine.SetMargin(new inkMargin(txtX, 42.0, 12.0, 0.0));
+        modeLine.SetMargin(new inkMargin(txtX, 54.0, 12.0, 0.0));
         modeLine.SetTintColor(new HDRColor(0.10, 0.60, 0.60, 0.8));
         modeLine.SetText("MODE ... SCOUT");
         modeLine.Reparent(canvas);
@@ -129,7 +141,7 @@ public class BNTestPanel {
 
         let div1 = new inkRectangle();
         div1.SetAnchor(inkEAnchor.TopLeft);
-        div1.SetMargin(new inkMargin(txtX, 60.0, 0.0, 0.0));
+        div1.SetMargin(new inkMargin(txtX, 72.0, 0.0, 0.0));
         div1.SetSize(new Vector2(trackW, 1.0));
         div1.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.5));
         div1.Reparent(canvas);
@@ -139,7 +151,7 @@ public class BNTestPanel {
         marksLine.SetFontSize(15);
         marksLine.SetLetterCase(textLetterCase.UpperCase);
         marksLine.SetAnchor(inkEAnchor.TopLeft);
-        marksLine.SetMargin(new inkMargin(txtX, 72.0, 12.0, 0.0));
+        marksLine.SetMargin(new inkMargin(txtX, 84.0, 12.0, 0.0));
         marksLine.SetTintColor(new HDRColor(1.2, 0.78, 0.12, 1.0));
         marksLine.SetText("ACTIVE MARKS ... 0");
         marksLine.Reparent(canvas);
@@ -147,7 +159,7 @@ public class BNTestPanel {
 
         let div2 = new inkRectangle();
         div2.SetAnchor(inkEAnchor.TopLeft);
-        div2.SetMargin(new inkMargin(txtX, 92.0, 0.0, 0.0));
+        div2.SetMargin(new inkMargin(txtX, 104.0, 0.0, 0.0));
         div2.SetSize(new Vector2(trackW, 1.0));
         div2.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.3));
         div2.Reparent(canvas);
@@ -157,7 +169,7 @@ public class BNTestPanel {
         heatLabel.SetFontSize(14);
         heatLabel.SetLetterCase(textLetterCase.UpperCase);
         heatLabel.SetAnchor(inkEAnchor.TopLeft);
-        heatLabel.SetMargin(new inkMargin(txtX, 102.0, 12.0, 0.0));
+        heatLabel.SetMargin(new inkMargin(txtX, 114.0, 12.0, 0.0));
         heatLabel.SetTintColor(new HDRColor(1.2, 0.78, 0.12, 1.0));
         heatLabel.SetText("NETWORK HEAT ... COLD 0%");
         heatLabel.Reparent(canvas);
@@ -165,14 +177,14 @@ public class BNTestPanel {
 
         let heatTrack = new inkRectangle();
         heatTrack.SetAnchor(inkEAnchor.TopLeft);
-        heatTrack.SetMargin(new inkMargin(txtX, 120.0, 0.0, 0.0));
+        heatTrack.SetMargin(new inkMargin(txtX, 132.0, 0.0, 0.0));
         heatTrack.SetSize(new Vector2(trackW, 10.0));
         heatTrack.SetTintColor(new HDRColor(0.08, 0.08, 0.06, 1.0));
         heatTrack.Reparent(canvas);
 
         let heatFill = new inkRectangle();
         heatFill.SetAnchor(inkEAnchor.TopLeft);
-        heatFill.SetMargin(new inkMargin(txtX, 120.0, 0.0, 0.0));
+        heatFill.SetMargin(new inkMargin(txtX, 132.0, 0.0, 0.0));
         heatFill.SetSize(new Vector2(1.0, 10.0));
         heatFill.SetTintColor(new HDRColor(0.15, 1.1, 0.15, 1.0));
         heatFill.Reparent(canvas);
@@ -356,6 +368,11 @@ public class BNTestPanel {
             this.m_deckLine.SetText(deckMss.GetEquippedCyberdeckName());
         }
 
+        if IsDefined(deckMss) && IsDefined(this.m_quickhackLine) {
+            let qhName: String = deckMss.GetCascadeQuickhackName();
+            this.m_quickhackLine.SetText("CASCADE ... " + (NotEquals(qhName, "") ? qhName : "NONE"));
+        }
+
         if IsDefined(deckMss) && IsDefined(this.m_modeLine) {
             let mode: Int32 = deckMss.GetBreachMode();
             if mode == 1 {
@@ -454,7 +471,7 @@ public class BNTestPanel {
         this.m_counterTrack.SetVisible(showCounterBar);
         this.m_counterFill.SetVisible(showCounterBar);
 
-        let curY: Float = 130.0;
+        let curY: Float = 142.0;
 
         let sigLabelY: Float = curY + 8.0;
         this.m_signalLabel.SetMargin(new inkMargin(txtX, sigLabelY, 12.0, 0.0));

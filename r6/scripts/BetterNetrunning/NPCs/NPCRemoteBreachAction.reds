@@ -30,7 +30,7 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
       container.Get(BNConstants.CLASS_COUNTER_BREACH_SYSTEM()) as CounterBreachSystem;
 
     if !IsDefined(npcPS) {
-      if IsDefined(cbs) { cbs.ShowWarning("ICE ANALYSIS COMPLETE"); }
+
       BNWarn("NPCRemoteBreach", "No NPC in state system after ICE board success");
       return;
     }

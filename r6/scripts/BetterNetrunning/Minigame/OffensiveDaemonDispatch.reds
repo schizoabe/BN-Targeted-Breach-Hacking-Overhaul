@@ -210,64 +210,66 @@ private final func BNDispatchCascadeProtocol(
     BNInfo("OffensiveDaemonDispatch", "Cascade: no cyberdeck equipped");
     return;
   }
+
   let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(gi);
-  let deckData: ref<gameItemData> = ts.GetItemData(playerPuppet, deckID);
-  if !IsDefined(deckData) {
-    BNWarn("OffensiveDaemonDispatch", "Cascade: could not get cyberdeck item data");
-    return;
-  }
-  let parts: array<InnerItemData>;
-  deckData.GetItemParts(parts);
-  BNInfo("OffensiveDaemonDispatch", "Cascade: cyberdeck has " + ToString(ArraySize(parts)) + " installed part(s)");
-  let qhItem: ItemID;
-  let pi: Int32 = 0;
-  while pi < ArraySize(parts) {
-    let candidate: ItemID = InnerItemData.GetItemID(parts[pi]);
-    if ItemID.IsValid(candidate) {
-      let partTDBID: TweakDBID = ItemID.GetTDBID(candidate);
-      let partRecord: wref<Item_Record> = TweakDBInterface.GetItemRecord(partTDBID);
-      if IsDefined(partRecord) && partRecord.GetObjectActionsCount() > 0
-          && partTDBID != t"Items.GenericItemRoot" {
-        qhItem = candidate;
-        BNInfo("OffensiveDaemonDispatch", "Cascade: using part[" + ToString(pi) + "] as quickhack (actions=" + ToString(partRecord.GetObjectActionsCount()) + ")");
-        pi = ArraySize(parts);
-      } else {
-        BNDebug("OffensiveDaemonDispatch", "Cascade: skipping part[" + ToString(pi) + "] — no ObjectActions");
-      }
-    }
-    pi += 1;
-  }
-  if !ItemID.IsValid(qhItem) {
-    if IsDefined(cbs) { cbs.ShowWarning("CASCADE: NO QUICKHACK IN SLOT 1"); }
-    BNInfo("OffensiveDaemonDispatch", "Cascade: no valid quickhack found in cyberdeck parts");
-    return;
-  }
+  let deckData: wref<gameItemData> = ts.GetItemData(playerPuppet, deckID);
+  let qhActions: array<wref<ObjectAction_Record>>;
+  if IsDefined(deckData) {
+    let parts: array<InnerItemData>;
+    deckData.GetItemParts(parts);
+    let pi: Int32 = 0;
+    while pi < ArraySize(parts) {
+      let part: InnerItemData = parts[pi];
+      if ItemID.IsValid(InnerItemData.GetItemID(part)) {
+        let programRec: ref<Item_Record> = InnerItemData.GetStaticData(part);
+        if IsDefined(programRec) {
+          let progActions: array<wref<ObjectAction_Record>>;
+          programRec.ObjectActions(progActions);
 
-  let qhTDBID: TweakDBID = ItemID.GetTDBID(qhItem);
-  let puppetActionID: TweakDBID;
-  let actionResolved: Bool = false;
-
-  let itemRecord: wref<Item_Record> = TweakDBInterface.GetItemRecord(qhTDBID);
-  if IsDefined(itemRecord) {
-    let ai: Int32 = 0;
-    while ai < itemRecord.GetObjectActionsCount() && !actionResolved {
-      let action: wref<ObjectAction_Record> = itemRecord.GetObjectActionsItem(ai);
-      if IsDefined(action) {
-        let actionType: wref<ObjectActionType_Record> = action.ObjectActionType();
-        if IsDefined(actionType) && Equals(actionType.Type(), gamedataObjectActionType.PuppetQuickHack) {
-          puppetActionID = action.GetID();
-          actionResolved = true;
-          BNInfo("OffensiveDaemonDispatch", "Cascade: PuppetQuickHack action found at index " + ToString(ai));
+          let ai: Int32 = 0;
+          let foundForProgram: Bool = false;
+          while ai < ArraySize(progActions) && !foundForProgram {
+            let pact: wref<ObjectAction_Record> = progActions[ai];
+            if IsDefined(pact) && IsDefined(pact.ObjectActionType()) &&
+               Equals(pact.ObjectActionType().Type(), gamedataObjectActionType.PuppetQuickHack) {
+              BNDebug("OffensiveDaemonDispatch", "Cascade: slot[" + ToString(pi) + "] → " + NameToString(pact.ActionName()));
+              ArrayPush(qhActions, pact);
+              foundForProgram = true;
+            }
+            ai += 1;
+          }
         }
       }
-      ai += 1;
+      pi += 1;
     }
   }
-
-  if !actionResolved {
+  let qhCount: Int32 = ArraySize(qhActions);
+  if qhCount == 0 {
     if IsDefined(cbs) { cbs.ShowWarning("CASCADE: QUICKHACK NOT APPLICABLE"); }
-    BNWarn("OffensiveDaemonDispatch", "Cascade: no PuppetQuickHack ObjectAction found for equipped quickhack");
+    BNWarn("OffensiveDaemonDispatch", "Cascade: no PuppetQuickHack action in player quickhack list");
     return;
+  }
+
+  let cascadeIdx: Int32 = markingSystem.GetCascadeQHIndex() % qhCount;
+  let selectedAction: wref<ObjectAction_Record> = qhActions[cascadeIdx];
+  let puppetActionID: TweakDBID = selectedAction.GetID();
+  let resolvedActionName: String = NameToString(selectedAction.ActionName());
+  BNInfo("OffensiveDaemonDispatch", "Cascade: " + ToString(qhCount) + " PuppetQH action(s), index " + ToString(cascadeIdx) + " → " + resolvedActionName);
+
+  let uiFlatID: TweakDBID = selectedAction.GetID();
+  TDBID.Append(uiFlatID, t"objectActionUI");
+  let uiID: TweakDBID = FromVariant<TweakDBID>(TweakDBInterface.GetFlat(uiFlatID));
+  TDBID.Append(uiID, t"caption");
+  let captionCN: CName = FromVariant<CName>(TweakDBInterface.GetFlat(uiID));
+  let qhDisplayName: String = IsNameValid(captionCN) ? GetLocalizedTextByKey(captionCN) : resolvedActionName;
+
+  let actionRec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(puppetActionID);
+  let completionFX: array<wref<ObjectActionEffect_Record>>;
+  if IsDefined(actionRec) {
+    actionRec.CompletionEffects(completionFX);
+    BNInfo("OffensiveDaemonDispatch", "Cascade: " + resolvedActionName + " has " + ToString(ArraySize(completionFX)) + " completion effect(s)");
+  } else {
+    BNWarn("OffensiveDaemonDispatch", "Cascade: no action record for " + resolvedActionName);
   }
 
   let npcs: array<MarkEntry> = markingSystem.GetMarkedNPCEntries();
@@ -278,14 +280,22 @@ private final func BNDispatchCascadeProtocol(
     if IsDefined(puppet) && !puppet.IsDead() {
       let npcPS: ref<ScriptedPuppetPS> = puppet.GetPuppetPS();
       if IsDefined(npcPS) && npcPS.m_bnNPCIceDefeated {
-        let act: ref<PuppetAction> = new PuppetAction();
-        act.RegisterAsRequester(puppet.GetEntityID());
-        act.SetExecutor(player);
-        act.SetObjectActionID(puppetActionID);
-        act.SetUp(npcPS);
-        act.SetDisableSpread(true);
-        act.ProcessRPGAction(gi);
-        dispatched += 1;
+        let npcApplied: Bool = false;
+        let ei: Int32 = 0;
+        while ei < ArraySize(completionFX) {
+          let seRec: wref<StatusEffect_Record> = completionFX[ei].StatusEffect();
+          if IsDefined(seRec) {
+            StatusEffectHelper.ApplyStatusEffect(puppet, seRec.GetID(), player.GetEntityID());
+            BNDebug("OffensiveDaemonDispatch", "Cascade: applied " + TDBID.ToStringDEBUG(seRec.GetID()) + " to " + puppet.GetDisplayName());
+            npcApplied = true;
+          }
+          ei += 1;
+        }
+        if npcApplied {
+          let label: String = StrLen(qhDisplayName) > 0 ? qhDisplayName : resolvedActionName;
+          BNInfo("OffensiveDaemonDispatch", "Cascade: distributed " + label + " → " + puppet.GetDisplayName());
+          dispatched += 1;
+        }
       }
     }
     ni += 1;
@@ -294,8 +304,9 @@ private final func BNDispatchCascadeProtocol(
   markingSystem.AddSessionHeat(0.15);
 
   if dispatched > 0 {
-    if IsDefined(cbs) { cbs.ShowWarning("CASCADE: QUICKHACK DISTRIBUTED"); }
-    BNInfo("OffensiveDaemonDispatch", "Cascade Protocol: distributed to " + ToString(dispatched) + " NPC(s)");
+    let summary: String = StrLen(qhDisplayName) > 0 ? qhDisplayName : resolvedActionName;
+    if IsDefined(cbs) { cbs.ShowWarning("CASCADE: " + summary + " broadcasted."); }
+    BNInfo("OffensiveDaemonDispatch", "Cascade Protocol: " + summary + " distributed to " + ToString(dispatched) + " NPC(s)");
   } else {
     BNDebug("OffensiveDaemonDispatch", "Cascade: no stamped marked NPCs reachable");
   }

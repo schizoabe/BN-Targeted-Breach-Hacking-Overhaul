@@ -805,7 +805,7 @@ public class OnRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded {
         BNInfo("RemoteBreachICE", "ICE WEAKENED — " + NetworkStateUtils.FormatVulnerabilityMessage(state, heat));
       }
     } else {
-      if IsDefined(cbs) { cbs.ShowWarning("ICE ANALYSIS COMPLETE — REMOTE BREACH AGAIN TO CONTINUE"); }
+
       BNWarn("RemoteBreachICE", "No device in state system after ICE board success");
     }
   }

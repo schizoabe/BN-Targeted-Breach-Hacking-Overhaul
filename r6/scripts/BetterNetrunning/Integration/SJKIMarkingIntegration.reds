@@ -20,8 +20,6 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
   BNInfo("SJKIIntegration", "BN_SJKIHandleSuccess — ActivePrograms count="
     + ToString(ArraySize(activePrograms)));
 
-  NetworkStateUtils.OnDaemonsCompleted(activePrograms, this, gi);
-
   let iceState: NetworkState = NetworkStateUtils.GetNetworkState(this, gi);
 
   let unlockFlags: BreachUnlockFlags = DaemonFilterUtils.ExtractUnlockFlags(activePrograms);
@@ -65,21 +63,21 @@ public func BN_SJKIHandleSuccess(gi: GameInstance) -> Void {
       markingSystem.RecordBreachICEState(iceState.hitsRequired, iceState.hitsApplied);
       markingSystem.ShowRemoteBreachStatus();
     }
+
+    NetworkStateUtils.OnDaemonsCompleted(activePrograms, this, gi);
     this.BNHandleSJKIBoardComplete(gi, activePrograms);
     return;
   }
+
+  NetworkStateUtils.OnDaemonsCompleted(activePrograms, this, gi);
 
   let markedCount: Int32 = markingSystem.GetTotalCount();
   let player: ref<PlayerPuppet> = GetPlayer(gi);
   if IsDefined(player) && markedCount > 0 {
     let poolSystem: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gi);
     let playerID: StatsObjectID = Cast<StatsObjectID>(player.GetEntityID());
-    let curRAM: Float = poolSystem.GetStatPoolValue(
-      playerID, gamedataStatPoolType.Memory, false);
-    poolSystem.RequestSettingStatPoolValue(
-      playerID, gamedataStatPoolType.Memory,
-      MaxF(0.0, curRAM - Cast<Float>(markedCount)),
-      player, false);
+    poolSystem.RequestChangingStatPoolValue(
+      playerID, gamedataStatPoolType.Memory, -Cast<Float>(markedCount), player, false);
     BNInfo("SJKIIntegration", "RAM cost: -" + ToString(markedCount));
   }
 
