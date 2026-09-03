@@ -51,9 +51,6 @@ public class BNFirewallSucceededEvent extends OnCustomHackingSucceeded {
     let cbs: ref<CounterBreachSystem> =
       GameInstance.GetScriptableSystemsContainer(gi)
         .Get(BNConstants.CLASS_COUNTER_BREACH_SYSTEM()) as CounterBreachSystem;
-    if IsDefined(cbs) {
-      cbs.ShowWarning("FIREWALL: HACK REFLECTED!");
-    }
     BNInfo("Firewall", "Firewall succeeded — hack reflected to attacker");
   }
 }
@@ -62,11 +59,11 @@ public class BNFirewallFailedEvent extends OnCustomHackingFailed {
   public let m_listener: wref<UploadFromNPCToPlayerListener>;
 
   public func Execute() -> Void {
-    GameInstance.GetTimeSystem(this.gameInstance).UnsetTimeDilation(n"BNFirewall");
+
     if IsDefined(this.m_listener) {
       this.m_listener.m_bnFirewallEngaged = false;
-
     }
+    GameInstance.GetTimeSystem(this.gameInstance).UnsetTimeDilation(n"BNFirewall");
     BNInfo("Firewall", "Firewall minigame failed — upload resumes, hack lands");
   }
 }
@@ -103,6 +100,11 @@ public class BNFirewallUtils {
           || aid == t"AIQuickHack.PreventionHackRevealPosition";
       }
       npc.QueueEvent(unlinkFx);
+
+      if !StatusEffectSystem.ObjectHasStatusEffect(npc, t"AIQuickHackStatusEffect.HackingInterrupted") {
+        StatusEffectHelper.ApplyStatusEffect(npc, t"AIQuickHackStatusEffect.HackingInterrupted", npc.GetEntityID());
+      }
+      ScriptedPuppet.SendActionSignal(npc, n"HackingCompleted", 1.0);
     }
 
     listener.m_bnFirewallEngaged = false;
@@ -131,6 +133,11 @@ protected cb func OnStatPoolAdded() -> Bool {
 
   this.m_bnFirewallEngaged = false;
 
+  if IsDefined(this.m_action)
+      && Equals(this.m_action.GetObjectActionID(), t"AIQuickHack.BlackICE_RAMDrain") {
+    return result;
+  }
+
   let mss: ref<MarkingStateSystem> =
     GameInstance.GetScriptableSystemsContainer(gi)
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
@@ -147,7 +154,6 @@ protected cb func OnStatPoolAdded() -> Bool {
 
   let charges: Int32 = cbs.GetFirewallCharges(gi);
   if charges <= 0 {
-    cbs.ShowWarning("FIREWALL DEPLETED — HACK INCOMING");
     BNInfo("Firewall", "Firewall depleted — hack proceeds");
     return result;
   }
@@ -180,8 +186,16 @@ protected cb func OnStatPoolAdded() -> Bool {
 
   if launched {
     this.m_bnFirewallEngaged = true;
-    cbs.ShowWarning("FIREWALL DEPLOYED — CANCELLING QUICKHACK");
-    BNInfo("Firewall", "Firewall engaged — charges=" + ToString(charges));
+
+    GameInstance.GetStatPoolsSystem(gi).RequestChangingStatPoolValue(
+      Cast<StatsObjectID>(this.m_playerPuppet.GetEntityID()),
+      gamedataStatPoolType.Memory,
+      -4.0,
+      this.m_playerPuppet,
+      false,
+      false
+    );
+    BNInfo("Firewall", "Firewall engaged — charges=" + ToString(charges) + ", -4 RAM spent");
   } else {
 
     GameInstance.GetTimeSystem(gi).UnsetTimeDilation(n"BNFirewall");

@@ -260,6 +260,12 @@ public class MarkingStateSystem extends ScriptableSystem {
     if IsDefined(testSys) { testSys.ShowTestPanel(0.0); }
   }
 
+  public func RefreshHUDPanel() -> Void {
+    let testSys: ref<BNTestPanelSystem> = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance())
+        .Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
+    if IsDefined(testSys) { testSys.Refresh(0.0); }
+  }
+
   private let m_debugLastICERequired: Int32;
   private let m_debugLastICEApplied:  Int32;
   private let m_debugLastDeviceName:  String;

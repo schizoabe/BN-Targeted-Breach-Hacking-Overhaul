@@ -1,0 +1,4 @@
+
+AIQuickHack.BNBreachICE:
+  $base: AIQuickHack.HackCyberware
+  completionEffects: []

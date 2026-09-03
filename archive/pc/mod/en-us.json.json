@@ -90,7 +90,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "No Network access rights",
+              "femaleVariant": "Breach Required",
               "maleVariant": "",
               "primaryKey": "4820011",
               "secondaryKey": "Better-Netrunning-Quickhacks-Locked"
@@ -174,7 +174,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Nulls ICE across the network.",
+              "femaleVariant": "Disables ICE across the network.",
               "maleVariant": "",
               "primaryKey": "4820023",
               "secondaryKey": "Better-Netrunning-DisarmICE-Description"
@@ -244,7 +244,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Initiates a clean disconnect from the network.",
+              "femaleVariant": "Initiates a clean disconnect from the device.",
               "maleVariant": "",
               "primaryKey": "4820041",
               "secondaryKey": "Better-Netrunning-ExitProtocol-Description"
@@ -258,7 +258,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Offloads processing to breached node.",
+              "femaleVariant": "Recovers RAM on upload.",
               "maleVariant": "",
               "primaryKey": "4820043",
               "secondaryKey": "Better-Netrunning-OffloadProtocol-Description"
@@ -272,7 +272,7 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Intercept the incoming hack.",
+              "femaleVariant": "Intercepts and reflects the hack.",
               "maleVariant": "",
               "primaryKey": "4820045",
               "secondaryKey": "Better-Netrunning-Firewall-ICE-Description"
@@ -286,10 +286,17 @@
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",
-              "femaleVariant": "Broadcasts quickhack across all marked personnel.",
+              "femaleVariant": "Broadcasts equipped quickhack across all marked personnel.",
               "maleVariant": "",
               "primaryKey": "4820049",
               "secondaryKey": "Better-Netrunning-CascadeProtocol-Description"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Breach Required",
+              "maleVariant": "",
+              "primaryKey": "27728",
+              "secondaryKey": "Gameplay-QuickHacks-Reasons-InactivityNetworkBreached"
             }
           ]
         }

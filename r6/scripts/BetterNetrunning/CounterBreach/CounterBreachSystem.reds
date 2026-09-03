@@ -330,6 +330,11 @@ public class CounterBreachSystem extends ScriptableSystem {
 
     let gi: GameInstance = this.GetGameInstance();
 
+    let vice: ref<BNVICESystem> = BNVICESystem.GetInstance(gi);
+    if IsDefined(vice) {
+      vice.ZeroICE();
+    }
+
     let mssT: ref<MarkingStateSystem> =
       GameInstance.GetScriptableSystemsContainer(gi)
         .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
@@ -346,7 +351,6 @@ public class CounterBreachSystem extends ScriptableSystem {
       return;
     }
     BNInfo("CounterBreach", "Firewall active — " + ToString(firewallCharges) + " charge(s) available (RAM=" + ToString(RoundF(this.GetCurrentRAM(gi))) + ")");
-    this.ShowWarning("FIREWALL DEPLOYED — CANCELLING QUICKHACK");
 
     let hackSystem: ref<CustomHackingSystem> =
       GameInstance.GetScriptableSystemsContainer(gi)

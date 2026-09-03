@@ -11,6 +11,7 @@ public class BNInputKeySystem extends ScriptableSystem {
     private let m_cycleBreachModeKey:   EInputKey;
     private let m_toggleHUDPanelsKey:   EInputKey;
     private let m_cycleCascadeQHKey:    EInputKey;
+    private let m_dumpRAMForICEKey:     EInputKey;
 
     public static func GetInstance(gi: GameInstance) -> ref<BNInputKeySystem> {
         return GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.Core.BNInputKeySystem") as BNInputKeySystem;
@@ -39,6 +40,8 @@ public class BNInputKeySystem extends ScriptableSystem {
             BNInputActions.ToggleHUDPanels(gi);
         } else if Equals(key, this.m_cycleCascadeQHKey) {
             BNInputActions.CycleCascadeQH(gi);
+        } else if Equals(key, this.m_dumpRAMForICEKey) {
+            BNInputActions.DumpRAMForICE(gi);
         }
     }
 
@@ -51,6 +54,10 @@ public class BNInputKeySystem extends ScriptableSystem {
 
     public func ApplyCascadeHotkey(cycleCascadeQH: String) -> Void {
         this.m_cycleCascadeQHKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", cycleCascadeQH)));
+    }
+
+    public func ApplyDumpRAMHotkey(dumpRAMForICE: String) -> Void {
+        this.m_dumpRAMForICEKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", dumpRAMForICE)));
     }
 }
 
@@ -156,6 +163,11 @@ public class BNInputActions {
         let testSys: ref<BNTestPanelSystem> = GameInstance.GetScriptableSystemsContainer(gi)
             .Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
         if IsDefined(testSys) { testSys.Refresh(0.0); }
+    }
+
+    public static func DumpRAMForICE(gi: GameInstance) -> Void {
+        let vice = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.CounterBreach.BNVICESystem") as BNVICESystem;
+        if IsDefined(vice) { vice.DumpRAMForICE(); }
     }
 
     public static func ToggleHUDPanels(gi: GameInstance) -> Void {

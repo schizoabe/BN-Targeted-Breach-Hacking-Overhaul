@@ -67,6 +67,11 @@ function NativeSettingsUI.Build(nativeSettings, SettingsManager, TweakDBSetup)
         SettingsManager.Save()
         NativeSettingsUI.PushHotkeys(SettingsManager)
     end)
+    nativeSettings.addKeyBinding("/BetterNetrunning/Controls", "Dump RAM → ICE", "Converts all current RAM into ICE hits (Defend mode only). Sacrifice offense for defense mid-fight.", settings.HotkeyKey_DumpRAMForICE, "IK_None", false, function(key)
+        SettingsManager.Set("HotkeyKey_DumpRAMForICE", key)
+        SettingsManager.Save()
+        NativeSettingsUI.PushHotkeys(SettingsManager)
+    end)
 
     nativeSettings.addSwitch("/BetterNetrunning/Breaching", GetLocKey("DisplayName-BetterNetrunning-EnableClassicMode"), GetLocKey("Description-BetterNetrunning-EnableClassicMode"), settings.EnableClassicMode, false, function(state)
         SettingsManager.Set("EnableClassicMode", state)
@@ -541,6 +546,7 @@ function NativeSettingsUI.PushHotkeys(SettingsManager)
         get("HotkeyKey_ToggleHUDPanels")
     )
     inputSys:ApplyCascadeHotkey(get("HotkeyKey_CycleCascadeQH"))
+    inputSys:ApplyDumpRAMHotkey(get("HotkeyKey_DumpRAMForICE"))
 end
 
 local BN_PERK_MAX = { [0]=3, [1]=2, [2]=3, [3]=3, [4]=1, [5]=2, [6]=3, [7]=1,

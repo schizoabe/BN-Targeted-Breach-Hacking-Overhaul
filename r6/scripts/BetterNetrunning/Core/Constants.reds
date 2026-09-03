@@ -27,6 +27,10 @@ public static func CLASS_COUNTER_BREACH_SYSTEM() -> CName {
     return n"BetterNetrunning.CounterBreach.CounterBreachSystem";
 }
 
+public static func CLASS_VICE_SYSTEM() -> CName {
+    return n"BetterNetrunning.CounterBreach.BNVICESystem";
+}
+
   public static func CLASS_CUSTOM_HACKING_SYSTEM() -> CName {
     return n"HackingExtensions.CustomHackingSystem";
   }

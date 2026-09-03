@@ -9,6 +9,7 @@ local defaults = {
     HotkeyKey_CycleBreachMode = "IK_None",
     HotkeyKey_ToggleHUDPanels = "IK_None",
     HotkeyKey_CycleCascadeQH  = "IK_None",
+    HotkeyKey_DumpRAMForICE   = "IK_None",
 
     EnableClassicMode = false,
     AllowBreachUnconscious = true,
