@@ -4,6 +4,7 @@ module BetterNetrunning.CounterBreach
 import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Marking.*
+import BetterNetrunning.Perks.*
 import HackingExtensions.*
 
 @addField(UploadFromNPCToPlayerListener)
@@ -22,11 +23,17 @@ public class BNFirewallSucceededEvent extends OnCustomHackingSucceeded {
     if IsDefined(this.m_listener) {
       BNFirewallUtils.CancelUpload(gi, this.m_listener, this.m_playerPuppet);
     }
-    if IsDefined(this.m_npcPuppet) {
+
+    let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
+
+    let canReflect: Bool = IsDefined(perkSys) && perkSys.GetPerkLevel(BNPerk.FirewallReflect) > 0;
+    if canReflect && IsDefined(this.m_npcPuppet) {
       BNFirewallUtils.ReflectHack(gi, this.m_npcPuppet, this.m_actionID);
+      BNInfo("Firewall", "Firewall Reflect: hack bounced to attacker");
     }
 
-    if IsDefined(this.m_npcPuppet) && !this.m_npcPuppet.IsDead() {
+    let canBreach: Bool = canReflect && IsDefined(perkSys) && perkSys.GetPerkLevel(BNPerk.FirewallBreach) > 0;
+    if canBreach && IsDefined(this.m_npcPuppet) && !this.m_npcPuppet.IsDead() {
       let npcPS: ref<ScriptedPuppetPS> = this.m_npcPuppet.GetPuppetPS();
       if IsDefined(npcPS) {
         npcPS.BN_StampSJKIBreached();
@@ -44,14 +51,11 @@ public class BNFirewallSucceededEvent extends OnCustomHackingSucceeded {
           mss.AddMarkNamed(this.m_npcPuppet.GetEntityID(), MarkedSubnetType.NPC,
             this.m_npcPuppet.GetDisplayName(), npcPS.m_bnNPCIceHitsRequired);
         }
-        BNInfo("Firewall", "Reflect: netrunner ICE stamped + marked for Cascade");
+        BNInfo("Firewall", "Firewall Breach: netrunner ICE stamped + marked for Cascade");
       }
     }
 
-    let cbs: ref<CounterBreachSystem> =
-      GameInstance.GetScriptableSystemsContainer(gi)
-        .Get(BNConstants.CLASS_COUNTER_BREACH_SYSTEM()) as CounterBreachSystem;
-    BNInfo("Firewall", "Firewall succeeded — hack reflected to attacker");
+    BNInfo("Firewall", "Firewall succeeded — block" + (canReflect ? " + reflect" : "") + (canBreach ? " + breach" : ""));
   }
 }
 
@@ -138,30 +142,34 @@ protected cb func OnStatPoolAdded() -> Bool {
     return result;
   }
 
+  this.BNTryFirewall(gi);
+
+  return result;
+}
+
+@addMethod(UploadFromNPCToPlayerListener)
+private final func BNTryFirewall(gi: GameInstance) -> Bool {
+
   let mss: ref<MarkingStateSystem> =
     GameInstance.GetScriptableSystemsContainer(gi)
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
-  if !IsDefined(mss) || !mss.IsDefendMode() { return result; }
-  if !mss.IsFirewallArmed() {
-    BNInfo("Firewall", "Firewall disarmed (weapons cold) — hack proceeds");
-    return result;
-  }
+  if !IsDefined(mss) || !mss.IsDefendMode() { return false; }
 
   let cbs: ref<CounterBreachSystem> =
     GameInstance.GetScriptableSystemsContainer(gi)
       .Get(BNConstants.CLASS_COUNTER_BREACH_SYSTEM()) as CounterBreachSystem;
-  if !IsDefined(cbs) { return result; }
+  if !IsDefined(cbs) { return false; }
 
   let charges: Int32 = cbs.GetFirewallCharges(gi);
   if charges <= 0 {
-    BNInfo("Firewall", "Firewall depleted — hack proceeds");
-    return result;
+    BNInfo("Firewall", "Firewall depleted — hack proceeds to ICE");
+    return false;
   }
 
   let hackSystem: ref<CustomHackingSystem> =
     GameInstance.GetScriptableSystemsContainer(gi)
       .Get(n"HackingExtensions.CustomHackingSystem") as CustomHackingSystem;
-  if !IsDefined(hackSystem) { return result; }
+  if !IsDefined(hackSystem) { return false; }
 
   let successCB: ref<BNFirewallSucceededEvent> = new BNFirewallSucceededEvent();
   successCB.m_npcPuppet    = this.m_npcPuppet;
@@ -202,7 +210,7 @@ protected cb func OnStatPoolAdded() -> Bool {
     BNWarn("Firewall", "Firewall minigame failed to launch — another minigame already active");
   }
 
-  return result;
+  return launched;
 }
 
 @wrapMethod(UploadFromNPCToPlayerListener)

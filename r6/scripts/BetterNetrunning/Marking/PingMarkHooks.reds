@@ -35,10 +35,7 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
   }
 
   let sharedPS: ref<SharedGameplayPS> = this.GetDevicePS();
-  if IsDefined(sharedPS) && sharedPS.m_bnIceHitsRequired == 0 {
-    sharedPS.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
-    BNInfo("PingMark", "Device ICE initialized: " + ToString(sharedPS.m_bnIceHitsRequired) + " hits required");
-  }
+  NetworkStateUtils.EnsureDeviceICERolled(sharedPS, gi);
   let iceHitsRequired: Int32 = IsDefined(sharedPS) ? sharedPS.m_bnIceHitsRequired : 0;
 
   let displayName: String = GetLocalizedText(this.GetDisplayName());

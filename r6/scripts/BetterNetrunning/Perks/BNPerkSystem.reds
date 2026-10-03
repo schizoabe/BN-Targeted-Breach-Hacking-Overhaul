@@ -25,6 +25,9 @@ public enum BNPerk {
   EntropyProtocol  = 14,
   CascadeProtocol  = 15,
   OffloadProtocol  = 16,
+
+  FirewallReflect  = 17,
+  FirewallBreach   = 18,
 }
 
 public abstract class BNPerkData {
@@ -48,6 +51,8 @@ public abstract class BNPerkData {
       case BNPerk.EntropyProtocol:  return 3;
       case BNPerk.CascadeProtocol:  return 1;
       case BNPerk.OffloadProtocol:  return 3;
+      case BNPerk.FirewallReflect:  return 1;
+      case BNPerk.FirewallBreach:   return 1;
       default:                       return 0;
     }
   }
@@ -71,6 +76,8 @@ public abstract class BNPerkData {
       case BNPerk.EntropyProtocol:  return "Entropy Protocol";
       case BNPerk.CascadeProtocol:  return "Cascade Protocol";
       case BNPerk.OffloadProtocol:  return "Offload Protocol";
+      case BNPerk.FirewallReflect:  return "Firewall Reflect";
+      case BNPerk.FirewallBreach:   return "Firewall Breach";
       default:                       return "Unknown";
     }
   }

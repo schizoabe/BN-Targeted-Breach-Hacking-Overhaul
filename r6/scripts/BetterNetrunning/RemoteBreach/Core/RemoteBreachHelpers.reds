@@ -29,22 +29,6 @@ public abstract class DaemonTypes {
 
 @if(ModuleExists("HackingExtensions"))
 public abstract class StateSystemUtils {
-
-    public static func GetHeatScaledICEHits(gi: GameInstance) -> Int32 {
-        let c: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gi);
-        let ms: ref<MarkingStateSystem> = IsDefined(c) ? c.Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem : null;
-        let heat: Float = IsDefined(ms) ? ms.GetSessionHeat() : 0.0;
-        let iceMin: Int32;
-        let iceMax: Int32;
-        if      heat >= 0.95 { iceMin = 6; iceMax = 11; }
-        else if heat >= 0.80 { iceMin = 5; iceMax = 10; }
-        else if heat >= 0.60 { iceMin = 4; iceMax =  8; }
-        else if heat >= 0.40 { iceMin = 3; iceMax =  7; }
-        else if heat >= 0.20 { iceMin = 2; iceMax =  6; }
-        else                 { iceMin = 1; iceMax =  4; }
-        return RandRange(iceMin, iceMax);
-    }
-
     public static func GetDeviceStateSystem(gameInstance: GameInstance) -> ref<DeviceRemoteBreachStateSystem> {
         let c: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
         return IsDefined(c) ? c.Get(BNConstants.CLASS_DEVICE_REMOTE_BREACH_STATE_SYSTEM()) as DeviceRemoteBreachStateSystem : null;

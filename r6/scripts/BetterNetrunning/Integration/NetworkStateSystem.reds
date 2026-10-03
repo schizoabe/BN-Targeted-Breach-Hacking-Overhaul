@@ -5,6 +5,7 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Marking.*
 import BetterNetrunning.Perks.*
+import BetterNetrunning.Systems.*
 
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
@@ -23,6 +24,21 @@ public struct NetworkState {
 }
 
 public abstract class NetworkStateUtils {
+
+  public static func EnsureDeviceICERolled(sharedPS: ref<SharedGameplayPS>, gi: GameInstance) -> Void {
+    if !IsDefined(sharedPS) || sharedPS.m_bnIceHitsRequired > 0 { return; }
+    sharedPS.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
+  }
+
+  public static func EnsureNPCICERolled(npcPS: ref<ScriptedPuppetPS>, gi: GameInstance) -> Void {
+    if !IsDefined(npcPS) || npcPS.m_bnNPCIceHitsRequired > 0 { return; }
+    let puppet: wref<ScriptedPuppet> = npcPS.GetOwnerEntityWeak() as ScriptedPuppet;
+    if IsDefined(puppet) && NPCRarityToRank(puppet.GetNPCRarity()) >= 4 {
+      npcPS.m_bnNPCIceHitsRequired = 6;
+    } else {
+      npcPS.m_bnNPCIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
+    }
+  }
 
   public static func GetNetworkState(
     devicePS:     ref<ScriptableDeviceComponentPS>,
@@ -70,11 +86,7 @@ public abstract class NetworkStateUtils {
     gameInstance: GameInstance
   ) -> Void {
     let sharedPS: ref<SharedGameplayPS> = devicePS;
-    if IsDefined(sharedPS) && sharedPS.m_bnIceHitsRequired == 0 {
-      sharedPS.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gameInstance);
-      BNInfo("NetworkState",
-        "ICE health initialized: " + ToString(sharedPS.m_bnIceHitsRequired) + " hits required");
-    }
+    NetworkStateUtils.EnsureDeviceICERolled(sharedPS, gameInstance);
 
     if IsDefined(sharedPS) {
       let ms: ref<MarkingStateSystem> = NetworkStateUtils.GetMarkingSystem(gameInstance);
@@ -130,9 +142,7 @@ public abstract class NetworkStateUtils {
 
     if hits > 0 {
 
-      if sharedPS.m_bnIceHitsRequired <= 0 {
-        sharedPS.m_bnIceHitsRequired = RandRange(2, 7);
-      }
+      NetworkStateUtils.EnsureDeviceICERolled(sharedPS, gameInstance);
       let effective: Int32 = sharedPS.m_bnIceHitsRequired + globalBonus;
       sharedPS.m_bnIceHitsApplied += hits;
       if sharedPS.m_bnIceHitsApplied > effective {

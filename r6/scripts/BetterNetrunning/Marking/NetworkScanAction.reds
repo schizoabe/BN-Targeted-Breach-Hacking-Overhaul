@@ -254,9 +254,7 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
     }
 
     let sharedPS: ref<SharedGameplayPS> = this.m_devicePS;
-    if IsDefined(sharedPS) && sharedPS.m_bnIceHitsRequired == 0 {
-      sharedPS.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gameInstance);
-    }
+    NetworkStateUtils.EnsureDeviceICERolled(sharedPS, gameInstance);
     let iceHitsRequired: Int32 = IsDefined(sharedPS) ? sharedPS.m_bnIceHitsRequired : 0;
 
     let player: ref<PlayerPuppet> = GetPlayer(gameInstance);

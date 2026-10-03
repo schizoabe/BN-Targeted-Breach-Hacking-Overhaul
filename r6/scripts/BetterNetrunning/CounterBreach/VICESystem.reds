@@ -60,6 +60,26 @@ public class BNVICESystem extends ScriptableSystem {
     }
   }
 
+  public func AbsorbHit(damage: Int32, source: String) -> Void {
+    this.EnsureInitialized();
+    if this.m_iceHits <= 0 { return; }
+
+    let prev: Int32 = this.m_iceHits;
+    this.m_iceHits = this.m_iceHits - damage;
+    if this.m_iceHits < 0 { this.m_iceHits = 0; }
+
+    BNInfo("VICE", source + " absorbed: -" + ToString(damage) + " (" + ToString(prev) + " -> " + ToString(this.m_iceHits) + "/" + ToString(this.m_maxIceHits) + ")");
+    this.SaveICEState();
+    this.RefreshPanel();
+
+    if this.m_iceHits <= 0 {
+      let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
+      if IsDefined(player) {
+        StatusEffectHelper.RemoveStatusEffect(player, t"AIQuickHackStatusEffect.BN_ICEIntact");
+      }
+    }
+  }
+
   public func ZeroICE() -> Void {
     if this.m_iceHits <= 0 { return; }
     this.m_iceHits = 0;
@@ -162,9 +182,9 @@ public class BNVICESystem extends ScriptableSystem {
         .GetLocalInstanced(player.GetEntityID(), GetAllBlackboardDefs().PlayerStateMachine);
       if IsDefined(psmBB) {
         let combatState: Int32 = psmBB.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Combat);
-        if combatState == EnumInt(gamePSMCombat.Default) {
+        if combatState != EnumInt(gamePSMCombat.InCombat) {
           this.RestoreICE(1);
-          BNInfo("VICE", "ICE regen: out of combat, +" + "1 hit (" + ToString(this.m_iceHits) + "/" + ToString(this.m_maxIceHits) + ")");
+          BNInfo("VICE", "ICE regen: out of combat, +1 hit (" + ToString(this.m_iceHits) + "/" + ToString(this.m_maxIceHits) + ")");
         }
       }
     }

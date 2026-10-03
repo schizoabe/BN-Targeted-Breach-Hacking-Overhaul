@@ -46,6 +46,8 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     return;
   }
 
+  this.BNDispatchOffensiveDaemons();
+
   if Equals(this.DetectBreachType(), BreachType.RemoteBreach) {
     BNInfo("BreachLoop", "Remote breach succeeded — exiting cleanly (no loop)");
     wrappedMethod(state);
@@ -71,8 +73,6 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     if completedPrograms[epi] == BNConstants.PROGRAM_BN_EXIT_PROTOCOL() { hasExitProtocol = true; }
     epi += 1;
   }
-
-  this.BNDispatchOffensiveDaemons();
 
   if hasExitProtocol {
     BNInfo("BreachLoop", "Exit Protocol completed — jacking out");

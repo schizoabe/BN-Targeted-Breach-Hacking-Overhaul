@@ -67,10 +67,7 @@ private final func ActionCustomDeviceRemoteBreach() -> ref<DeviceRemoteBreachAct
 
     let gi: GameInstance = this.GetGameInstance();
     let sharedPS: ref<SharedGameplayPS> = this;
-    if IsDefined(sharedPS) && sharedPS.m_bnIceHitsRequired == 0 {
-        sharedPS.m_bnIceHitsRequired = StateSystemUtils.GetHeatScaledICEHits(gi);
-        BNInfo("RemoteBreachDevice", "ICE initialized: " + ToString(sharedPS.m_bnIceHitsRequired) + " hits required");
-    }
+    NetworkStateUtils.EnsureDeviceICERolled(sharedPS, gi);
 
     let ms: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi).Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
     let netState: NetworkState = NetworkStateUtils.GetNetworkState(this, gi);

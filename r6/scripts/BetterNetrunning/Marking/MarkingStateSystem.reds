@@ -46,8 +46,6 @@ public class MarkingStateSystem extends ScriptableSystem {
 
   private let m_breachMode: Int32;
 
-  private let m_firewallArmed: Bool;
-
   private let m_cascadeQHIndex: Int32;
 
   private let m_beamedEntityIDs: array<EntityID>;
@@ -66,7 +64,6 @@ public class MarkingStateSystem extends ScriptableSystem {
     this.m_lastHeatBand          = 0;
     this.m_lastBreachTargetType  = "device";
     this.m_breachMode            = 0;
-    this.m_firewallArmed         = true;
     this.m_cascadeQHIndex        = 0;
   }
 
@@ -147,14 +144,6 @@ public class MarkingStateSystem extends ScriptableSystem {
 
   public func GetCascadeQHIndex() -> Int32 { return this.m_cascadeQHIndex; }
   public func SetCascadeQHIndex(idx: Int32) -> Void { this.m_cascadeQHIndex = idx; }
-
-  public func IsFirewallArmed() -> Bool { return this.m_firewallArmed; }
-
-  public func ToggleFirewall() -> Bool {
-    this.m_firewallArmed = !this.m_firewallArmed;
-    BNInfo("MarkingState", "Firewall " + (this.m_firewallArmed ? "ARMED" : "DISARMED"));
-    return this.m_firewallArmed;
-  }
 
   public func SetBreachMode(mode: Int32) -> Void {
     if this.IsAPBreachActive() {
@@ -498,23 +487,15 @@ public class MarkingStateSystem extends ScriptableSystem {
     let vehicle: ref<VehicleObject> = entity as VehicleObject;
     if IsDefined(vehicle) {
       let sharedPS: ref<SharedGameplayPS> = vehicle.GetVehiclePS();
-      if IsDefined(sharedPS) {
-        if sharedPS.m_bnIceHitsRequired == 0 {
-          sharedPS.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
-        }
-        iceHitsRequired = sharedPS.m_bnIceHitsRequired;
-      }
+      NetworkStateUtils.EnsureDeviceICERolled(sharedPS, gi);
+      if IsDefined(sharedPS) { iceHitsRequired = sharedPS.m_bnIceHitsRequired; }
       if Equals(displayName, s"") { displayName = s"VEHICLE"; }
     } else {
       let device: ref<Device> = entity as Device;
       if IsDefined(device) {
         let ps: ref<ScriptableDeviceComponentPS> = device.GetDevicePS();
-        if IsDefined(ps) {
-          if ps.m_bnIceHitsRequired == 0 {
-            ps.m_bnIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
-          }
-          iceHitsRequired = ps.m_bnIceHitsRequired;
-        }
+        NetworkStateUtils.EnsureDeviceICERolled(ps, gi);
+        if IsDefined(ps) { iceHitsRequired = ps.m_bnIceHitsRequired; }
         if Equals(displayName, s"") {
           displayName = DeviceTypeUtils.DeviceTypeToString(DeviceTypeUtils.GetDeviceTypeFromEntity(device));
         }
@@ -522,16 +503,8 @@ public class MarkingStateSystem extends ScriptableSystem {
         let puppet: ref<ScriptedPuppet> = entity as ScriptedPuppet;
         if IsDefined(puppet) {
           let npcPS: ref<ScriptedPuppetPS> = puppet.GetPuppetPS() as ScriptedPuppetPS;
-          if IsDefined(npcPS) {
-            if npcPS.m_bnNPCIceHitsRequired == 0 {
-              if NPCRarityToRank(puppet.GetNPCRarity()) >= 4 {
-                npcPS.m_bnNPCIceHitsRequired = 6;
-              } else {
-                npcPS.m_bnNPCIceHitsRequired = NetworkStateUtils.GetHeatScaledICEHits(gi);
-              }
-            }
-            iceHitsRequired = npcPS.m_bnNPCIceHitsRequired;
-          }
+          NetworkStateUtils.EnsureNPCICERolled(npcPS, gi);
+          if IsDefined(npcPS) { iceHitsRequired = npcPS.m_bnNPCIceHitsRequired; }
           if Equals(displayName, s"") { displayName = s"PERSONNEL"; }
         }
       }

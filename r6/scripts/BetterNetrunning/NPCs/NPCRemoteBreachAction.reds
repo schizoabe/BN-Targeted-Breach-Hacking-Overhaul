@@ -56,9 +56,7 @@ public class OnNPCRemoteBreachICEBoardSucceeded extends OnCustomHackingSucceeded
     let globalBonus: Int32 = IsDefined(markingSystem) ? markingSystem.GetHeatICEBonus() : 0;
 
     if hitsThisRound > 0 {
-      if npcPS.m_bnNPCIceHitsRequired <= 0 {
-        npcPS.m_bnNPCIceHitsRequired = StateSystemUtils.GetHeatScaledICEHits(gi);
-      }
+      NetworkStateUtils.EnsureNPCICERolled(npcPS, gi);
       let effective: Int32 = npcPS.m_bnNPCIceHitsRequired + globalBonus;
       npcPS.m_bnNPCIceHitsApplied += hitsThisRound;
       if npcPS.m_bnNPCIceHitsApplied > effective {
@@ -237,16 +235,7 @@ public class NPCRemoteBreachAction extends CustomAccessBreach {
       return;
     }
 
-    if this.m_npcPS.m_bnNPCIceHitsRequired == 0 {
-      let iceEntity: wref<ScriptedPuppet> = this.m_npcPS.GetOwnerEntityWeak() as ScriptedPuppet;
-      if IsDefined(iceEntity) && NPCRarityToRank(iceEntity.GetNPCRarity()) >= 4 {
-        this.m_npcPS.m_bnNPCIceHitsRequired = 6;
-      } else {
-        this.m_npcPS.m_bnNPCIceHitsRequired = StateSystemUtils.GetHeatScaledICEHits(gameInstance);
-      }
-      BNInfo("NPCRemoteBreach",
-        "NPC ICE initialized: " + ToString(this.m_npcPS.m_bnNPCIceHitsRequired) + " hits required");
-    }
+    NetworkStateUtils.EnsureNPCICERolled(this.m_npcPS, gameInstance);
 
     let ms: ref<MarkingStateSystem> =
       GameInstance.GetScriptableSystemsContainer(gameInstance)

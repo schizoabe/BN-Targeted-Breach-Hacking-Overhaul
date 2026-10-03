@@ -550,7 +550,8 @@ function NativeSettingsUI.PushHotkeys(SettingsManager)
 end
 
 local BN_PERK_MAX = { [0]=3, [1]=2, [2]=3, [3]=3, [4]=1, [5]=2, [6]=3, [7]=1,
-                      [8]=1, [9]=1, [10]=1, [11]=1, [12]=3, [13]=2, [14]=3, [15]=1, [16]=3 }
+                      [8]=1, [9]=1, [10]=1, [11]=1, [12]=3, [13]=2, [14]=3, [15]=1, [16]=3,
+                      [17]=1, [18]=1 }
 
 function NativeSettingsUI.ApplyDevPerks(enable)
     local player = Game.GetPlayer()
