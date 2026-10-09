@@ -157,6 +157,22 @@ public static func CLASS_VICE_SYSTEM() -> CName {
     return t"MinigameAction.BN_OffloadProtocol";
   }
 
+  public static func PROGRAM_QUEST_LOOT_Q003() -> TweakDBID {
+    return t"MinigameAction.NetworkLootQ003";
+  }
+  public static func PROGRAM_QUEST_LOOT_MQ024() -> TweakDBID {
+    return t"MinigameAction.NetworkLootMQ024";
+  }
+  public static func PROGRAM_QUEST_LOOT_MQ015() -> TweakDBID {
+    return t"MinigameAction.NetworkLootMQ015";
+  }
+  public static func PROGRAM_QUEST_LOOT_MQ015_RECIPE() -> TweakDBID {
+    return t"MinigameAction.NetworkLootMQ015Recipe";
+  }
+  public static func PROGRAM_QUEST_FIND_ANNA() -> TweakDBID {
+    return t"minigame_v2.FindAnna";
+  }
+
   public static func PROGRAM_BN_ICEPICK_V1() -> TweakDBID {
     return t"MinigameAction.BNIcepickV1";
   }
@@ -284,6 +300,15 @@ public static func CLASS_VICE_SYSTEM() -> CName {
 
     if pid == BNConstants.PROGRAM_BN_ENTROPY_PROTOCOL() { return true; }
     if pid == BNConstants.PROGRAM_CASCADE_PROTOCOL()    { return true; }
+    return false;
+  }
+
+  public static func IsQuestLootProgram(pid: TweakDBID) -> Bool {
+    if pid == BNConstants.PROGRAM_QUEST_LOOT_Q003()        { return true; }
+    if pid == BNConstants.PROGRAM_QUEST_LOOT_MQ024()       { return true; }
+    if pid == BNConstants.PROGRAM_QUEST_LOOT_MQ015()       { return true; }
+    if pid == BNConstants.PROGRAM_QUEST_LOOT_MQ015_RECIPE() { return true; }
+    if pid == BNConstants.PROGRAM_QUEST_FIND_ANNA()        { return true; }
     return false;
   }
 }

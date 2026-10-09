@@ -1,4 +1,4 @@
-﻿
+
 local SettingsManager = require("settingsManager")
 local TweakDBSetup = require("tweakdbSetup")
 local NativeSettingsUI = require("nativeSettingsUI")

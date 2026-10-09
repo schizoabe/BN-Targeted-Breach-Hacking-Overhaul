@@ -68,10 +68,18 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
     bbHacking.GetVariant(GetAllBlackboardDefs().HackingMinigame.ActivePrograms)
   );
   let hasExitProtocol: Bool = false;
+  let hasQuestLoot: Bool = false;
   let epi: Int32 = 0;
   while epi < ArraySize(completedPrograms) {
     if completedPrograms[epi] == BNConstants.PROGRAM_BN_EXIT_PROTOCOL() { hasExitProtocol = true; }
+    if BNConstants.IsQuestLootProgram(completedPrograms[epi]) { hasQuestLoot = true; }
     epi += 1;
+  }
+
+  if hasQuestLoot {
+    BNInfo("BreachLoop", "Quest loot program on board — exiting cleanly (no loop)");
+    wrappedMethod(state);
+    return;
   }
 
   if hasExitProtocol {
@@ -140,10 +148,17 @@ public final func BNHandleSJKIBoardComplete(gi: GameInstance, completedPrograms:
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
 
   let hasExitProtocol: Bool = false;
+  let hasQuestLoot: Bool = false;
   let i: Int32 = 0;
   while i < ArraySize(completedPrograms) {
     if completedPrograms[i] == BNConstants.PROGRAM_BN_EXIT_PROTOCOL() { hasExitProtocol = true; }
+    if BNConstants.IsQuestLootProgram(completedPrograms[i]) { hasQuestLoot = true; }
     i += 1;
+  }
+
+  if hasQuestLoot {
+    BNInfo("BreachLoop", "SJKI: Quest loot program on board — jacking out");
+    return;
   }
 
   if hasExitProtocol {
