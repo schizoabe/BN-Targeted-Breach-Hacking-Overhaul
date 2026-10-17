@@ -20,18 +20,10 @@ public struct DevicePermissions {
   public let allowCameras: Bool;
   public let allowTurrets: Bool;
   public let allowBasicDevices: Bool;
-  public let allowPing: Bool;
-  public let allowDistraction: Bool;
 }
 
 public struct NPCHackPermissions {
   public let isBreached: Bool;
-  public let allowCovert: Bool;
-  public let allowCombat: Bool;
-  public let allowControl: Bool;
-  public let allowUltimate: Bool;
-  public let allowPing: Bool;
-  public let allowWhistle: Bool;
 }
 
 public struct BreachUnlockFlags {

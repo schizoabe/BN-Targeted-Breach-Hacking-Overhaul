@@ -1,5 +1,5 @@
 
-module BetterNetrunning.RemoteBreach.Common
+module BetterNetrunning.Breach
 import BetterNetrunning.Utils.*
 
 public abstract class DeviceInteractionUtils {

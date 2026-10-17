@@ -5,7 +5,6 @@ import BetterNetrunning.Logging.*
 import BetterNetrunningConfig.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
-import BetterNetrunning.Systems.*
 import BetterNetrunning.Breach.*
 
 @wrapMethod(ScriptedPuppetPS)
@@ -88,7 +87,6 @@ private final func ApplyBetterNetrunningQuickhackFilter(
 private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
   let permissions: NPCHackPermissions;
   let gameInstance: GameInstance = this.GetGameInstance();
-  let npc: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
 
   permissions.isBreached = this.m_quickHacksExposed;
 
@@ -114,48 +112,14 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
     }
   }
 
-  permissions.allowCovert = ShouldUnlockHackNPC(gameInstance, npc, BetterNetrunningSettings.AlwaysNPCsCovert(), BetterNetrunningSettings.ProgressionCyberdeckNPCsCovert(), BetterNetrunningSettings.ProgressionIntelligenceNPCsCovert(), BetterNetrunningSettings.ProgressionEnemyRarityNPCsCovert());
-  permissions.allowCombat = ShouldUnlockHackNPC(gameInstance, npc, BetterNetrunningSettings.AlwaysNPCsCombat(), BetterNetrunningSettings.ProgressionCyberdeckNPCsCombat(), BetterNetrunningSettings.ProgressionIntelligenceNPCsCombat(), BetterNetrunningSettings.ProgressionEnemyRarityNPCsCombat());
-  permissions.allowControl = ShouldUnlockHackNPC(gameInstance, npc, BetterNetrunningSettings.AlwaysNPCsControl(), BetterNetrunningSettings.ProgressionCyberdeckNPCsControl(), BetterNetrunningSettings.ProgressionIntelligenceNPCsControl(), BetterNetrunningSettings.ProgressionEnemyRarityNPCsControl());
-  permissions.allowUltimate = ShouldUnlockHackNPC(gameInstance, npc, BetterNetrunningSettings.AlwaysNPCsUltimate(), BetterNetrunningSettings.ProgressionCyberdeckNPCsUltimate(), BetterNetrunningSettings.ProgressionIntelligenceNPCsUltimate(), BetterNetrunningSettings.ProgressionEnemyRarityNPCsUltimate());
-  permissions.allowPing = BetterNetrunningSettings.AlwaysAllowPing() || permissions.allowCovert;
-  permissions.allowWhistle = BetterNetrunningSettings.AlwaysAllowWhistle() || permissions.allowCovert;
-
   return permissions;
 }
 
 @addMethod(ScriptedPuppetPS)
 private final func ShouldQuickhackBeInactive(puppetAction: ref<PuppetAction>, permissions: NPCHackPermissions) -> Bool {
-
   if permissions.isBreached || this.IsWhiteListedForHacks() {
     return false;
   }
-
-  let actionRecord: ref<ObjectAction_Record> = puppetAction.GetObjectActionRecord();
-  if !IsDefined(actionRecord) { return true; }
-  let hackCategoryRecord = actionRecord.HackCategory();
-  if !IsDefined(hackCategoryRecord) { return true; }
-  let hackCategory: CName = hackCategoryRecord.EnumName();
-  if Equals(hackCategory, n"CovertHack") && permissions.allowCovert {
-    return false;
-  }
-  if Equals(hackCategory, n"DamageHack") && permissions.allowCombat {
-    return false;
-  }
-  if Equals(hackCategory, n"ControlHack") && permissions.allowControl {
-    return false;
-  }
-  if Equals(hackCategory, n"UltimateHack") && permissions.allowUltimate {
-    return false;
-  }
-
-  if IsDefined(puppetAction as PingSquad) && permissions.allowPing {
-    return false;
-  }
-  if Equals(puppetAction.GetObjectActionRecord().ActionName(), n"Whistle") && permissions.allowWhistle {
-    return false;
-  }
-
   return true;
 }
 

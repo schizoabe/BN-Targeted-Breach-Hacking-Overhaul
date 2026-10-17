@@ -191,7 +191,7 @@ public abstract class TargetedBreachUtils {
             "Vehicle unlocked: " + EntityID.ToDebugString(vehicle.GetEntityID()));
     }
 
-    private static func UnlockNPC(
+    public static func UnlockNPC(
         puppet:      ref<ScriptedPuppet>,
         currentTime: Float,
         persistency: ref<GamePersistencySystem>,
@@ -227,7 +227,7 @@ public abstract class TargetedBreachUtils {
             "NPC unlocked: " + EntityID.ToDebugString(entityID));
     }
 
-    private static func UnlockDevice(
+    public static func UnlockDevice(
         device:      ref<Device>,
         targetType:  TargetType,
         currentTime: Float,

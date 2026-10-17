@@ -3,18 +3,6 @@ module BetterNetrunning.Core
 
 public abstract class BNConstants {
 
-  public static func CLASS_REMOTE_BREACH_DEVICE() -> CName {
-    return n"BetterNetrunning.RemoteBreach.Actions.DeviceRemoteBreachAction";
-  }
-
-  public static func CLASS_DEVICE_REMOTE_BREACH_STATE_SYSTEM() -> CName {
-    return n"BetterNetrunning.RemoteBreach.Core.DeviceRemoteBreachStateSystem";
-  }
-
-  public static func CLASS_NPC_REMOTE_BREACH_STATE_SYSTEM() -> CName {
-    return n"BetterNetrunning.RemoteBreach.Core.NPCRemoteBreachStateSystem";
-  }
-
   public static func CLASS_DISPLAYED_DAEMONS_STATE_SYSTEM() -> CName {
     return n"BetterNetrunning.Logging.DisplayedDaemonsStateSystem";
   }
@@ -60,7 +48,7 @@ public static func CLASS_VICE_SYSTEM() -> CName {
   }
 
   public static func ACTION_UNCONSCIOUS_BREACH() -> CName {
-    return n"BreachUnconsciousOfficer";
+    return n"BNBreachUnconsciousNPC";
   }
 
   public static func LOCKEY_QUICKHACKS_LOCKED() -> CName {
@@ -284,10 +272,6 @@ public static func CLASS_VICE_SYSTEM() -> CName {
 
   public static func DEVICE_ACTION_REMOTE_BREACH() -> TweakDBID {
     return t"DeviceAction.RemoteBreach";
-  }
-
-  public static func IsRemoteBreachAction(className: CName) -> Bool {
-    return Equals(className, BNConstants.CLASS_REMOTE_BREACH_DEVICE());
   }
 
   public static func IsOffensiveDaemon(pid: TweakDBID) -> Bool {

@@ -7,11 +7,7 @@ import BetterNetrunning.Network.*
 import BetterNetrunning.UI.*
 import BetterNetrunning.Utils.*
 
-@if(ModuleExists("HackingExtensions"))
-import HackingExtensions.*
-
-@if(ModuleExists("HackingExtensions"))
-public class BNMarkNPCAction extends CustomAccessBreach {
+public class BNMarkNPCAction extends PuppetAction {
   private let m_npcPS:   ref<ScriptedPuppetPS>;
   private let m_ramCost: Int32;
 
@@ -64,8 +60,7 @@ public class BNMarkNPCAction extends CustomAccessBreach {
   }
 }
 
-@if(ModuleExists("HackingExtensions"))
-public class BNUnmarkNPCAction extends CustomAccessBreach {
+public class BNUnmarkNPCAction extends PuppetAction {
   private let m_npcPS:   ref<ScriptedPuppetPS>;
   private let m_ramCost: Int32;
 
@@ -116,7 +111,6 @@ public class BNUnmarkNPCAction extends CustomAccessBreach {
   }
 }
 
-@if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptedPuppet)
 private final func TranslateChoicesIntoQuickSlotCommands(
   const puppetActions: script_ref<array<ref<PuppetAction>>>,
@@ -161,9 +155,12 @@ private final func TranslateChoicesIntoQuickSlotCommands(
     action.SetExecutor(player);
 
     let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNUnmark");
-    entry.m_title       = LocKeyToString(rec.ObjectActionUI().Caption());
-    entry.m_description = LocKeyToString(rec.ObjectActionUI().Description());
-    entry.m_icon        = rec.ObjectActionUI().CaptionIcon().TexturePartID().GetID();
+    entry.m_title        = LocKeyToString(rec.ObjectActionUI().Caption());
+    entry.m_description  = LocKeyToString(rec.ObjectActionUI().Description());
+    entry.m_icon         = rec.ObjectActionUI().CaptionIcon().TexturePartID().GetID();
+    entry.m_iconCategory = rec.GameplayCategory().IconName();
+    entry.m_category     = rec.HackCategory();
+    entry.m_type         = rec.ObjectActionType().Type();
 
     if action.CanPayCost(player, false) {
       entry.m_action      = action;
@@ -180,9 +177,12 @@ private final func TranslateChoicesIntoQuickSlotCommands(
     action.SetExecutor(player);
 
     let rec: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(t"QuickHack.BNMark");
-    entry.m_title       = LocKeyToString(rec.ObjectActionUI().Caption());
-    entry.m_description = LocKeyToString(rec.ObjectActionUI().Description());
-    entry.m_icon        = rec.ObjectActionUI().CaptionIcon().TexturePartID().GetID();
+    entry.m_title        = LocKeyToString(rec.ObjectActionUI().Caption());
+    entry.m_description  = LocKeyToString(rec.ObjectActionUI().Description());
+    entry.m_icon         = rec.ObjectActionUI().CaptionIcon().TexturePartID().GetID();
+    entry.m_iconCategory = rec.GameplayCategory().IconName();
+    entry.m_category     = rec.HackCategory();
+    entry.m_type         = rec.ObjectActionType().Type();
 
     if action.CanPayCost(player, false) {
       entry.m_action      = action;
@@ -198,8 +198,7 @@ private final func TranslateChoicesIntoQuickSlotCommands(
   ArrayPush(Deref(commands), entry);
 }
 
-@if(ModuleExists("HackingExtensions"))
-public class BNMarkDeviceAction extends CustomAccessBreach {
+public class BNMarkDeviceAction extends PuppetAction {
   private let m_devicePS: ref<ScriptableDeviceComponentPS>;
   private let m_ramCost: Int32;
 
@@ -279,8 +278,7 @@ public class BNMarkDeviceAction extends CustomAccessBreach {
   }
 }
 
-@if(ModuleExists("HackingExtensions"))
-public class BNUnmarkDeviceAction extends CustomAccessBreach {
+public class BNUnmarkDeviceAction extends PuppetAction {
   private let m_devicePS: ref<ScriptableDeviceComponentPS>;
   private let m_ramCost: Int32;
 
@@ -344,21 +342,31 @@ public class BNUnmarkDeviceAction extends CustomAccessBreach {
   }
 }
 
-@if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptableDeviceComponentPS)
 public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, const context: script_ref<GetActionsContext>) -> Void {
   wrappedMethod(outActions, context);
 
-  if IsDefined(this as AccessPointControllerPS) { return; }
+  BNDebug("NetworkScan", "GetRemoteActions: entered for " + NameToString(this.GetClassName()));
+
+  if IsDefined(this as AccessPointControllerPS) {
+    BNDebug("NetworkScan", "GetRemoteActions: skipped — is AccessPointControllerPS");
+    return;
+  }
 
   let gi: GameInstance = this.GetGameInstance();
 
   let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
     .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
-  if !IsDefined(mss) { return; }
+  if !IsDefined(mss) {
+    BNWarn("NetworkScan", "GetRemoteActions: MarkingStateSystem not found");
+    return;
+  }
 
   let deviceEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
-  if !IsDefined(deviceEntity) { return; }
+  if !IsDefined(deviceEntity) {
+    BNWarn("NetworkScan", "GetRemoteActions: no owner entity");
+    return;
+  }
 
   let subnetType: MarkedSubnetType;
   if DaemonFilterUtils.IsCamera(this) {
@@ -373,34 +381,75 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
   let isMarked: Bool = mss.IsMark(deviceEntity.GetEntityID(), subnetType);
   let player: ref<PlayerPuppet> = GetPlayer(gi);
 
-  let hackSystem: ref<CustomHackingSystem> =
-    GameInstance.GetScriptableSystemsContainer(gi).Get(BNConstants.CLASS_CUSTOM_HACKING_SYSTEM()) as CustomHackingSystem;
-
-  if IsDefined(hackSystem) {
-    let scanBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
-    let scanEntity: wref<Entity> = this.GetOwnerEntityWeak() as Entity;
-    if IsDefined(scanBB) && IsDefined(scanEntity) {
-      scanBB.SetVariant(GetAllBlackboardDefs().HackingMinigame.Entity, ToVariant(scanEntity));
-    }
-  }
+  BNDebug("NetworkScan", "GetRemoteActions: injecting " + (isMarked ? "Unmark" : "Mark") + " for " + GetLocalizedText(deviceEntity.GetDisplayName()));
 
   if isMarked {
     let action: ref<BNUnmarkDeviceAction> = new BNUnmarkDeviceAction();
+    action.SetUp(this);
     action.SetDevicePS(this, ramCost);
+    action.AddDeviceName(this.m_deviceName);
+    action.CreateInteraction();
     if IsDefined(player) { action.SetExecutor(player); }
     if !action.CanPayCost(player, false) {
       action.SetInactiveWithReason(false, BNConstants.LOCKEY_RAM_INSUFFICIENT());
     }
-    if IsDefined(hackSystem) { hackSystem.RegisterDeviceAction(action); }
     ArrayPush(outActions, action);
+    BNDebug("NetworkScan", "GetRemoteActions: pushed BNUnmarkDeviceAction, outActions size=" + ToString(ArraySize(outActions)));
   } else {
     let action: ref<BNMarkDeviceAction> = new BNMarkDeviceAction();
+    action.SetUp(this);
     action.SetDevicePS(this, ramCost);
+    action.AddDeviceName(this.m_deviceName);
+    action.CreateInteraction();
     if IsDefined(player) { action.SetExecutor(player); }
     if !action.CanPayCost(player, false) {
       action.SetInactiveWithReason(false, BNConstants.LOCKEY_RAM_INSUFFICIENT());
     }
-    if IsDefined(hackSystem) { hackSystem.RegisterDeviceAction(action); }
     ArrayPush(outActions, action);
+    BNDebug("NetworkScan", "GetRemoteActions: pushed BNMarkDeviceAction, outActions size=" + ToString(ArraySize(outActions)));
   }
+}
+
+@addField(PlayerPuppet)
+public let m_bnInjectMarkHacks: Bool;
+
+@wrapMethod(QuickHackableHelper)
+public final static func TranslateActionsIntoQuickSlotCommands(const actions: array<ref<DeviceAction>>, commands: script_ref<array<ref<QuickhackData>>>, gameObject: ref<GameObject>, scriptableComponentPS: ref<ScriptableDeviceComponentPS>) -> Void {
+  let player: ref<PlayerPuppet> = GetPlayer(gameObject.GetGame());
+  BNDebug("NetworkScan", "TranslateActionsIntoQuickSlotCommands: entered, incoming actions=" + ToString(ArraySize(actions)) + " playerDefined=" + ToString(IsDefined(player)));
+  if IsDefined(player) { player.m_bnInjectMarkHacks = true; }
+  wrappedMethod(actions, commands, gameObject, scriptableComponentPS);
+  if IsDefined(player) { player.m_bnInjectMarkHacks = false; }
+  BNDebug("NetworkScan", "TranslateActionsIntoQuickSlotCommands: finished, commands=" + ToString(ArraySize(Deref(commands))));
+}
+
+@wrapMethod(RPGManager)
+public final static func GetPlayerQuickHackListWithQuality(player: wref<PlayerPuppet>) -> array<PlayerQuickhackData> {
+  let list: array<PlayerQuickhackData> = wrappedMethod(player);
+  if !IsDefined(player) || !player.m_bnInjectMarkHacks { return list; }
+
+  BNDebug("NetworkScan", "GetPlayerQuickHackListWithQuality: flag set, injecting BNMarkDevice/BNUnmarkDevice records");
+
+  let ids: array<TweakDBID>;
+  ArrayPush(ids, t"QuickHack.BNMarkDevice");
+  ArrayPush(ids, t"QuickHack.BNUnmarkDevice");
+
+  let i: Int32 = 0;
+  while i < ArraySize(ids) {
+    let record: ref<ObjectAction_Record> = TweakDBInterface.GetObjectActionRecord(ids[i]);
+    let present: Bool = false;
+    let j: Int32 = 0;
+    while j < ArraySize(list) {
+      if Equals(list[j].actionRecord.GetID(), ids[i]) { present = true; }
+      j += 1;
+    }
+    if !IsDefined(record) {
+      BNWarn("NetworkScan", "GetPlayerQuickHackListWithQuality: record not found for " + TDBID.ToStringDEBUG(ids[i]));
+    } else if !present {
+      ArrayPush(list, new PlayerQuickhackData(ItemID.None(), record, 5));
+      BNDebug("NetworkScan", "GetPlayerQuickHackListWithQuality: injected " + TDBID.ToStringDEBUG(ids[i]));
+    }
+    i += 1;
+  }
+  return list;
 }

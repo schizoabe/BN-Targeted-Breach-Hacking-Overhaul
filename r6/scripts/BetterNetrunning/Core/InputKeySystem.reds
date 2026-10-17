@@ -45,20 +45,12 @@ public class BNInputKeySystem extends ScriptableSystem {
         }
     }
 
-    public func ApplyHotkeys(clearMarks: String, forceJackOut: String, cycleBreachMode: String, toggleHUDPanels: String) -> Void {
-        this.m_clearMarksKey      = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", clearMarks)));
-        this.m_forceJackOutKey    = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", forceJackOut)));
-        this.m_cycleBreachModeKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", cycleBreachMode)));
-        this.m_toggleHUDPanelsKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", toggleHUDPanels)));
-    }
-
-    public func ApplyCascadeHotkey(cycleCascadeQH: String) -> Void {
-        this.m_cycleCascadeQHKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", cycleCascadeQH)));
-    }
-
-    public func ApplyDumpRAMHotkey(dumpRAMForICE: String) -> Void {
-        this.m_dumpRAMForICEKey = IntEnum<EInputKey>(Cast<Int32>(EnumValueFromString("EInputKey", dumpRAMForICE)));
-    }
+    public func SetClearMarksKey(key: EInputKey) -> Void      { this.m_clearMarksKey      = key; }
+    public func SetForceJackOutKey(key: EInputKey) -> Void    { this.m_forceJackOutKey    = key; }
+    public func SetCycleBreachModeKey(key: EInputKey) -> Void { this.m_cycleBreachModeKey = key; }
+    public func SetToggleHUDPanelsKey(key: EInputKey) -> Void { this.m_toggleHUDPanelsKey = key; }
+    public func SetCycleCascadeQHKey(key: EInputKey) -> Void  { this.m_cycleCascadeQHKey  = key; }
+    public func SetDumpRAMForICEKey(key: EInputKey) -> Void   { this.m_dumpRAMForICEKey   = key; }
 }
 
 public class BNInputActions {
@@ -71,7 +63,10 @@ public class BNInputActions {
 
     public static func ClearMarks(gi: GameInstance) -> Void {
         let ms = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.Marking.MarkingStateSystem") as MarkingStateSystem;
-        if IsDefined(ms) { ms.ClearAll(); }
+        if IsDefined(ms) {
+            ms.ClearAll();
+            ms.RefreshMarkBeams();
+        }
         let testSys = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.UI.BNTestPanelSystem") as BNTestPanelSystem;
         let logSys  = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.Marking.ICEScoutLogSystem") as ICEScoutLogSystem;
         if IsDefined(testSys) { testSys.Hide(); }

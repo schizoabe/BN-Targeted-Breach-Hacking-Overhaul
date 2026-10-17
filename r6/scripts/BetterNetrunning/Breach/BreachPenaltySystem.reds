@@ -6,16 +6,13 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Integration.*
 import BetterNetrunning.Marking.*
-import BetterNetrunning.RemoteBreach.Common.*
-import BetterNetrunning.RemoteBreach.Core.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Minigame.*
 
 public enum BreachType {
   Unknown = 0,
   AccessPoint = 1,
-  UnconsciousNPC = 2,
-  RemoteBreach = 3
+  UnconsciousNPC = 2
 }
 
 @wrapMethod(ScriptableDeviceComponentPS)
@@ -47,12 +44,6 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
   }
 
   this.BNDispatchOffensiveDaemons();
-
-  if Equals(this.DetectBreachType(), BreachType.RemoteBreach) {
-    BNInfo("BreachLoop", "Remote breach succeeded — exiting cleanly (no loop)");
-    wrappedMethod(state);
-    return;
-  }
 
   if !this.m_bnDaemonsInjected {
     wrappedMethod(state);
@@ -280,52 +271,16 @@ public func OnNPCBreachEvent(evt: ref<NPCBreachEvent>) -> EntityNotificationType
 
 @addMethod(ScriptableDeviceComponentPS)
 private func DetectBreachType() -> BreachType {
-
-  if this.IsRemoteBreachingAnyDevice() {
-    return BreachType.RemoteBreach;
-  }
-
-  if this.HasPersonalLinkSlot() {
-
-    return BreachType.AccessPoint;
-  }
-
-  return BreachType.RemoteBreach;
-}
-
-@addMethod(ScriptableDeviceComponentPS)
-private func IsRemoteBreachingAnyDevice() -> Bool {
-  let gameInstance: GameInstance = this.GetGameInstance();
-  let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
-
-  if !IsDefined(container) {
-    return false;
-  }
-
-  let deviceSystem: ref<DeviceRemoteBreachStateSystem> = container.Get(BNConstants.CLASS_DEVICE_REMOTE_BREACH_STATE_SYSTEM()) as DeviceRemoteBreachStateSystem;
-  if IsDefined(deviceSystem) {
-    let currentDevice: wref<ScriptableDeviceComponentPS> = deviceSystem.GetCurrentDevice();
-    if IsDefined(currentDevice) && currentDevice == this {
-      return true;
-    }
-  }
-
-  return false;
+  return BreachType.AccessPoint;
 }
 
 @addMethod(ScriptableDeviceComponentPS)
 private func IsBreachPenaltyEnabledForType(breachType: BreachType) -> Bool {
-  if Equals(breachType, BreachType.AccessPoint) {
-    return BetterNetrunningSettings.APBreachFailurePenaltyEnabled();
-  }
   if Equals(breachType, BreachType.UnconsciousNPC) {
     return BetterNetrunningSettings.NPCBreachFailurePenaltyEnabled();
   }
-  if Equals(breachType, BreachType.RemoteBreach) {
-    return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
-  }
 
-  return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
+  return BetterNetrunningSettings.APBreachFailurePenaltyEnabled();
 }
 
 private static func ShouldApplyBreachPenalty(breachType: BreachType) -> Bool {
@@ -334,17 +289,11 @@ private static func ShouldApplyBreachPenalty(breachType: BreachType) -> Bool {
     return false;
   }
 
-  if Equals(breachType, BreachType.AccessPoint) {
-    return BetterNetrunningSettings.APBreachFailurePenaltyEnabled();
-  }
   if Equals(breachType, BreachType.UnconsciousNPC) {
     return BetterNetrunningSettings.NPCBreachFailurePenaltyEnabled();
   }
-  if Equals(breachType, BreachType.RemoteBreach) {
-    return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
-  }
 
-  return BetterNetrunningSettings.RemoteBreachFailurePenaltyEnabled();
+  return BetterNetrunningSettings.APBreachFailurePenaltyEnabled();
 }
 
 public static func ApplyFailurePenalty(
@@ -363,10 +312,7 @@ public static func ApplyFailurePenalty(
     return;
   }
 
-  if Equals(breachType, BreachType.RemoteBreach) {
-
-    RecordBreachFailureByType(player, devicePS, deviceEntity.GetWorldPosition(), gameInstance, breachType);
-  } else if Equals(breachType, BreachType.AccessPoint) {
+  if Equals(breachType, BreachType.AccessPoint) {
 
     if RecordBreachFailureTimestamp(devicePS, gameInstance) {
 
@@ -440,28 +386,6 @@ private static func RecordBreachFailureTimestamp(
   npcPS.m_betterNetrunningNPCBreachFailedTimestamp = currentTime;
   BNDebug("BreachPenalty", "Recorded NPC breach failure timestamp: " + ToString(currentTime));
   return true;
-}
-
-private static func RecordBreachFailureByType(
-  player: ref<PlayerPuppet>,
-  devicePS: ref<ScriptableDeviceComponentPS>,
-  failedPosition: Vector4,
-  gameInstance: GameInstance,
-  breachType: BreachType
-) -> Void {
-
-  if Equals(breachType, BreachType.RemoteBreach) {
-    RemoteBreachLockSystem.RecordRemoteBreachFailure(player, devicePS, failedPosition, gameInstance);
-    return;
-  }
-
-  if Equals(breachType, BreachType.AccessPoint) || Equals(breachType, BreachType.UnconsciousNPC) {
-    BNError("BreachPenalty", "AP/NPC breach incorrectly routed to position recording");
-    return;
-  }
-
-  BNWarn("BreachPenalty", "Unknown breach type - fallback to RemoteBreach recording");
-  RemoteBreachLockSystem.RecordRemoteBreachFailure(player, devicePS, failedPosition, gameInstance);
 }
 
 private static func TriggerTraceAttempt(

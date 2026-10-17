@@ -41,20 +41,26 @@ protected func OnIncapacitated() -> Void {
   CachedBoolValue.SetDirty(this.m_isActiveCached);
 }
 
-@if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptedPuppetPS)
 public final const func GetValidChoices(const actions: script_ref<array<wref<ObjectAction_Record>>>, const context: script_ref<GetActionsContext>, objectActionsCallbackController: wref<gameObjectActionsCallbackController>, checkPlayerQuickHackList: Bool, choices: script_ref<array<InteractionChoice>>) -> Void {
   if BetterNetrunningSettings.AllowBreachingUnconsciousNPCs()
       && !this.m_betterNetrunningWasDirectlyBreached {
 
-    let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
-    let neuralTapOwned: Bool = true;
-    if IsDefined(player) {
-      let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(player.GetGame());
-      if IsDefined(perkSys) { neuralTapOwned = perkSys.GetPerkLevel(BNPerk.NeuralTap) > 0; }
-    }
-    if neuralTapOwned {
-      ArrayPush(Deref(actions), TweakDBInterface.GetObjectActionRecord(t"Takedown.BreachUnconsciousOfficer"));
+    let ownerPuppet: wref<ScriptedPuppet> = this.GetOwnerEntity() as ScriptedPuppet;
+    if IsDefined(ownerPuppet) && ownerPuppet.IsIncapacitated() {
+
+      let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
+      let neuralTapOwned: Bool = true;
+      if IsDefined(player) {
+        let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(player.GetGame());
+        if IsDefined(perkSys) { neuralTapOwned = perkSys.GetPerkLevel(BNPerk.NeuralTap) > 0; }
+      }
+      if neuralTapOwned {
+        let cfg: ref<BNConfig> = BNConfig.GetInstance(this.GetGameInstance());
+        if IsDefined(cfg) {
+          ArrayPush(Deref(actions), TweakDBInterface.GetObjectActionRecord(cfg.GetBreachUnconsciousNPCActionID()));
+        }
+      }
     }
   }
   wrappedMethod(actions, context, objectActionsCallbackController, checkPlayerQuickHackList, choices);

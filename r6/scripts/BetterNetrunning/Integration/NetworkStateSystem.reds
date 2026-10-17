@@ -165,6 +165,35 @@ public abstract class NetworkStateUtils {
     }
   }
 
+  public static func ApplyIcepickEffectNPC(
+    npcPS:        ref<ScriptedPuppetPS>,
+    gameInstance: GameInstance,
+    hits:         Int32
+  ) -> Void {
+    if !IsDefined(npcPS) { return; }
+
+    let ms: ref<MarkingStateSystem> = NetworkStateUtils.GetMarkingSystem(gameInstance);
+    let globalBonus: Int32 = IsDefined(ms) ? ms.GetHeatICEBonus() : 0;
+
+    if hits > 0 {
+      NetworkStateUtils.EnsureNPCICERolled(npcPS, gameInstance);
+      let effective: Int32 = npcPS.m_bnNPCIceHitsRequired + globalBonus;
+      npcPS.m_bnNPCIceHitsApplied += hits;
+      if npcPS.m_bnNPCIceHitsApplied > effective {
+        npcPS.m_bnNPCIceHitsApplied = effective;
+      }
+      if npcPS.m_bnNPCIceHitsApplied >= effective {
+        npcPS.m_bnNPCIceDefeated = true;
+      }
+      BNInfo("NetworkState",
+        "NPC ICE hits: " + ToString(npcPS.m_bnNPCIceHitsApplied)
+        + "/" + ToString(effective)
+        + " (base=" + ToString(npcPS.m_bnNPCIceHitsRequired)
+        + " +bonus=" + ToString(globalBonus) + ")"
+        + (npcPS.m_bnNPCIceDefeated ? " [DEFEATED]" : ""));
+    }
+  }
+
   public static func OnDaemonsCompleted(
     activePrograms: array<TweakDBID>,
     devicePS:       ref<ScriptableDeviceComponentPS>,

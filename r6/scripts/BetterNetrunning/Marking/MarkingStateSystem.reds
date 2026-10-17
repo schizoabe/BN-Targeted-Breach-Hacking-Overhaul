@@ -199,6 +199,23 @@ public class MarkingStateSystem extends ScriptableSystem {
     }
   }
 
+  public func DebugSetSessionHeat(value: Float) -> Void {
+    let clamped: Float = value;
+    if clamped < 0.0 { clamped = 0.0; }
+    if clamped > 1.0 { clamped = 1.0; }
+    this.m_sessionHeat = clamped;
+
+    let newBand: Int32 = MarkingStateSystem.HeatBand(this.m_sessionHeat);
+    if newBand > this.m_lastHeatBand {
+      this.m_lastHeatBand = newBand;
+      let rolled: Int32 = MarkingStateSystem.RollBonusForBand(newBand);
+      if rolled > this.m_heatICEBonus {
+        this.m_heatICEBonus = rolled;
+      }
+    }
+    BNInfo("MarkingState", "DEBUG: session heat forced to " + ToString(this.m_sessionHeat));
+  }
+
   public func GetHeatICEBonus() -> Int32 { return this.m_heatICEBonus; }
 
   private static func HeatBand(heat: Float) -> Int32 {

@@ -1,8 +1,8 @@
 
 Interactions.BNExitProtocol:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820040
-  description: LocKey#4820041
+  caption: LocKey#Better-Netrunning-ExitProtocol-Name
+  description: LocKey#Better-Netrunning-ExitProtocol-Description
   captionIcon: ChoiceCaptionParts.DoorAuthorizationIcon
 
 MinigameAction.BN_ExitProtocol:
@@ -14,8 +14,8 @@ MinigameAction.BN_ExitProtocol:
 
 Interactions.BNOffloadProtocol:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820042
-  description: LocKey#4820043
+  caption: LocKey#Better-Netrunning-OffloadProtocol-Name
+  description: LocKey#Better-Netrunning-OffloadProtocol-Description
   captionIcon: ChoiceCaptionParts.ICEMediumIcon
 
 MinigameAction.BN_OffloadProtocol:
@@ -27,8 +27,8 @@ MinigameAction.BN_OffloadProtocol:
 
 Interactions.BNCascadeProtocol:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820048
-  description: LocKey#4820049
+  caption: LocKey#Better-Netrunning-CascadeProtocol-Name
+  description: LocKey#Better-Netrunning-CascadeProtocol-Description
   captionIcon: ChoiceCaptionParts.MassMadnessIcon
 
 MinigameAction.BN_CascadeProtocol:
@@ -40,8 +40,8 @@ MinigameAction.BN_CascadeProtocol:
 
 Interactions.BNEntropyProtocol:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820038
-  description: LocKey#4820039
+  caption: LocKey#Better-Netrunning-EntropyProtocol-Name
+  description: LocKey#Better-Netrunning-EntropyProtocol-Description
   captionIcon: ChoiceCaptionParts.VulnerableNPCsIcon
 
 MinigameAction.BN_EntropyProtocol:

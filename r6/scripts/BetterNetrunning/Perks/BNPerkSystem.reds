@@ -82,6 +82,16 @@ public abstract class BNPerkData {
     }
   }
 
+  public static func ApplyDevAll(player: ref<PlayerPuppet>, toMax: Bool) -> Void {
+    if !IsDefined(player) { return; }
+    let i: Int32 = 0;
+    while i <= 18 {
+      let perk: BNPerk = IntEnum<BNPerk>(i);
+      player.SetBNPerkLevel(perk, toMax ? BNPerkData.GetMaxLevel(perk) : 0);
+      i += 1;
+    }
+  }
+
   public static func GetRemoteBreachICEBoard(gi: GameInstance) -> TweakDBID {
     let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
     if !IsDefined(perkSys) { return t"Minigame.BNRemoteBreachICEBoard_FPS"; }

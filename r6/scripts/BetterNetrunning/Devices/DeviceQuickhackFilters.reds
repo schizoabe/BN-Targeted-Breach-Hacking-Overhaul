@@ -7,118 +7,10 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Systems.*
 import BetterNetrunning.Breach.*
-import BetterNetrunning.RemoteBreach.Core.*
-import BetterNetrunning.RemoteBreach.Actions.*
-import BetterNetrunning.RadialUnlock.*
 
-@if(ModuleExists("HackingExtensions"))
 @addMethod(ScriptableDeviceComponentPS)
 private final func ApplyBetterNetrunningDeviceFilters(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
-  this.ReplaceVanillaRemoteBreachWithCustom(outActions);
-
-  this.RemoveRemoteBreachIfUnlocked(outActions);
-}
-
-@if(!ModuleExists("HackingExtensions"))
-@addMethod(ScriptableDeviceComponentPS)
-private final func ApplyBetterNetrunningDeviceFilters(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
-  this.RemoveRemoteBreachIfUnlocked(outActions);
-}
-
-@if(ModuleExists("HackingExtensions"))
-@addMethod(ScriptableDeviceComponentPS)
-private final func ReplaceVanillaRemoteBreachWithCustom(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
-  if this.IsBreached() {
-    this.RemoveVanillaRemoteBreachActions(outActions);
-    return;
-  }
-
-  if BreachLockUtils.IsDeviceLockedByRemoteBreachFailure(this) {
-
-    return;
-  }
-
-  let actionCountBefore: Int32 = ArraySize(Deref(outActions));
   this.RemoveVanillaRemoteBreachActions(outActions);
-  let actionCountAfter: Int32 = ArraySize(Deref(outActions));
-  let vanillaRemoteBreachFound: Bool = actionCountBefore > actionCountAfter;
-
-  if vanillaRemoteBreachFound && this.IsConnectedToBackdoorDevice() {
-    let beforeSize: Int32 = ArraySize(Deref(outActions));
-    BNTrace("ReplaceVanillaRemoteBreachWithCustom", "Before TryAddCustomRemoteBreach: " + IntToString(beforeSize) + " actions");
-
-    this.TryAddCustomRemoteBreach(outActions);
-
-    let afterSize: Int32 = ArraySize(Deref(outActions));
-    BNTrace("ReplaceVanillaRemoteBreachWithCustom", "After TryAddCustomRemoteBreach: " + IntToString(afterSize) + " actions");
-
-    if afterSize > beforeSize {
-      BNTrace("ReplaceVanillaRemoteBreachWithCustom", "Added BetterNetrunning RemoteBreach (RemoteBreachAction/VehicleRemoteBreachAction/DeviceRemoteBreachAction)");
-    } else {
-      BNTrace("ReplaceVanillaRemoteBreachWithCustom", "BetterNetrunning RemoteBreach NOT added (locked or other reason)");
-    }
-  }
-}
-
-@if(ModuleExists("HackingExtensions"))
-@addMethod(ScriptableDeviceComponentPS)
-private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
-  if !this.IsBreached() {
-    return;
-  }
-
-  let i: Int32 = ArraySize(Deref(outActions)) - 1;
-  while i >= 0 {
-    let action: ref<DeviceAction> = Deref(outActions)[i];
-
-    if IsDefined(action as RemoteBreach) {
-      ArrayErase(Deref(outActions), i);
-    } else {
-      let customBreachAction: ref<CustomAccessBreach> = action as CustomAccessBreach;
-      if IsDefined(customBreachAction) {
-        ArrayErase(Deref(outActions), i);
-        BNTrace("RemoveRemoteBreachIfUnlocked", "Removed CustomAccessBreach (device already breached)");
-      }
-    }
-
-    i -= 1;
-  }
-}
-
-@if(!ModuleExists("HackingExtensions"))
-@addMethod(ScriptableDeviceComponentPS)
-private final func RemoveRemoteBreachIfUnlocked(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
-  if !this.IsBreached() {
-    return;
-  }
-
-  let i: Int32 = ArraySize(Deref(outActions)) - 1;
-  while i >= 0 {
-    let action: ref<DeviceAction> = Deref(outActions)[i];
-
-    if IsDefined(action as RemoteBreach) {
-      ArrayErase(Deref(outActions), i);
-    }
-
-    i -= 1;
-  }
-}
-
-@if(ModuleExists("HackingExtensions"))
-@addMethod(ScriptableDeviceComponentPS)
-private final func TryAddMissingCustomRemoteBreachWrapper(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-  this.TryAddMissingCustomRemoteBreach(outActions);
-}
-
-@if(!ModuleExists("HackingExtensions"))
-@addMethod(ScriptableDeviceComponentPS)
-private final func TryAddMissingCustomRemoteBreachWrapper(outActions: script_ref<array<ref<DeviceAction>>>) -> Void {
-
 }
 
 @addMethod(ScriptableDeviceComponentPS)
@@ -137,7 +29,6 @@ private final func ShouldProcessQuickHackActions(outActions: script_ref<array<re
   return true;
 }
 
-@if(ModuleExists("HackingExtensions"))
 @wrapMethod(ScriptableDeviceComponentPS)
 protected final func MarkActionsAsQuickHacks(actionsToMark: script_ref<array<ref<DeviceAction>>>) -> Void {
 
@@ -145,11 +36,9 @@ protected final func MarkActionsAsQuickHacks(actionsToMark: script_ref<array<ref
 
   let i: Int32 = 0;
   while i < ArraySize(Deref(actionsToMark)) {
-
-    let customBreachAction: ref<CustomAccessBreach> = Deref(actionsToMark)[i] as CustomAccessBreach;
-    if IsDefined(customBreachAction) {
-
-      customBreachAction.SetAsQuickHack();
+    let puppetBreachAction: ref<PuppetAction> = Deref(actionsToMark)[i] as PuppetAction;
+    if IsDefined(puppetBreachAction) {
+      puppetBreachAction.SetAsQuickHack();
     }
 
     i += 1;
@@ -167,7 +56,5 @@ private final func ApplyCommonQuickHackRestrictions(outActions: script_ref<array
   this.SetActionIllegality(outActions, this.m_illegalActions.quickHacks);
   this.MarkActionsAsQuickHacks(outActions);
   this.SetActionsQuickHacksExecutioner(outActions);
-
-  this.RemoveCustomRemoteBreachIfUnlocked(outActions);
 }
 

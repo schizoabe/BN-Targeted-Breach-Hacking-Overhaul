@@ -6,7 +6,6 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Utils.*
-import BetterNetrunning.RadialUnlock.*
 import BetterNetrunning.Marking.*
 import BetterNetrunning.Network.*
 
@@ -250,25 +249,6 @@ private final func UnlockDevice(
   if sharedPS.m_bnIceHitsRequired <= 0 { sharedPS.m_bnIceHitsRequired = 1; }
   sharedPS.m_bnIceHitsApplied = sharedPS.m_bnIceHitsRequired;
   sharedPS.m_bnIceDefeated = true;
-}
-
-@addMethod(AccessPointControllerPS)
-public final func ApplyDeviceTypeUnlock(device: ref<DeviceComponentPS>, unlockFlags: BreachUnlockFlags) -> Void {
-  let sharedPS: ref<SharedGameplayPS> = device as SharedGameplayPS;
-  if !IsDefined(sharedPS) {
-    return;
-  }
-
-  let TargetType: TargetType = DeviceTypeUtils.GetDeviceType(device);
-
-  if !DeviceTypeUtils.ShouldUnlockByFlags(TargetType, unlockFlags) {
-    return;
-  }
-
-  this.QueuePSEvent(device, this.ActionSetExposeQuickHacks());
-
-  let currentTime: Float = TimeUtils.GetCurrentTimestamp(this.GetGameInstance());
-  TimeUtils.SetDeviceUnlockTimestamp(sharedPS, TargetType, currentTime);
 }
 
 @addMethod(AccessPointControllerPS)

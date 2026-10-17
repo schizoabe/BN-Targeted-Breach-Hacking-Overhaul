@@ -45,6 +45,15 @@ public persistent let m_bnIceHitsApplied: Int32;
 @addField(SharedGameplayPS)
 public persistent let m_bnIceDefeated: Bool;
 
+@addField(ScriptedPuppetPS)
+public persistent let m_bnNPCIceHitsRequired: Int32;
+
+@addField(ScriptedPuppetPS)
+public persistent let m_bnNPCIceHitsApplied: Int32;
+
+@addField(ScriptedPuppetPS)
+public persistent let m_bnNPCIceDefeated: Bool;
+
 public class SetBreachedSubnet extends ActionBool {
 
   public let unlockTimestampBasic: Float;
@@ -134,16 +143,5 @@ public abstract class BreachStatusUtils {
   public static func IsTurretsBreached(sharedPS: ref<SharedGameplayPS>) -> Bool {
     return BreachStatusUtils.IsBreached(sharedPS.m_betterNetrunningUnlockTimestampTurrets);
   }
-}
-
-public func IsCustomRemoteBreachAction(action: ref<DeviceAction>) -> Bool {
-  if !IsDefined(action) {
-    return false;
-  }
-  return BNConstants.IsRemoteBreachAction(action.GetClassName());
-}
-
-public func IsCustomRemoteBreachAction(className: CName) -> Bool {
-  return BNConstants.IsRemoteBreachAction(className);
 }
 

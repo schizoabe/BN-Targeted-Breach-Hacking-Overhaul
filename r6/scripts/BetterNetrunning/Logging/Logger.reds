@@ -2,6 +2,9 @@
 module BetterNetrunning.Logging
 
 import BetterNetrunningConfig.*
+import RedscriptConfigFramework.*
+
+public func BNRedLoggerTag() -> String = "NetrunningOverhaul"
 
 public enum LogLevel {
   ERROR = 0,
@@ -93,6 +96,7 @@ private static func LogWithLevel(level: LogLevel, context: String, message: Stri
     let levelPrefix: String = GetLevelPrefix(level);
     let fullMessage: String = levelPrefix + " [" + context + "] " + message;
     ModLog(n"BetterNetrunning", fullMessage);
+    WriteToRedLogger(level, fullMessage);
     return;
   }
 
@@ -108,16 +112,34 @@ private static func LogWithLevel(level: LogLevel, context: String, message: Stri
     let levelPrefix: String = GetLevelPrefix(level);
     let summaryMsg: String = levelPrefix + " [" + loggerState.GetLastContext() + "] → Previous message repeated " + ToString(loggerState.GetDuplicateCount()) + " times";
     ModLog(n"BetterNetrunning", summaryMsg);
+    WriteToRedLogger(level, summaryMsg);
     loggerState.SetDuplicateCount(0);
   }
 
   let levelPrefix: String = GetLevelPrefix(level);
   let fullMessage: String = levelPrefix + " [" + context + "] " + message;
   ModLog(n"BetterNetrunning", fullMessage);
+  WriteToRedLogger(level, fullMessage);
 
   loggerState.SetLastMessage(message);
   loggerState.SetLastContext(context);
   loggerState.SetLastTimestamp(currentTime);
+}
+
+private static func WriteToRedLogger(level: LogLevel, fullMessage: String) -> Void {
+  switch level {
+    case LogLevel.ERROR:
+      RedLogger.LogError(BNRedLoggerTag(), fullMessage);
+      break;
+    case LogLevel.WARNING:
+      RedLogger.LogWarn(BNRedLoggerTag(), fullMessage);
+      break;
+    case LogLevel.INFO:
+      RedLogger.LogInfo(BNRedLoggerTag(), fullMessage);
+      break;
+    default:
+      RedLogger.LogDebug(BNRedLoggerTag(), fullMessage);
+  }
 }
 
 private static func GetLevelPrefix(level: LogLevel) -> String {

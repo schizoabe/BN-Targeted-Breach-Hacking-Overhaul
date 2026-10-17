@@ -1,8 +1,14 @@
 
+QuickHack.BNNativeBreachTrigger:
+  $type: gamedataObjectAction_Record
+  actionName: BNNativeBreachTrigger
+  activationTime: []
+  hackCategory: HackCategory.CovertHack
+
 Interactions.NetworkCounterBreachICE:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820012
-  description: LocKey#4820013
+  caption: LocKey#Better-Netrunning-Counter-Breach-ICE-Name
+  description: LocKey#Better-Netrunning-Counter-Breach-ICE-Description
   captionIcon: ChoiceCaptionParts.DoorAuthorizationIcon
 
 MinigameAction.BNCounterBreachICE:
@@ -27,8 +33,8 @@ CustomHackingSystemMinigame.BNCounterBreach:
 
 Interactions.NetworkFirewallICE:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820044
-  description: LocKey#4820045
+  caption: LocKey#Better-Netrunning-Firewall-ICE-Name
+  description: LocKey#Better-Netrunning-Firewall-ICE-Description
   captionIcon: ChoiceCaptionParts.FriendlyCamerasIcon
 
 MinigameAction.BNFirewallICE:

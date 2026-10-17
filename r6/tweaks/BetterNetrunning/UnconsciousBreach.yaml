@@ -1,27 +1,65 @@
 
-Takedown.BreachUnconsciousOfficer:
+Takedown.BNBreachUnconsciousNPCBase:
+  $type: gamedataObjectAction_Record
+  objectActionType: ObjectActionType.Direct
+  actionName: RemoteBreach
+  interactionLayer: Loot
   instigatorPrereqs:
-    - !override
-    - QuickHack.RemoteBreach_inline0
-    - QuickHack.QuickHack_inline3
     - Takedown.GeneralStateChecks
     - Takedown.IsPlayerInExploration
     - Takedown.IsPlayerInAcceptableGroundLocomotionState
     - Takedown.PlayerNotInSafeZone
     - Takedown.GameplayRestrictions
-    - Takedown.BreachUnconsciousOfficer_inline0
-    - Takedown.BreachUnconsciousOfficer_inline1
-    - Takedown.BreachUnconsciousOfficer_inline2
+    - $type: gamedataStatPrereq_Record
+      prereqClassName: StatPrereq
+      objectToCheck: Instigator
+      statType: HasCyberdeck
+      comparisonType: Greater
+      valueToCheck: 0
   targetActivePrereqs:
-    - !override
     - Prereqs.QuickHackUploadingPrereq
-  targetPrereqs:
-    - !override
-    - Takedown.BreachUnconsciousOfficer_inline4
+  activationTime: []
   startEffects:
-    - !override
     - QuickHack.QuickHack_inline12
     - QuickHack.QuickHack_inline13
   completionEffects: []
-  actionName: RemoteBreach
-  activationTime: []
+
+Takedown.BNBreachUnconsciousNPC_Choice1:
+  $base: Takedown.BNBreachUnconsciousNPCBase
+  objectActionUI: Interactions.BNBreachUnconsciousNPC_Choice1
+
+Takedown.BNBreachUnconsciousNPC_Choice2:
+  $base: Takedown.BNBreachUnconsciousNPCBase
+  objectActionUI: Interactions.BNBreachUnconsciousNPC_Choice2
+
+Takedown.BNBreachUnconsciousNPC_Choice3:
+  $base: Takedown.BNBreachUnconsciousNPCBase
+  objectActionUI: Interactions.BNBreachUnconsciousNPC_Choice3
+
+Takedown.BNBreachUnconsciousNPC_Choice4:
+  $base: Takedown.BNBreachUnconsciousNPCBase
+  objectActionUI: Interactions.BNBreachUnconsciousNPC_Choice4
+
+Interactions.BNBreachUnconsciousNPC_Choice1:
+  $type: gamedataInteractionBase_Record
+  name: BNBreachUnconsciousNPC
+  caption: LocKey#325
+  action: Choice1
+
+Interactions.BNBreachUnconsciousNPC_Choice2:
+  $type: gamedataInteractionBase_Record
+  name: BNBreachUnconsciousNPC
+  caption: LocKey#325
+  action: Choice2
+
+Interactions.BNBreachUnconsciousNPC_Choice3:
+  $type: gamedataInteractionBase_Record
+  name: BNBreachUnconsciousNPC
+  caption: LocKey#325
+  action: Choice3
+
+Interactions.BNBreachUnconsciousNPC_Choice4:
+  $type: gamedataInteractionBase_Record
+  name: BNBreachUnconsciousNPC
+  caption: LocKey#325
+  action: Choice4

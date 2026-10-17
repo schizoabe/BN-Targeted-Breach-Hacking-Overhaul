@@ -15,26 +15,46 @@ QuickHack.BNNetworkScanCost:
 
 Interactions.BNMark:
   $base: Interactions.PingHack
-  caption: LocKey#4820034
-  description: LocKey#4820035
+  caption: LocKey#Better-Netrunning-Mark-Name
+  description: LocKey#Better-Netrunning-Mark-Description
 
 Interactions.BNUnmark:
   $base: Interactions.PingHack
-  caption: LocKey#4820036
-  description: LocKey#4820037
+  caption: LocKey#Better-Netrunning-Unmark-Name
+  description: LocKey#Better-Netrunning-Unmark-Description
 
 QuickHack.BNMark:
   $base: QuickHack.CovertHack
+  actionName: BNMark
   objectActionUI: Interactions.BNMark
+  gameplayCategory: ActionCategories.Ping
 
 QuickHack.BNUnmark:
   $base: QuickHack.CovertHack
+  actionName: BNUnmark
   objectActionUI: Interactions.BNUnmark
+  gameplayCategory: ActionCategories.Ping
 
 QuickHack.BNMarkDevice:
   $type: gamedataObjectAction_Record
+  actionName: BNMarkDevice
+  objectActionType: ObjectActionType.DeviceQuickHack
   objectActionUI: Interactions.BNMark
+  isQuickHack: True
+  interactionLayer: any
+  hackCategory: HackCategory.CovertHack
+  gameplayCategory: ActionCategories.Ping
+  costs:
+    - QuickHack.BNNetworkScanCost
 
 QuickHack.BNUnmarkDevice:
   $type: gamedataObjectAction_Record
+  actionName: BNUnmarkDevice
+  objectActionType: ObjectActionType.DeviceQuickHack
   objectActionUI: Interactions.BNUnmark
+  isQuickHack: True
+  interactionLayer: any
+  hackCategory: HackCategory.CovertHack
+  gameplayCategory: ActionCategories.Ping
+  costs:
+    - QuickHack.BNNetworkScanCost

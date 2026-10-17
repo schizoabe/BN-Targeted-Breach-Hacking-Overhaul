@@ -1,0 +1,96 @@
+
+QuickHack.BNRemoteBreachBaseRAM:
+  $base: QuickHack.MemoryMod
+  value: 6
+
+QuickHack.BNRemoteBreachCost:
+  $type: gamedataStatPoolCost_Record
+  statPool: BaseStatPools.Memory
+  costMods:
+    - QuickHack.MemoryCostReductionMod
+    - QuickHack.ConsumableCostReduction
+    - QuickHack.TargetResistanceCovert
+    - QuickHack.NetworkMemoryCostReductionMod
+    - QuickHack.BNRemoteBreachBaseRAM
+
+Interactions.BNRemoteBreach:
+  $base: Interactions.RemoteBreach
+  caption: LocKey#Better-Netrunning-RemoteBreach-Name
+  description: LocKey#Better-Netrunning-RemoteBreach-Description
+
+QuickHack.BNRemoteBreach:
+  $base: QuickHack.CovertHack
+  actionName: BNRemoteBreach
+  objectActionUI: Interactions.BNRemoteBreach
+  gameplayCategory: ActionCategories.TakeControl
+
+QuickHack.BNRemoteBreachDevice:
+  $type: gamedataObjectAction_Record
+  actionName: BNRemoteBreachDevice
+  objectActionType: ObjectActionType.DeviceQuickHack
+  objectActionUI: Interactions.BNRemoteBreach
+  isQuickHack: True
+  interactionLayer: any
+  hackCategory: HackCategory.CovertHack
+  gameplayCategory: ActionCategories.TakeControl
+  costs:
+    - QuickHack.BNRemoteBreachCost
+
+MinigameProgram.BNRemoteBreach_Fracture:
+  $base: minigame_v2.DefaultItemMinigame_inline0
+  program: MinigameAction.BNIcepickV1
+  charactersChain: [-1, -1, -1]
+
+MinigameProgram.BNRemoteBreach_Purge:
+  $base: minigame_v2.DefaultItemMinigame_inline0
+  program: MinigameAction.BNIcepickV2
+  charactersChain: [-1, -1, -1, -1]
+
+MinigameProgram.BNRemoteBreach_Sunder:
+  $base: minigame_v2.DefaultItemMinigame_inline0
+  program: MinigameAction.BNIcepickV3
+  charactersChain: [-1, -1, -1, -1, -1]
+
+Minigame.BNRemoteBreachICEBoard_F:
+  $base: minigame_v2.DefaultMinigame
+  gridSize: 5
+  bufferSize: 6
+  timeLimit: 30.0
+  extraDifficulty: 0
+  overrideProgramsList:
+    - MinigameProgram.BNRemoteBreach_Fracture
+  forbiddenProgramsList: []
+
+Minigame.BNRemoteBreachICEBoard_FP:
+  $base: minigame_v2.DefaultMinigame
+  gridSize: 5
+  bufferSize: 7
+  timeLimit: 35.0
+  extraDifficulty: 5
+  overrideProgramsList:
+    - MinigameProgram.BNRemoteBreach_Fracture
+    - MinigameProgram.BNRemoteBreach_Purge
+  forbiddenProgramsList: []
+
+Minigame.BNRemoteBreachICEBoard_FS:
+  $base: minigame_v2.DefaultMinigame
+  gridSize: 5
+  bufferSize: 8
+  timeLimit: 35.0
+  extraDifficulty: 5
+  overrideProgramsList:
+    - MinigameProgram.BNRemoteBreach_Fracture
+    - MinigameProgram.BNRemoteBreach_Sunder
+  forbiddenProgramsList: []
+
+Minigame.BNRemoteBreachICEBoard_FPS:
+  $base: minigame_v2.DefaultMinigame
+  gridSize: 6
+  bufferSize: 9
+  timeLimit: 40.0
+  extraDifficulty: 10
+  overrideProgramsList:
+    - MinigameProgram.BNRemoteBreach_Fracture
+    - MinigameProgram.BNRemoteBreach_Purge
+    - MinigameProgram.BNRemoteBreach_Sunder
+  forbiddenProgramsList: []

@@ -4,11 +4,8 @@ import BetterNetrunning.Logging.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Integration.*
-import BetterNetrunning.RemoteBreach.Core.*
-import BetterNetrunning.RemoteBreach.Actions.*
 import BetterNetrunning.Minigame.*
 import BetterNetrunning.Systems.*
-import BetterNetrunning.RadialUnlock.*
 import BetterNetrunning.Marking.*
 import BetterNetrunning.CounterBreach.*
 import BetterNetrunningConfig.*
@@ -36,48 +33,6 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     markingSystem = GameInstance.GetScriptableSystemsContainer(gameInstance)
       .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
     hasMarks = IsDefined(markingSystem) && markingSystem.HasAnyMarked();
-  }
-
-  if GameInstance.IsValid(gameInstance) {
-    let container: ref<ScriptableSystemsContainer> = GameInstance.GetScriptableSystemsContainer(gameInstance);
-
-    let npcRBSS: ref<NPCRemoteBreachStateSystem> =
-      container.Get(BNConstants.CLASS_NPC_REMOTE_BREACH_STATE_SYSTEM()) as NPCRemoteBreachStateSystem;
-    if IsDefined(npcRBSS) && IsDefined(npcRBSS.GetCurrentNPC()) {
-      let puppet: ref<ScriptedPuppet> = this.m_entity as ScriptedPuppet;
-      if IsDefined(puppet) && Equals(puppet.GetPS().GetID(), npcRBSS.GetCurrentNPC().GetID()) {
-        if !IsDefined(markingSystem) || !markingSystem.IsScoutMode() {
-          ArrayClear(Deref(programs));
-          BNInfo("FilterPlayerPrograms", "NPC remote breach blocked — not in Scout mode");
-          return;
-        }
-        BNDebug("FilterPlayerPrograms", "NPC remote breach board — preserving programs");
-        return;
-      }
-    }
-
-    let devRBSS: ref<DeviceRemoteBreachStateSystem> =
-      container.Get(BNConstants.CLASS_DEVICE_REMOTE_BREACH_STATE_SYSTEM()) as DeviceRemoteBreachStateSystem;
-    if IsDefined(devRBSS) && IsDefined(devRBSS.GetCurrentDevice()) && this.m_isRemoteBreach {
-      let device: ref<Device> = this.m_entity as Device;
-      if IsDefined(device) && Equals(device.GetDevicePS().GetID(), devRBSS.GetCurrentDevice().GetID()) {
-
-        let perkSysRB: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
-        if !IsDefined(perkSysRB) || perkSysRB.GetPerkLevel(BNPerk.IntrusionSuite) <= 0 {
-          ArrayClear(Deref(programs));
-          BNInfo("FilterPlayerPrograms", "Intrusion Suite not owned — device remote breach blocked");
-          return;
-        }
-        if !IsDefined(markingSystem) || !markingSystem.IsScoutMode() {
-          ArrayClear(Deref(programs));
-          BNInfo("FilterPlayerPrograms", "Device remote breach blocked — not in Scout mode");
-          return;
-        }
-        BNDebug("FilterPlayerPrograms", "Device remote breach board — preserving programs");
-        return;
-      }
-    }
-
   }
 
   let npcPuppet: ref<ScriptedPuppet> = this.m_entity as ScriptedPuppet;
@@ -278,13 +233,9 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
   }
 
   let connectedToNetwork: Bool;
-  let data: ConnectedClassTypes;
-  let devPS: ref<SharedGameplayPS>;
 
   if (this.m_entity as GameObject).IsPuppet() {
     connectedToNetwork = true;
-    data = (this.m_entity as ScriptedPuppet).GetMasterConnectedClassTypes();
-    devPS = (this.m_entity as ScriptedPuppet).GetPS().GetDeviceLink();
   } else {
     let isAccessPoint: Bool = IsDefined(this.m_entity as AccessPoint);
     if isAccessPoint {
@@ -292,8 +243,6 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     } else {
       connectedToNetwork = (this.m_entity as Device).GetDevicePS().IsConnectedToPhysicalAccessPoint();
     }
-    data = (this.m_entity as Device).GetDevicePS().CheckMasterConnectedClassTypes();
-    devPS = (this.m_entity as Device).GetDevicePS();
   }
 
   let removedPrograms: array<TweakDBID>;
@@ -318,15 +267,9 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     } else if ShouldRemoveNonNetrunnerPrograms(actionID, miniGameActionRecord, this.m_isRemoteBreach, this.m_entity as GameObject) {
       shouldRemove = true;
       filterName = "NonNetrunnerFilter";
-    } else if !hasMarks && ShouldRemoveDeviceTypePrograms(actionID, miniGameActionRecord, data) {
-      shouldRemove = true;
-      filterName = "DeviceTypeFilter";
     } else if BonusDaemonUtils.IsDatamineDaemon(actionID) {
       shouldRemove = true;
       filterName = "DatamineFilter";
-    } else if !hasMarks && ShouldRemoveOutOfRangeDevicePrograms(actionID, (this.m_entity as GameObject).GetGame(), this.GetBreachPositionForFiltering(), this.m_entity as GameObject) {
-      shouldRemove = true;
-      filterName = "PhysicalRangeFilter";
     }
 
     if shouldRemove {
@@ -336,8 +279,6 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     }
     i -= 1;
   };
-
-  ApplyDNRDaemonGating(programs, devPS, this.m_isRemoteBreach, this.m_player as PlayerPuppet, this.m_entity);
 
   let finalProgramCount: Int32 = ArraySize(Deref(programs));
   DebugUtils.LogFilteringSummary(initialProgramCount, finalProgramCount, removedPrograms, "[FilterPlayerPrograms]");
@@ -497,17 +438,3 @@ private final func RestoreBetterNetrunningDaemons(
   }
 }
 
-@addMethod(MinigameGenerationRuleScalingPrograms)
-private final func GetBreachPositionForFiltering() -> Vector4 {
-  let targetEntity: wref<GameObject> = this.m_entity as GameObject;
-  if IsDefined(targetEntity) {
-    return targetEntity.GetWorldPosition();
-  }
-  let player: ref<PlayerPuppet> = this.m_player as PlayerPuppet;
-  if IsDefined(player) {
-    BNWarn("GetBreachPositionForFiltering", "Using player position as fallback");
-    return player.GetWorldPosition();
-  }
-  BNError("GetBreachPositionForFiltering", "Could not get breach position");
-  return Vector4(-999999.0, -999999.0, -999999.0, 1.0);
-}

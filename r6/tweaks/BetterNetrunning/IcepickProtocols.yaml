@@ -1,8 +1,8 @@
 
 Interactions.BNIcepickV1:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820014
-  description: LocKey#4820015
+  caption: LocKey#Better-Netrunning-Icepick-V1-Name
+  description: LocKey#Better-Netrunning-Icepick-V1-Description
   captionIcon: ChoiceCaptionParts.BNFractureIcon
 
 MinigameAction.BNIcepickV1:
@@ -14,8 +14,8 @@ MinigameAction.BNIcepickV1:
 
 Interactions.BNIcepickV2:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820016
-  description: LocKey#4820017
+  caption: LocKey#Better-Netrunning-Icepick-V2-Name
+  description: LocKey#Better-Netrunning-Icepick-V2-Description
   captionIcon: ChoiceCaptionParts.ICEMediumIcon
 
 MinigameAction.BNIcepickV2:
@@ -27,8 +27,8 @@ MinigameAction.BNIcepickV2:
 
 Interactions.BNIcepickV3:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820018
-  description: LocKey#4820019
+  caption: LocKey#Better-Netrunning-Icepick-V3-Name
+  description: LocKey#Better-Netrunning-Icepick-V3-Description
   captionIcon: ChoiceCaptionParts.BNSunderIcon
 
 MinigameAction.BNIcepickV3:

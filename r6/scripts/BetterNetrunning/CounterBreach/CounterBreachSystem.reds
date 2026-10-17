@@ -5,12 +5,11 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Network.*
 import BetterNetrunning.Marking.*
-import HackingExtensions.*
 
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
-public class CounterBreachSucceededEvent extends OnCustomHackingSucceeded {
+public class CounterBreachSucceededEvent extends BNHackResultCallback {
 
   public func Execute() -> Void {
     let gi: GameInstance = this.gameInstance;
@@ -33,7 +32,7 @@ public class CounterBreachSucceededEvent extends OnCustomHackingSucceeded {
   }
 }
 
-public class CounterBreachFailedEvent extends OnCustomHackingFailed {
+public class CounterBreachFailedEvent extends BNHackResultCallback {
 
   public func Execute() -> Void {
     let gi: GameInstance = this.gameInstance;
@@ -53,15 +52,11 @@ public class CounterBreachSystem extends ScriptableSystem {
 
   private let m_lastBreachWasStandalone: Bool;
 
-  private let m_abandonListener: ref<CallbackHandle>;
+  private let m_activeListener: ref<BNHackResultListener>;
 
   private func OnAttach() -> Void {
     this.m_isActive = false;
     this.m_lastBreachWasStandalone = false;
-  }
-
-  private func OnDetach() -> Void {
-    this.CleanupAbandonListener();
   }
 
   public func IsActive() -> Bool {
@@ -99,7 +94,7 @@ public class CounterBreachSystem extends ScriptableSystem {
 
   public func OnOutcomeFinished() -> Void {
     this.m_isActive = false;
-    this.CleanupAbandonListener();
+    this.m_activeListener = null;
   }
 
   public func ForceJackOut() -> Void {
@@ -299,29 +294,6 @@ public class CounterBreachSystem extends ScriptableSystem {
     return Cast<Int32>(this.GetCurrentRAM(gi)) / 4;
   }
 
-  private func CleanupAbandonListener() -> Void {
-    if IsDefined(this.m_abandonListener) {
-      let bbMinigame: ref<IBlackboard> =
-        GameInstance.GetBlackboardSystem(this.GetGameInstance())
-          .Get(GetAllBlackboardDefs().HackingMinigame);
-      if IsDefined(bbMinigame) {
-        bbMinigame.UnregisterListenerInt(
-          GetAllBlackboardDefs().HackingMinigame.State, this.m_abandonListener);
-      }
-      this.m_abandonListener = null;
-    }
-  }
-
-  protected cb func OnCounterBreachStateChanged(state: Int32) -> Void {
-    if state == 4 {
-      BNInfo("CounterBreach", "Counter-breach abandoned — applying fail consequence");
-      this.ApplyFailConsequence();
-      this.OnOutcomeFinished();
-    } else if state == 2 || state == 3 {
-      this.CleanupAbandonListener();
-    }
-  }
-
   public func Trigger() -> Void {
     if this.m_isActive {
       BNDebug("CounterBreach", "Already active — ignoring trigger");
@@ -352,38 +324,34 @@ public class CounterBreachSystem extends ScriptableSystem {
     }
     BNInfo("CounterBreach", "Firewall active — " + ToString(firewallCharges) + " charge(s) available (RAM=" + ToString(RoundF(this.GetCurrentRAM(gi))) + ")");
 
-    let hackSystem: ref<CustomHackingSystem> =
-      GameInstance.GetScriptableSystemsContainer(gi)
-        .Get(n"HackingExtensions.CustomHackingSystem") as CustomHackingSystem;
-
-    if !IsDefined(hackSystem) {
-      BNWarn("CounterBreach", "CustomHackingSystem not found — is the mod installed?");
+    let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
+    let currentState: HackingMinigameState = IntEnum(minigameBB.GetInt(GetAllBlackboardDefs().HackingMinigame.State));
+    if Equals(currentState, HackingMinigameState.InProgress) {
+      BNWarn("CounterBreach", "Counter-breach launch failed — player may already be hacking");
       return;
     }
 
     this.ForceJackOut();
 
-    let launched: Bool = hackSystem.StartNewHackInstance(
-      "ICE Counter-Breach",
-      t"CustomHackingSystemMinigame.BNCounterBreach",
-      null,
-      [],
-      new CounterBreachSucceededEvent(),
-      new CounterBreachFailedEvent()
+    let successCB: ref<CounterBreachSucceededEvent> = new CounterBreachSucceededEvent();
+    let failCB: ref<CounterBreachFailedEvent> = new CounterBreachFailedEvent();
+
+    this.m_activeListener = new BNHackResultListener();
+    this.m_activeListener.successCB = successCB;
+    this.m_activeListener.failCB    = failCB;
+    this.m_activeListener.Arm(gi);
+
+    let player: ref<PlayerPuppet> = GetPlayer(gi);
+
+    let launched: Bool = BNNativeBreachLauncher.Launch(
+      gi, player, t"CustomHackingSystemMinigame.BNCounterBreach", "ICE Counter-Breach"
     );
-
-    if launched {
-      this.m_isActive = true;
-      BNInfo("CounterBreach", "Counter-breach triggered — defeat the ICE retaliation or face the consequences");
-
-      let bbMinigame: ref<IBlackboard> =
-        GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
-      if IsDefined(bbMinigame) {
-        this.m_abandonListener = bbMinigame.RegisterListenerInt(
-          GetAllBlackboardDefs().HackingMinigame.State, this, n"OnCounterBreachStateChanged");
-      }
-    } else {
-      BNWarn("CounterBreach", "Counter-breach launch failed — player may already be hacking");
+    if !launched {
+      BNWarn("CounterBreach", "BNNativeBreachLauncher.Launch failed");
+      return;
     }
+
+    this.m_isActive = true;
+    BNInfo("CounterBreach", "Counter-breach triggered — defeat the ICE retaliation or face the consequences");
   }
 }

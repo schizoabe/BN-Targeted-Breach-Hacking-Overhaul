@@ -1,8 +1,8 @@
 
 Interactions.BNHidePresence:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820020
-  description: LocKey#4820021
+  caption: LocKey#Better-Netrunning-HidePresence-Name
+  description: LocKey#Better-Netrunning-HidePresence-Description
   captionIcon: ChoiceCaptionParts.BNGhostIcon
 
 MinigameAction.BNHidePresence:
@@ -14,8 +14,8 @@ MinigameAction.BNHidePresence:
 
 Interactions.BNDisarmICE:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820022
-  description: LocKey#4820023
+  caption: LocKey#Better-Netrunning-DisarmICE-Name
+  description: LocKey#Better-Netrunning-DisarmICE-Description
   captionIcon: ChoiceCaptionParts.ICEMajorIcon
 
 MinigameAction.BNDisarmICE:
@@ -27,8 +27,8 @@ MinigameAction.BNDisarmICE:
 
 Interactions.BNSignalNoise:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820024
-  description: LocKey#4820025
+  caption: LocKey#Better-Netrunning-SignalNoise-Name
+  description: LocKey#Better-Netrunning-SignalNoise-Description
   captionIcon: ChoiceCaptionParts.BNRavenIcon
 
 MinigameAction.BNSignalNoise:

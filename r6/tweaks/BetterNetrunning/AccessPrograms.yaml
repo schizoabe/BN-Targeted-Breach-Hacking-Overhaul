@@ -1,8 +1,8 @@
 
 Interactions.NetworkBasicAccess:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820003
-  description: LocKey#4820004
+  caption: LocKey#Better-Netrunning-Basic-Access-Name
+  description: LocKey#Better-Netrunning-Basic-Access-Description
   captionIcon: ChoiceCaptionParts.BreachProtocolIcon
 
 MinigameAction.UnlockQuickhacks:
@@ -15,8 +15,8 @@ MinigameAction.UnlockQuickhacks:
 
 Interactions.NetworkNPCAccess:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820005
-  description: LocKey#4820006
+  caption: LocKey#Better-Netrunning-NPC-Access-Name
+  description: LocKey#Better-Netrunning-NPC-Access-Description
   captionIcon: ChoiceCaptionParts.PingIcon
 
 MinigameAction.UnlockNPCQuickhacks:
@@ -29,8 +29,8 @@ MinigameAction.UnlockNPCQuickhacks:
 
 Interactions.NetworkCameraAccess:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820007
-  description: LocKey#4820008
+  caption: LocKey#Better-Netrunning-Camera-Access-Name
+  description: LocKey#Better-Netrunning-Camera-Access-Description
   captionIcon: ChoiceCaptionParts.CameraShutdownIcon
 
 MinigameAction.UnlockCameraQuickhacks:
@@ -43,8 +43,8 @@ MinigameAction.UnlockCameraQuickhacks:
 
 Interactions.NetworkTurretAccess:
   $base: Interactions.NetworkGainAccessProgram
-  caption: LocKey#4820009
-  description: LocKey#4820010
+  caption: LocKey#Better-Netrunning-Turret-Access-Name
+  description: LocKey#Better-Netrunning-Turret-Access-Description
   captionIcon: ChoiceCaptionParts.TurretShutdownIcon
 
 MinigameAction.UnlockTurretQuickhacks:

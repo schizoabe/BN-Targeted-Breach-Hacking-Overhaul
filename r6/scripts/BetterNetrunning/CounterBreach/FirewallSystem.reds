@@ -5,12 +5,14 @@ import BetterNetrunning.Core.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Marking.*
 import BetterNetrunning.Perks.*
-import HackingExtensions.*
 
 @addField(UploadFromNPCToPlayerListener)
 public let m_bnFirewallEngaged: Bool;
 
-public class BNFirewallSucceededEvent extends OnCustomHackingSucceeded {
+@addField(UploadFromNPCToPlayerListener)
+public let m_bnActiveResultListener: ref<BNHackResultListener>;
+
+public class BNFirewallSucceededEvent extends BNHackResultCallback {
   public let m_npcPuppet:    wref<ScriptedPuppet>;
   public let m_playerPuppet: wref<PlayerPuppet>;
   public let m_listener:     wref<UploadFromNPCToPlayerListener>;
@@ -22,6 +24,7 @@ public class BNFirewallSucceededEvent extends OnCustomHackingSucceeded {
 
     if IsDefined(this.m_listener) {
       BNFirewallUtils.CancelUpload(gi, this.m_listener, this.m_playerPuppet);
+      this.m_listener.m_bnActiveResultListener = null;
     }
 
     let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
@@ -59,13 +62,14 @@ public class BNFirewallSucceededEvent extends OnCustomHackingSucceeded {
   }
 }
 
-public class BNFirewallFailedEvent extends OnCustomHackingFailed {
+public class BNFirewallFailedEvent extends BNHackResultCallback {
   public let m_listener: wref<UploadFromNPCToPlayerListener>;
 
   public func Execute() -> Void {
 
     if IsDefined(this.m_listener) {
       this.m_listener.m_bnFirewallEngaged = false;
+      this.m_listener.m_bnActiveResultListener = null;
     }
     GameInstance.GetTimeSystem(this.gameInstance).UnsetTimeDilation(n"BNFirewall");
     BNInfo("Firewall", "Firewall minigame failed — upload resumes, hack lands");
@@ -166,10 +170,12 @@ private final func BNTryFirewall(gi: GameInstance) -> Bool {
     return false;
   }
 
-  let hackSystem: ref<CustomHackingSystem> =
-    GameInstance.GetScriptableSystemsContainer(gi)
-      .Get(n"HackingExtensions.CustomHackingSystem") as CustomHackingSystem;
-  if !IsDefined(hackSystem) { return false; }
+  let minigameBB: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().HackingMinigame);
+  let currentState: HackingMinigameState = IntEnum(minigameBB.GetInt(GetAllBlackboardDefs().HackingMinigame.State));
+  if Equals(currentState, HackingMinigameState.InProgress) {
+    BNWarn("Firewall", "Firewall minigame failed to launch — another minigame already active");
+    return false;
+  }
 
   let successCB: ref<BNFirewallSucceededEvent> = new BNFirewallSucceededEvent();
   successCB.m_npcPuppet    = this.m_npcPuppet;
@@ -182,35 +188,36 @@ private final func BNTryFirewall(gi: GameInstance) -> Bool {
   let failCB: ref<BNFirewallFailedEvent> = new BNFirewallFailedEvent();
   failCB.m_listener = this;
 
+  this.m_bnActiveResultListener = new BNHackResultListener();
+  this.m_bnActiveResultListener.successCB = successCB;
+  this.m_bnActiveResultListener.failCB    = failCB;
+  this.m_bnActiveResultListener.Arm(gi);
+
   GameInstance.GetTimeSystem(gi).SetTimeDilation(n"BNFirewall", 0.0);
-  let launched: Bool = hackSystem.StartNewHackInstance(
-    "BN Firewall",
-    t"CustomHackingSystemMinigame.BNFirewall",
-    null,
-    [],
-    successCB,
-    failCB
+
+  let npcEntity: wref<Entity> = this.m_npcPuppet as Entity;
+  let launched: Bool = BNNativeBreachLauncher.Launch(
+    gi, this.m_playerPuppet, t"CustomHackingSystemMinigame.BNFirewall", "BN Firewall", npcEntity
   );
-
-  if launched {
-    this.m_bnFirewallEngaged = true;
-
-    GameInstance.GetStatPoolsSystem(gi).RequestChangingStatPoolValue(
-      Cast<StatsObjectID>(this.m_playerPuppet.GetEntityID()),
-      gamedataStatPoolType.Memory,
-      -4.0,
-      this.m_playerPuppet,
-      false,
-      false
-    );
-    BNInfo("Firewall", "Firewall engaged — charges=" + ToString(charges) + ", -4 RAM spent");
-  } else {
-
+  if !launched {
+    BNWarn("Firewall", "BNNativeBreachLauncher.Launch failed");
     GameInstance.GetTimeSystem(gi).UnsetTimeDilation(n"BNFirewall");
-    BNWarn("Firewall", "Firewall minigame failed to launch — another minigame already active");
+    return false;
   }
 
-  return launched;
+  this.m_bnFirewallEngaged = true;
+
+  GameInstance.GetStatPoolsSystem(gi).RequestChangingStatPoolValue(
+    Cast<StatsObjectID>(this.m_playerPuppet.GetEntityID()),
+    gamedataStatPoolType.Memory,
+    -4.0,
+    this.m_playerPuppet,
+    false,
+    false
+  );
+  BNInfo("Firewall", "Firewall engaged — charges=" + ToString(charges) + ", -4 RAM spent");
+
+  return true;
 }
 
 @wrapMethod(UploadFromNPCToPlayerListener)
