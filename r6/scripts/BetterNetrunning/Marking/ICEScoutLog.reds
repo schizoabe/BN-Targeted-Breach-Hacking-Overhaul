@@ -8,18 +8,18 @@ import BetterNetrunning.UI.*
 public abstract class ICEDiagnosticUtils {
 
   public static func GetTierLabel(hitsRequired: Int32) -> String {
-    if hitsRequired <= 0 { return "UNKNOWN ICE"; }
-    if hitsRequired <= 3 { return "LEGACY ICE"; }
-    if hitsRequired <= 5 { return "HARDENED ICE"; }
-    return "CORPORATE ICE";
+    if hitsRequired <= 0 { return GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-TierUnknown"); }
+    if hitsRequired <= 3 { return GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-TierLegacy"); }
+    if hitsRequired <= 5 { return GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-TierHardened"); }
+    return GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-TierCorporate");
   }
 
   public static func GetStatusLabel(hitsApplied: Int32, hitsRequired: Int32) -> String {
-    if hitsRequired <= 0           { return "UNKNOWN"; }
-    if hitsApplied <= 0            { return "INTACT"; }
-    if hitsApplied >= hitsRequired { return "FULLY COMPROMISED"; }
+    if hitsRequired <= 0           { return GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-StatusUnknown"); }
+    if hitsApplied <= 0            { return GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-StatusIntact"); }
+    if hitsApplied >= hitsRequired { return GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-StatusCompromised"); }
     let pct: Int32 = (hitsApplied * 100) / hitsRequired;
-    return ToString(pct) + "% DEGRADED";
+    return ToString(pct) + GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-StatusDegradedSuffix");
   }
 }
 
@@ -35,17 +35,20 @@ public class ICEScoutLog {
 
   private let m_isVisible: Bool;
 
-  public static func Create(parent: ref<inkCompoundWidget>) -> ref<ICEScoutLog> {
+  private let m_scale: Float;
+
+  public static func Create(parent: ref<inkCompoundWidget>, gi: GameInstance) -> ref<ICEScoutLog> {
     let log = new ICEScoutLog();
-    log.Build(parent);
+    log.Build(parent, BNUIScale.GetScale(gi));
     return log;
   }
 
-  private func Build(parent: ref<inkCompoundWidget>) -> Void {
-    let w:     Float = 680.0;
-    let h:     Float = 280.0;
-    let sideW: Float = 50.0;
-    let txtX:  Float = sideW + 20.0;
+  private func Build(parent: ref<inkCompoundWidget>, scale: Float) -> Void {
+    this.m_scale = scale;
+    let w:     Float = 680.0 * scale;
+    let h:     Float = 280.0 * scale;
+    let sideW: Float = 50.0 * scale;
+    let txtX:  Float = sideW + 20.0 * scale;
 
     let canvas = new inkCanvas();
     canvas.SetName(n"ICEScoutInner");
@@ -82,8 +85,8 @@ public class ICEScoutLog {
 
     let sidebar = new inkImage();
     sidebar.SetAnchor(inkEAnchor.TopLeft);
-    sidebar.SetSize(new Vector2(sideW, h - 20.0));
-    sidebar.SetMargin(new inkMargin(8.0, 10.0, 0.0, 0.0));
+    sidebar.SetSize(new Vector2(sideW, h - 20.0 * scale));
+    sidebar.SetMargin(new inkMargin(8.0 * scale, 10.0 * scale, 0.0, 0.0));
     sidebar.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
     sidebar.SetBrushTileType(inkBrushTileType.NoTile);
     sidebar.SetAtlasResource(r"base\\gameplay\\gui\\quests\\assets\\sq021_farms_map.inkatlas");
@@ -94,18 +97,18 @@ public class ICEScoutLog {
 
     let title = new inkText();
     title.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    title.SetFontSize(20);
+    title.SetFontSize(Cast<Int32>(20.0 * scale));
     title.SetLetterCase(textLetterCase.UpperCase);
     title.SetAnchor(inkEAnchor.TopLeft);
-    title.SetMargin(new inkMargin(txtX, 10.0, 12.0, 0.0));
+    title.SetMargin(new inkMargin(txtX, 10.0 * scale, 12.0 * scale, 0.0));
     title.SetTintColor(new HDRColor(0.15, 1.2, 1.1, 1.0));
-    title.SetText("Diagnostic Feed");
+    title.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-Title"));
     title.Reparent(canvas);
 
     let footerFluff = new inkImage();
     footerFluff.SetAnchor(inkEAnchor.TopLeft);
-    footerFluff.SetSize(new Vector2(w - sideW - 30.0, 18.0));
-    footerFluff.SetMargin(new inkMargin(txtX, h - 38.0, 0.0, 0.0));
+    footerFluff.SetSize(new Vector2(w - sideW - 30.0 * scale, 18.0 * scale));
+    footerFluff.SetMargin(new inkMargin(txtX, h - 38.0 * scale, 0.0, 0.0));
     footerFluff.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
     footerFluff.SetBrushTileType(inkBrushTileType.NoTile);
     footerFluff.SetAtlasResource(r"base\\gameplay\\gui\\quests\\assets\\q000_jenkins_brief.inkatlas");
@@ -117,21 +120,21 @@ public class ICEScoutLog {
 
     let footer = new inkText();
     footer.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    footer.SetFontSize(10);
+    footer.SetFontSize(Cast<Int32>(10.0 * scale));
     footer.SetLetterCase(textLetterCase.UpperCase);
     footer.SetAnchor(inkEAnchor.TopLeft);
-    footer.SetMargin(new inkMargin(txtX, h - 24.0, 12.0, 0.0));
+    footer.SetMargin(new inkMargin(txtX, h - 24.0 * scale, 12.0 * scale, 0.0));
     footer.SetTintColor(new HDRColor(0.15, 1.2, 1.1, 0.7));
-    footer.SetText("ICE Diagnostic System v1.4");
+    footer.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-Footer"));
     footer.Reparent(canvas);
     this.m_footer = footer;
 
     let content = new inkText();
     content.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-    content.SetFontSize(15);
+    content.SetFontSize(Cast<Int32>(15.0 * scale));
     content.SetLetterCase(textLetterCase.UpperCase);
     content.SetAnchor(inkEAnchor.TopLeft);
-    content.SetMargin(new inkMargin(txtX, 38.0, 12.0, 0.0));
+    content.SetMargin(new inkMargin(txtX, 38.0 * scale, 12.0 * scale, 0.0));
     content.SetTintColor(new HDRColor(0.15, 1.2, 1.1, 1.0));
     content.SetText("");
     content.Reparent(canvas);
@@ -140,20 +143,21 @@ public class ICEScoutLog {
 
   private func ResizeForEntries(count: Int32) -> Void {
     if !IsDefined(this.m_canvas) { return; }
-    let w:       Float = 680.0;
-    let sideW:   Float = 50.0;
-    let txtX:    Float = sideW + 20.0;
-    let lineH:   Float = 20.0;
-    let minH:    Float = 110.0;
-    let newH:    Float = 38.0 + Cast<Float>(count) * lineH + 48.0;
+    let scale:   Float = this.m_scale;
+    let w:       Float = 680.0 * scale;
+    let sideW:   Float = 50.0 * scale;
+    let txtX:    Float = sideW + 20.0 * scale;
+    let lineH:   Float = 20.0 * scale;
+    let minH:    Float = 110.0 * scale;
+    let newH:    Float = 38.0 * scale + Cast<Float>(count) * lineH + 48.0 * scale;
     if newH < minH { newH = minH; }
 
     this.m_canvas.SetSize(new Vector2(w, newH));
     this.m_bg.SetSize(new Vector2(w, newH));
     this.m_frame.SetSize(new Vector2(w, newH));
-    this.m_sidebar.SetSize(new Vector2(sideW, newH - 20.0));
-    this.m_footerFluff.SetMargin(new inkMargin(txtX, newH - 38.0, 0.0, 0.0));
-    this.m_footer.SetMargin(new inkMargin(txtX, newH - 24.0, 12.0, 0.0));
+    this.m_sidebar.SetSize(new Vector2(sideW, newH - 20.0 * scale));
+    this.m_footerFluff.SetMargin(new inkMargin(txtX, newH - 38.0 * scale, 0.0, 0.0));
+    this.m_footer.SetMargin(new inkMargin(txtX, newH - 24.0 * scale, 12.0 * scale, 0.0));
   }
 
   public func Refresh(gi: GameInstance) -> Void {
@@ -304,7 +308,7 @@ public class ICEScoutLog {
         if hitsRequired == 0 { hitsRequired = ps.m_bnIceHitsRequired; }
         if ps.m_bnIceDefeated {
           return entry.displayName + ": "
-              + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", FULLY COMPROMISED\n";
+              + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", " + GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-StatusCompromised") + "\n";
         }
       }
     } else {
@@ -317,7 +321,7 @@ public class ICEScoutLog {
           if hitsRequired == 0 { hitsRequired = vps.m_bnIceHitsRequired; }
           if vps.m_bnIceDefeated {
             return entry.displayName + ": "
-                + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", FULLY COMPROMISED\n";
+                + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", " + GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-StatusCompromised") + "\n";
           }
         }
       }
@@ -345,7 +349,7 @@ public class ICEScoutLog {
 
         if ps.m_bnNPCIceDefeated {
           return entry.displayName + ": "
-              + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", FULLY COMPROMISED\n";
+              + ICEDiagnosticUtils.GetTierLabel(hitsRequired) + ", " + GetLocalizedTextByKey(n"Better-Netrunning-UI-ICEScoutLog-StatusCompromised") + "\n";
         }
       }
     }
@@ -459,15 +463,17 @@ protected cb func OnGameAttached() -> Bool {
 
   hudRoot.RemoveChildByName(n"ICEScoutCanvas");
 
+  let scale: Float = BNUIScale.GetScale(gi);
+
   let canvas = new inkCanvas();
   canvas.SetName(n"ICEScoutCanvas");
   canvas.SetAnchor(inkEAnchor.TopLeft);
   canvas.SetAnchorPoint(new Vector2(0.0, 0.0));
-  canvas.SetMargin(new inkMargin(20.0, 630.0, 0.0, 0.0));
-  canvas.SetSize(new Vector2(680.0, 900.0));
+  canvas.SetMargin(new inkMargin(20.0 * scale, 630.0 * scale, 0.0, 0.0));
+  canvas.SetSize(new Vector2(680.0 * scale, 900.0 * scale));
   canvas.Reparent(hudRoot);
 
-  sys.RegisterLog(ICEScoutLog.Create(canvas));
+  sys.RegisterLog(ICEScoutLog.Create(canvas, gi));
   BNInfo("UI", "ICEScoutLog injected");
 
   return result;

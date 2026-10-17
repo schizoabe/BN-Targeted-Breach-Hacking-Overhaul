@@ -46,18 +46,21 @@ public class BNTestPanel {
     private let m_disarmFill:    ref<inkRectangle>;
     private let m_counterFill:   ref<inkRectangle>;
 
-    public static func Create(parent: ref<inkCompoundWidget>) -> ref<BNTestPanel> {
+    private let m_scale: Float;
+
+    public static func Create(parent: ref<inkCompoundWidget>, gi: GameInstance) -> ref<BNTestPanel> {
         let p = new BNTestPanel();
-        p.Build(parent);
+        p.Build(parent, BNUIScale.GetScale(gi));
         return p;
     }
 
-    private func Build(parent: ref<inkCompoundWidget>) -> Void {
-        let w:      Float = 520.0;
-        let h:      Float = 320.0;
-        let sideW:  Float = 50.0;
-        let txtX:   Float = sideW + 20.0;
-        let trackW: Float = w - txtX - 12.0;
+    private func Build(parent: ref<inkCompoundWidget>, scale: Float) -> Void {
+        this.m_scale = scale;
+        let w:      Float = 520.0 * scale;
+        let h:      Float = 320.0 * scale;
+        let sideW:  Float = 50.0 * scale;
+        let txtX:   Float = sideW + 20.0 * scale;
+        let trackW: Float = w - txtX - 12.0 * scale;
 
         let canvas = new inkCanvas();
         canvas.SetName(n"BNTestInner");
@@ -94,8 +97,8 @@ public class BNTestPanel {
 
         let sidebar = new inkImage();
         sidebar.SetAnchor(inkEAnchor.TopLeft);
-        sidebar.SetSize(new Vector2(sideW, h - 20.0));
-        sidebar.SetMargin(new inkMargin(8.0, 10.0, 0.0, 0.0));
+        sidebar.SetSize(new Vector2(sideW, h - 20.0 * scale));
+        sidebar.SetMargin(new inkMargin(8.0 * scale, 10.0 * scale, 0.0, 0.0));
         sidebar.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
         sidebar.SetBrushTileType(inkBrushTileType.NoTile);
         sidebar.SetAtlasResource(r"base\\gameplay\\gui\\quests\\assets\\sq021_farms_map.inkatlas");
@@ -106,130 +109,130 @@ public class BNTestPanel {
 
         let deckLine = new inkText();
         deckLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        deckLine.SetFontSize(20);
+        deckLine.SetFontSize(Cast<Int32>(20.0 * scale));
         deckLine.SetLetterCase(textLetterCase.UpperCase);
         deckLine.SetAnchor(inkEAnchor.TopLeft);
-        deckLine.SetMargin(new inkMargin(txtX, 10.0, 12.0, 0.0));
+        deckLine.SetMargin(new inkMargin(txtX, 10.0 * scale, 12.0 * scale, 0.0));
         deckLine.SetTintColor(new HDRColor(1.2, 0.78, 0.12, 1.0));
-        deckLine.SetText("CYBERDECK");
+        deckLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-CyberdeckPlaceholder"));
         deckLine.Reparent(canvas);
         this.m_deckLine = deckLine;
 
         let quickhackLine = new inkText();
         quickhackLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        quickhackLine.SetFontSize(10);
+        quickhackLine.SetFontSize(Cast<Int32>(10.0 * scale));
         quickhackLine.SetLetterCase(textLetterCase.UpperCase);
         quickhackLine.SetAnchor(inkEAnchor.TopLeft);
-        quickhackLine.SetMargin(new inkMargin(txtX, 30.0, 12.0, 0.0));
+        quickhackLine.SetMargin(new inkMargin(txtX, 30.0 * scale, 12.0 * scale, 0.0));
         quickhackLine.SetTintColor(new HDRColor(0.50, 0.20, 0.65, 0.55));
-        quickhackLine.SetText("CASCADE ... ?");
+        quickhackLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-CascadePrefix") + "?");
         quickhackLine.Reparent(canvas);
         this.m_quickhackLine = quickhackLine;
 
         let modeLine = new inkText();
         modeLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        modeLine.SetFontSize(10);
+        modeLine.SetFontSize(Cast<Int32>(10.0 * scale));
         modeLine.SetLetterCase(textLetterCase.UpperCase);
         modeLine.SetAnchor(inkEAnchor.TopLeft);
-        modeLine.SetMargin(new inkMargin(txtX, 42.0, 12.0, 0.0));
+        modeLine.SetMargin(new inkMargin(txtX, 42.0 * scale, 12.0 * scale, 0.0));
         modeLine.SetTintColor(new HDRColor(0.10, 0.60, 0.60, 0.8));
-        modeLine.SetText("MODE ... SCOUT");
+        modeLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-ModeScout"));
         modeLine.Reparent(canvas);
         this.m_modeLine = modeLine;
 
         let div1 = new inkRectangle();
         div1.SetAnchor(inkEAnchor.TopLeft);
-        div1.SetMargin(new inkMargin(txtX, 60.0, 0.0, 0.0));
-        div1.SetSize(new Vector2(trackW, 1.0));
+        div1.SetMargin(new inkMargin(txtX, 60.0 * scale, 0.0, 0.0));
+        div1.SetSize(new Vector2(trackW, 1.0 * scale));
         div1.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.5));
         div1.Reparent(canvas);
 
         let iceLine = new inkText();
         iceLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        iceLine.SetFontSize(14);
+        iceLine.SetFontSize(Cast<Int32>(14.0 * scale));
         iceLine.SetLetterCase(textLetterCase.UpperCase);
         iceLine.SetAnchor(inkEAnchor.TopLeft);
-        iceLine.SetMargin(new inkMargin(txtX, 70.0, 12.0, 0.0));
+        iceLine.SetMargin(new inkMargin(txtX, 70.0 * scale, 12.0 * scale, 0.0));
         iceLine.SetTintColor(new HDRColor(0.10, 0.80, 0.80, 1.0));
-        iceLine.SetText("ICE INTEGRITY ... NOMINAL");
+        iceLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-IceNominal"));
         iceLine.Reparent(canvas);
         this.m_iceLine = iceLine;
 
         let iceTrack = new inkRectangle();
         iceTrack.SetAnchor(inkEAnchor.TopLeft);
-        iceTrack.SetMargin(new inkMargin(txtX, 88.0, 0.0, 0.0));
-        iceTrack.SetSize(new Vector2(trackW, 10.0));
+        iceTrack.SetMargin(new inkMargin(txtX, 88.0 * scale, 0.0, 0.0));
+        iceTrack.SetSize(new Vector2(trackW, 10.0 * scale));
         iceTrack.SetTintColor(new HDRColor(0.08, 0.08, 0.06, 1.0));
         iceTrack.Reparent(canvas);
         this.m_iceTrack = iceTrack;
 
         let iceFill = new inkRectangle();
         iceFill.SetAnchor(inkEAnchor.TopLeft);
-        iceFill.SetMargin(new inkMargin(txtX, 88.0, 0.0, 0.0));
-        iceFill.SetSize(new Vector2(trackW, 10.0));
+        iceFill.SetMargin(new inkMargin(txtX, 88.0 * scale, 0.0, 0.0));
+        iceFill.SetSize(new Vector2(trackW, 10.0 * scale));
         iceFill.SetTintColor(new HDRColor(0.10, 0.80, 0.80, 1.0));
         iceFill.Reparent(canvas);
         this.m_iceFill = iceFill;
 
         let firewallLine = new inkText();
         firewallLine.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        firewallLine.SetFontSize(14);
+        firewallLine.SetFontSize(Cast<Int32>(14.0 * scale));
         firewallLine.SetLetterCase(textLetterCase.UpperCase);
         firewallLine.SetAnchor(inkEAnchor.TopLeft);
-        firewallLine.SetMargin(new inkMargin(txtX, 108.0, 12.0, 0.0));
+        firewallLine.SetMargin(new inkMargin(txtX, 108.0 * scale, 12.0 * scale, 0.0));
         firewallLine.SetTintColor(new HDRColor(0.20, 0.45, 1.30, 0.4));
-        firewallLine.SetText("FIREWALL ... STANDBY");
+        firewallLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-FirewallStandby"));
         firewallLine.Reparent(canvas);
         this.m_firewallLine = firewallLine;
 
         let div2 = new inkRectangle();
         div2.SetAnchor(inkEAnchor.TopLeft);
-        div2.SetMargin(new inkMargin(txtX, 130.0, 0.0, 0.0));
-        div2.SetSize(new Vector2(trackW, 1.0));
+        div2.SetMargin(new inkMargin(txtX, 130.0 * scale, 0.0, 0.0));
+        div2.SetSize(new Vector2(trackW, 1.0 * scale));
         div2.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.3));
         div2.Reparent(canvas);
 
         let heatLabel = new inkText();
         heatLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        heatLabel.SetFontSize(14);
+        heatLabel.SetFontSize(Cast<Int32>(14.0 * scale));
         heatLabel.SetLetterCase(textLetterCase.UpperCase);
         heatLabel.SetAnchor(inkEAnchor.TopLeft);
-        heatLabel.SetMargin(new inkMargin(txtX, 142.0, 12.0, 0.0));
+        heatLabel.SetMargin(new inkMargin(txtX, 142.0 * scale, 12.0 * scale, 0.0));
         heatLabel.SetTintColor(new HDRColor(1.2, 0.78, 0.12, 1.0));
-        heatLabel.SetText("NETWORK HEAT ... COLD 0%");
+        heatLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatCold") + " 0%");
         heatLabel.Reparent(canvas);
         this.m_heatLabel = heatLabel;
 
         let heatTrack = new inkRectangle();
         heatTrack.SetAnchor(inkEAnchor.TopLeft);
-        heatTrack.SetMargin(new inkMargin(txtX, 160.0, 0.0, 0.0));
-        heatTrack.SetSize(new Vector2(trackW, 10.0));
+        heatTrack.SetMargin(new inkMargin(txtX, 160.0 * scale, 0.0, 0.0));
+        heatTrack.SetSize(new Vector2(trackW, 10.0 * scale));
         heatTrack.SetTintColor(new HDRColor(0.08, 0.08, 0.06, 1.0));
         heatTrack.Reparent(canvas);
 
         let heatFill = new inkRectangle();
         heatFill.SetAnchor(inkEAnchor.TopLeft);
-        heatFill.SetMargin(new inkMargin(txtX, 160.0, 0.0, 0.0));
-        heatFill.SetSize(new Vector2(1.0, 10.0));
+        heatFill.SetMargin(new inkMargin(txtX, 160.0 * scale, 0.0, 0.0));
+        heatFill.SetSize(new Vector2(1.0, 10.0 * scale));
         heatFill.SetTintColor(new HDRColor(0.15, 1.1, 0.15, 1.0));
         heatFill.Reparent(canvas);
         this.m_heatFill = heatFill;
 
         let signalLabel = new inkText();
         signalLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        signalLabel.SetFontSize(14);
+        signalLabel.SetFontSize(Cast<Int32>(14.0 * scale));
         signalLabel.SetLetterCase(textLetterCase.UpperCase);
         signalLabel.SetAnchor(inkEAnchor.TopLeft);
-        signalLabel.SetMargin(new inkMargin(txtX, 200.0, 12.0, 0.0));
+        signalLabel.SetMargin(new inkMargin(txtX, 200.0 * scale, 12.0 * scale, 0.0));
         signalLabel.SetTintColor(new HDRColor(0.05, 0.50, 0.50, 0.7));
-        signalLabel.SetText("RAVEN ... READY");
+        signalLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-RavenPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Ready"));
         signalLabel.Reparent(canvas);
         this.m_signalLabel = signalLabel;
 
         let signalTrack = new inkRectangle();
         signalTrack.SetAnchor(inkEAnchor.TopLeft);
-        signalTrack.SetMargin(new inkMargin(txtX, 218.0, 0.0, 0.0));
-        signalTrack.SetSize(new Vector2(trackW, 10.0));
+        signalTrack.SetMargin(new inkMargin(txtX, 218.0 * scale, 0.0, 0.0));
+        signalTrack.SetSize(new Vector2(trackW, 10.0 * scale));
         signalTrack.SetTintColor(new HDRColor(0.08, 0.08, 0.06, 1.0));
         signalTrack.SetVisible(false);
         signalTrack.Reparent(canvas);
@@ -237,8 +240,8 @@ public class BNTestPanel {
 
         let signalFill = new inkRectangle();
         signalFill.SetAnchor(inkEAnchor.TopLeft);
-        signalFill.SetMargin(new inkMargin(txtX, 218.0, 0.0, 0.0));
-        signalFill.SetSize(new Vector2(1.0, 10.0));
+        signalFill.SetMargin(new inkMargin(txtX, 218.0 * scale, 0.0, 0.0));
+        signalFill.SetSize(new Vector2(1.0, 10.0 * scale));
         signalFill.SetTintColor(new HDRColor(0.10, 0.80, 0.75, 1.0));
         signalFill.SetVisible(false);
         signalFill.Reparent(canvas);
@@ -246,19 +249,19 @@ public class BNTestPanel {
 
         let hideLabel = new inkText();
         hideLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        hideLabel.SetFontSize(14);
+        hideLabel.SetFontSize(Cast<Int32>(14.0 * scale));
         hideLabel.SetLetterCase(textLetterCase.UpperCase);
         hideLabel.SetAnchor(inkEAnchor.TopLeft);
-        hideLabel.SetMargin(new inkMargin(txtX, 226.0, 12.0, 0.0));
+        hideLabel.SetMargin(new inkMargin(txtX, 226.0 * scale, 12.0 * scale, 0.0));
         hideLabel.SetTintColor(new HDRColor(0.60, 0.40, 0.08, 0.4));
-        hideLabel.SetText("GHOST ... OFFLINE");
+        hideLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-GhostPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Offline"));
         hideLabel.Reparent(canvas);
         this.m_hideLabel = hideLabel;
 
         let hideTrack = new inkRectangle();
         hideTrack.SetAnchor(inkEAnchor.TopLeft);
-        hideTrack.SetMargin(new inkMargin(txtX, 244.0, 0.0, 0.0));
-        hideTrack.SetSize(new Vector2(trackW, 10.0));
+        hideTrack.SetMargin(new inkMargin(txtX, 244.0 * scale, 0.0, 0.0));
+        hideTrack.SetSize(new Vector2(trackW, 10.0 * scale));
         hideTrack.SetTintColor(new HDRColor(0.08, 0.08, 0.06, 1.0));
         hideTrack.SetVisible(false);
         hideTrack.Reparent(canvas);
@@ -266,8 +269,8 @@ public class BNTestPanel {
 
         let hideFill = new inkRectangle();
         hideFill.SetAnchor(inkEAnchor.TopLeft);
-        hideFill.SetMargin(new inkMargin(txtX, 244.0, 0.0, 0.0));
-        hideFill.SetSize(new Vector2(1.0, 10.0));
+        hideFill.SetMargin(new inkMargin(txtX, 244.0 * scale, 0.0, 0.0));
+        hideFill.SetSize(new Vector2(1.0, 10.0 * scale));
         hideFill.SetTintColor(new HDRColor(0.20, 0.60, 1.40, 1.0));
         hideFill.SetVisible(false);
         hideFill.Reparent(canvas);
@@ -275,19 +278,19 @@ public class BNTestPanel {
 
         let disarmLabel = new inkText();
         disarmLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        disarmLabel.SetFontSize(14);
+        disarmLabel.SetFontSize(Cast<Int32>(14.0 * scale));
         disarmLabel.SetLetterCase(textLetterCase.UpperCase);
         disarmLabel.SetAnchor(inkEAnchor.TopLeft);
-        disarmLabel.SetMargin(new inkMargin(txtX, 252.0, 12.0, 0.0));
+        disarmLabel.SetMargin(new inkMargin(txtX, 252.0 * scale, 12.0 * scale, 0.0));
         disarmLabel.SetTintColor(new HDRColor(0.60, 0.40, 0.08, 0.4));
-        disarmLabel.SetText("NULL ... OFFLINE");
+        disarmLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-NullPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Offline"));
         disarmLabel.Reparent(canvas);
         this.m_disarmLabel = disarmLabel;
 
         let disarmTrack = new inkRectangle();
         disarmTrack.SetAnchor(inkEAnchor.TopLeft);
-        disarmTrack.SetMargin(new inkMargin(txtX, 270.0, 0.0, 0.0));
-        disarmTrack.SetSize(new Vector2(trackW, 10.0));
+        disarmTrack.SetMargin(new inkMargin(txtX, 270.0 * scale, 0.0, 0.0));
+        disarmTrack.SetSize(new Vector2(trackW, 10.0 * scale));
         disarmTrack.SetTintColor(new HDRColor(0.08, 0.08, 0.06, 1.0));
         disarmTrack.SetVisible(false);
         disarmTrack.Reparent(canvas);
@@ -295,8 +298,8 @@ public class BNTestPanel {
 
         let disarmFill = new inkRectangle();
         disarmFill.SetAnchor(inkEAnchor.TopLeft);
-        disarmFill.SetMargin(new inkMargin(txtX, 270.0, 0.0, 0.0));
-        disarmFill.SetSize(new Vector2(1.0, 10.0));
+        disarmFill.SetMargin(new inkMargin(txtX, 270.0 * scale, 0.0, 0.0));
+        disarmFill.SetSize(new Vector2(1.0, 10.0 * scale));
         disarmFill.SetTintColor(new HDRColor(1.10, 0.90, 0.10, 1.0));
         disarmFill.SetVisible(false);
         disarmFill.Reparent(canvas);
@@ -304,8 +307,8 @@ public class BNTestPanel {
 
         let div3 = new inkRectangle();
         div3.SetAnchor(inkEAnchor.TopLeft);
-        div3.SetMargin(new inkMargin(txtX, 278.0, 0.0, 0.0));
-        div3.SetSize(new Vector2(trackW, 1.0));
+        div3.SetMargin(new inkMargin(txtX, 278.0 * scale, 0.0, 0.0));
+        div3.SetSize(new Vector2(trackW, 1.0 * scale));
         div3.SetTintColor(new HDRColor(0.90, 0.58, 0.10, 0.5));
         div3.SetVisible(false);
         div3.Reparent(canvas);
@@ -313,20 +316,20 @@ public class BNTestPanel {
 
         let counterLabel = new inkText();
         counterLabel.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        counterLabel.SetFontSize(14);
+        counterLabel.SetFontSize(Cast<Int32>(14.0 * scale));
         counterLabel.SetLetterCase(textLetterCase.UpperCase);
         counterLabel.SetAnchor(inkEAnchor.TopLeft);
-        counterLabel.SetMargin(new inkMargin(txtX, 290.0, 12.0, 0.0));
+        counterLabel.SetMargin(new inkMargin(txtX, 290.0 * scale, 12.0 * scale, 0.0));
         counterLabel.SetTintColor(new HDRColor(1.50, 0.20, 0.05, 1.0));
-        counterLabel.SetText("ICE BREACH ... INCOMING");
+        counterLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-CounterIncoming"));
         counterLabel.SetVisible(false);
         counterLabel.Reparent(canvas);
         this.m_counterLabel = counterLabel;
 
         let counterTrack = new inkRectangle();
         counterTrack.SetAnchor(inkEAnchor.TopLeft);
-        counterTrack.SetMargin(new inkMargin(txtX, 308.0, 0.0, 0.0));
-        counterTrack.SetSize(new Vector2(trackW, 10.0));
+        counterTrack.SetMargin(new inkMargin(txtX, 308.0 * scale, 0.0, 0.0));
+        counterTrack.SetSize(new Vector2(trackW, 10.0 * scale));
         counterTrack.SetTintColor(new HDRColor(0.08, 0.08, 0.06, 1.0));
         counterTrack.SetVisible(false);
         counterTrack.Reparent(canvas);
@@ -334,8 +337,8 @@ public class BNTestPanel {
 
         let counterFill = new inkRectangle();
         counterFill.SetAnchor(inkEAnchor.TopLeft);
-        counterFill.SetMargin(new inkMargin(txtX, 308.0, 0.0, 0.0));
-        counterFill.SetSize(new Vector2(1.0, 10.0));
+        counterFill.SetMargin(new inkMargin(txtX, 308.0 * scale, 0.0, 0.0));
+        counterFill.SetSize(new Vector2(1.0, 10.0 * scale));
         counterFill.SetTintColor(new HDRColor(1.50, 0.08, 0.05, 1.0));
         counterFill.SetVisible(false);
         counterFill.Reparent(canvas);
@@ -343,8 +346,8 @@ public class BNTestPanel {
 
         let footerFluff = new inkImage();
         footerFluff.SetAnchor(inkEAnchor.TopLeft);
-        footerFluff.SetSize(new Vector2(trackW, 18.0));
-        footerFluff.SetMargin(new inkMargin(txtX, h - 25.0, 0.0, 0.0));
+        footerFluff.SetSize(new Vector2(trackW, 18.0 * scale));
+        footerFluff.SetMargin(new inkMargin(txtX, h - 25.0 * scale, 0.0, 0.0));
         footerFluff.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
         footerFluff.SetBrushTileType(inkBrushTileType.NoTile);
         footerFluff.SetAtlasResource(r"base\\gameplay\\gui\\quests\\assets\\q000_jenkins_brief.inkatlas");
@@ -393,10 +396,11 @@ public class BNTestPanel {
         counterBreachTime: Float
     ) -> Void {
         if !IsDefined(this.m_canvas) { return; }
-        let w:      Float = 520.0;
-        let sideW:  Float = 50.0;
-        let txtX:   Float = 70.0;
-        let trackW: Float = 438.0;
+        let scale:  Float = this.m_scale;
+        let w:      Float = 520.0 * scale;
+        let sideW:  Float = 50.0 * scale;
+        let txtX:   Float = 70.0 * scale;
+        let trackW: Float = 438.0 * scale;
 
         let deckMss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
             .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
@@ -407,19 +411,19 @@ public class BNTestPanel {
 
         if IsDefined(deckMss) && IsDefined(this.m_quickhackLine) {
             let qhName: String = deckMss.GetCascadeQuickhackName();
-            this.m_quickhackLine.SetText("CASCADE ... " + (NotEquals(qhName, "") ? qhName : "NONE"));
+            this.m_quickhackLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-CascadePrefix") + (NotEquals(qhName, "") ? qhName : GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-None")));
         }
 
         if IsDefined(deckMss) && IsDefined(this.m_modeLine) {
             let mode: Int32 = deckMss.GetBreachMode();
             if mode == 1 {
-                this.m_modeLine.SetText("MODE ... ATTACK");
+                this.m_modeLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-ModeAttack"));
                 this.m_modeLine.SetTintColor(new HDRColor(1.2, 0.58, 0.10, 1.0));
             } else if mode == 2 {
-                this.m_modeLine.SetText("MODE ... DEFEND");
+                this.m_modeLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-ModeDefend"));
                 this.m_modeLine.SetTintColor(new HDRColor(0.20, 0.45, 1.30, 1.0));
             } else {
-                this.m_modeLine.SetText("MODE ... SCOUT");
+                this.m_modeLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-ModeScout"));
                 this.m_modeLine.SetTintColor(new HDRColor(0.10, 0.60, 0.60, 0.8));
             }
         }
@@ -431,16 +435,16 @@ public class BNTestPanel {
             let ratio:   Float = maxHits > 0 ? Cast<Float>(hits) / Cast<Float>(maxHits) : 0.0;
             let fillW:   Float = ClampF(ratio, 0.0, 1.0) * trackW;
             if fillW < 1.0 { fillW = 1.0; }
-            this.m_iceFill.SetSize(new Vector2(fillW, 10.0));
+            this.m_iceFill.SetSize(new Vector2(fillW, 10.0 * scale));
             this.m_iceFill.SetTintColor(BNTestPanel.ICEFillColor(ratio));
             if hits <= 0 {
-                this.m_iceLine.SetText("ICE INTEGRITY ... BREACHED");
+                this.m_iceLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-IceBreached"));
                 this.m_iceLine.SetTintColor(new HDRColor(1.50, 0.08, 0.05, 1.0));
             } else if ratio <= 0.5 {
-                this.m_iceLine.SetText("ICE INTEGRITY ... DEGRADED");
+                this.m_iceLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-IceDegraded"));
                 this.m_iceLine.SetTintColor(new HDRColor(1.20, 0.58, 0.10, 1.0));
             } else {
-                this.m_iceLine.SetText("ICE INTEGRITY ... NOMINAL");
+                this.m_iceLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-IceNominal"));
                 this.m_iceLine.SetTintColor(new HDRColor(0.10, 0.80, 0.80, 1.0));
             }
         }
@@ -454,32 +458,34 @@ public class BNTestPanel {
                         .GetStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Memory, false);
                     let charges: Int32 = Cast<Int32>(ram) / 4;
                     if charges > 0 {
-                        let suffix: String = charges == 1 ? " CHARGE" : " CHARGES";
-                        this.m_firewallLine.SetText("FIREWALL ... " + ToString(charges) + suffix);
+                        let suffix: String = charges == 1
+                            ? GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-ChargeSingular")
+                            : GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-ChargePlural");
+                        this.m_firewallLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-FirewallPrefix") + ToString(charges) + suffix);
                         this.m_firewallLine.SetTintColor(new HDRColor(0.20, 0.45, 1.30, 1.0));
                     } else {
-                        this.m_firewallLine.SetText("FIREWALL ... DEPLETED");
+                        this.m_firewallLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-FirewallDepleted"));
                         this.m_firewallLine.SetTintColor(new HDRColor(1.50, 0.08, 0.05, 0.9));
                     }
                 }
             } else {
-                this.m_firewallLine.SetText("FIREWALL ... STANDBY");
+                this.m_firewallLine.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-FirewallStandby"));
                 this.m_firewallLine.SetTintColor(new HDRColor(0.20, 0.45, 1.30, 0.4));
             }
         }
 
         let heatStr: String;
-        if      heat < 0.2  { heatStr = "COLD"; }
-        else if heat < 0.4  { heatStr = "WARM"; }
-        else if heat < 0.6  { heatStr = "HOT"; }
-        else if heat < 0.8  { heatStr = "CRITICAL"; }
-        else if heat < 0.95 { heatStr = "PEAK"; }
-        else                { heatStr = "MAXIMUM"; }
+        if      heat < 0.2  { heatStr = GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatCold"); }
+        else if heat < 0.4  { heatStr = GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatWarm"); }
+        else if heat < 0.6  { heatStr = GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatHot"); }
+        else if heat < 0.8  { heatStr = GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatCritical"); }
+        else if heat < 0.95 { heatStr = GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatPeak"); }
+        else                { heatStr = GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatMaximum"); }
         let pct: Int32 = Cast<Int32>(heat * 100.0);
-        this.m_heatLabel.SetText("NETWORK HEAT ... " + heatStr + " " + ToString(pct) + "%");
+        this.m_heatLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-HeatPrefix") + heatStr + " " + ToString(pct) + "%");
         let heatW: Float = ClampF(heat, 0.0, 1.0) * trackW;
         if heatW < 1.0 { heatW = 1.0; }
-        this.m_heatFill.SetSize(new Vector2(heatW, 10.0));
+        this.m_heatFill.SetSize(new Vector2(heatW, 10.0 * scale));
         this.m_heatFill.SetTintColor(BNTestPanel.HeatFillColor(heat));
 
         let perkSys: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gi);
@@ -491,72 +497,72 @@ public class BNTestPanel {
         let showDisarmBar:  Bool = disarmTimer > 0.0;
         let showCounterBar: Bool = counterBreachTime > 0.0;
 
-        let curY: Float = 170.0;
+        let curY: Float = 170.0 * scale;
 
-        let sigLabelY: Float = curY + 8.0;
-        this.m_signalLabel.SetMargin(new inkMargin(txtX, sigLabelY, 12.0, 0.0));
+        let sigLabelY: Float = curY + 8.0 * scale;
+        this.m_signalLabel.SetMargin(new inkMargin(txtX, sigLabelY, 12.0 * scale, 0.0));
         if showSignalBar {
-            this.m_signalLabel.SetText("RAVEN ... " + ToString(Cast<Int32>(signalTimer)) + "s");
+            this.m_signalLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-RavenPrefix") + ToString(Cast<Int32>(signalTimer)) + "s");
             this.m_signalLabel.SetTintColor(new HDRColor(0.10, 1.2, 1.1, 1.0));
-            let sigBarY: Float = sigLabelY + 18.0;
+            let sigBarY: Float = sigLabelY + 18.0 * scale;
             this.m_signalTrack.SetMargin(new inkMargin(txtX, sigBarY, 0.0, 0.0));
             this.m_signalFill.SetMargin(new inkMargin(txtX, sigBarY, 0.0, 0.0));
             let fillW: Float = ClampF(signalTimer / 60.0, 0.0, 1.0) * trackW;
             if fillW < 1.0 { fillW = 1.0; }
-            this.m_signalFill.SetSize(new Vector2(fillW, 10.0));
-            curY = sigBarY + 10.0;
+            this.m_signalFill.SetSize(new Vector2(fillW, 10.0 * scale));
+            curY = sigBarY + 10.0 * scale;
         } else {
-            this.m_signalLabel.SetText("RAVEN ... READY");
+            this.m_signalLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-RavenPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Ready"));
             this.m_signalLabel.SetTintColor(new HDRColor(0.05, 0.50, 0.50, 0.7));
-            curY = sigLabelY + 18.0;
+            curY = sigLabelY + 18.0 * scale;
         }
         this.m_signalTrack.SetVisible(showSignalBar);
         this.m_signalFill.SetVisible(showSignalBar);
 
-        let hideLabelY: Float = curY + 8.0;
-        this.m_hideLabel.SetMargin(new inkMargin(txtX, hideLabelY, 12.0, 0.0));
+        let hideLabelY: Float = curY + 8.0 * scale;
+        this.m_hideLabel.SetMargin(new inkMargin(txtX, hideLabelY, 12.0 * scale, 0.0));
         if showHideBar {
-            this.m_hideLabel.SetText("GHOST ... " + ToString(Cast<Int32>(hideTimer)) + "s");
+            this.m_hideLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-GhostPrefix") + ToString(Cast<Int32>(hideTimer)) + "s");
             this.m_hideLabel.SetTintColor(new HDRColor(0.20, 0.70, 1.40, 1.0));
-            let hideBarY: Float = hideLabelY + 18.0;
+            let hideBarY: Float = hideLabelY + 18.0 * scale;
             this.m_hideTrack.SetMargin(new inkMargin(txtX, hideBarY, 0.0, 0.0));
             this.m_hideFill.SetMargin(new inkMargin(txtX, hideBarY, 0.0, 0.0));
             let fillW: Float = ClampF(hideTimer / 120.0, 0.0, 1.0) * trackW;
             if fillW < 1.0 { fillW = 1.0; }
-            this.m_hideFill.SetSize(new Vector2(fillW, 10.0));
-            curY = hideBarY + 10.0;
+            this.m_hideFill.SetSize(new Vector2(fillW, 10.0 * scale));
+            curY = hideBarY + 10.0 * scale;
         } else if hasHidePresence {
-            this.m_hideLabel.SetText("GHOST ... READY");
+            this.m_hideLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-GhostPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Ready"));
             this.m_hideLabel.SetTintColor(new HDRColor(0.10, 0.35, 0.70, 0.7));
-            curY = hideLabelY + 18.0;
+            curY = hideLabelY + 18.0 * scale;
         } else {
-            this.m_hideLabel.SetText("GHOST ... OFFLINE");
+            this.m_hideLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-GhostPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Offline"));
             this.m_hideLabel.SetTintColor(new HDRColor(0.60, 0.40, 0.08, 0.4));
-            curY = hideLabelY + 18.0;
+            curY = hideLabelY + 18.0 * scale;
         }
         this.m_hideTrack.SetVisible(showHideBar);
         this.m_hideFill.SetVisible(showHideBar);
 
-        let disarmLabelY: Float = curY + 8.0;
-        this.m_disarmLabel.SetMargin(new inkMargin(txtX, disarmLabelY, 12.0, 0.0));
+        let disarmLabelY: Float = curY + 8.0 * scale;
+        this.m_disarmLabel.SetMargin(new inkMargin(txtX, disarmLabelY, 12.0 * scale, 0.0));
         if showDisarmBar {
-            this.m_disarmLabel.SetText("NULL ... " + ToString(Cast<Int32>(disarmTimer)) + "s");
+            this.m_disarmLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-NullPrefix") + ToString(Cast<Int32>(disarmTimer)) + "s");
             this.m_disarmLabel.SetTintColor(new HDRColor(1.20, 1.00, 0.10, 1.0));
-            let disarmBarY: Float = disarmLabelY + 18.0;
+            let disarmBarY: Float = disarmLabelY + 18.0 * scale;
             this.m_disarmTrack.SetMargin(new inkMargin(txtX, disarmBarY, 0.0, 0.0));
             this.m_disarmFill.SetMargin(new inkMargin(txtX, disarmBarY, 0.0, 0.0));
             let fillW: Float = ClampF(disarmTimer / 120.0, 0.0, 1.0) * trackW;
             if fillW < 1.0 { fillW = 1.0; }
-            this.m_disarmFill.SetSize(new Vector2(fillW, 10.0));
-            curY = disarmBarY + 10.0;
+            this.m_disarmFill.SetSize(new Vector2(fillW, 10.0 * scale));
+            curY = disarmBarY + 10.0 * scale;
         } else if hasDisarmICE {
-            this.m_disarmLabel.SetText("NULL ... READY");
+            this.m_disarmLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-NullPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Ready"));
             this.m_disarmLabel.SetTintColor(new HDRColor(0.55, 0.45, 0.05, 0.7));
-            curY = disarmLabelY + 18.0;
+            curY = disarmLabelY + 18.0 * scale;
         } else {
-            this.m_disarmLabel.SetText("NULL ... OFFLINE");
+            this.m_disarmLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-NullPrefix") + GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-Offline"));
             this.m_disarmLabel.SetTintColor(new HDRColor(0.60, 0.40, 0.08, 0.4));
-            curY = disarmLabelY + 18.0;
+            curY = disarmLabelY + 18.0 * scale;
         }
         this.m_disarmTrack.SetVisible(showDisarmBar);
         this.m_disarmFill.SetVisible(showDisarmBar);
@@ -567,28 +573,28 @@ public class BNTestPanel {
         this.m_counterFill.SetVisible(showCounterBar);
 
         if showCounterBar {
-            let div3Y: Float = curY + 8.0;
+            let div3Y: Float = curY + 8.0 * scale;
             this.m_div3.SetMargin(new inkMargin(txtX, div3Y, 0.0, 0.0));
-            let ctrLabelY: Float = div3Y + 11.0;
-            this.m_counterLabel.SetMargin(new inkMargin(txtX, ctrLabelY, 12.0, 0.0));
-            this.m_counterLabel.SetText("ICE BREACH ... INCOMING " + ToString(Cast<Int32>(counterBreachTime)) + "s");
-            let ctrBarY: Float = ctrLabelY + 18.0;
+            let ctrLabelY: Float = div3Y + 11.0 * scale;
+            this.m_counterLabel.SetMargin(new inkMargin(txtX, ctrLabelY, 12.0 * scale, 0.0));
+            this.m_counterLabel.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-TestPanel-CounterIncoming") + " " + ToString(Cast<Int32>(counterBreachTime)) + "s");
+            let ctrBarY: Float = ctrLabelY + 18.0 * scale;
             this.m_counterTrack.SetMargin(new inkMargin(txtX, ctrBarY, 0.0, 0.0));
             this.m_counterFill.SetMargin(new inkMargin(txtX, ctrBarY, 0.0, 0.0));
             let charge: Float = ClampF((5.0 - counterBreachTime) / 5.0, 0.0, 1.0);
             let fillW: Float  = charge * trackW;
             if fillW < 1.0 { fillW = 1.0; }
-            this.m_counterFill.SetSize(new Vector2(fillW, 10.0));
-            curY = ctrBarY + 10.0;
+            this.m_counterFill.SetSize(new Vector2(fillW, 10.0 * scale));
+            curY = ctrBarY + 10.0 * scale;
         }
 
-        let footerY: Float = curY + 5.0;
-        let newH: Float    = footerY + 25.0;
+        let footerY: Float = curY + 5.0 * scale;
+        let newH: Float    = footerY + 25.0 * scale;
         this.m_footerFluff.SetMargin(new inkMargin(txtX, footerY, 0.0, 0.0));
         this.m_canvas.SetSize(new Vector2(w, newH));
         this.m_bg.SetSize(new Vector2(w, newH));
         this.m_frame.SetSize(new Vector2(w, newH));
-        this.m_sidebar.SetSize(new Vector2(sideW, newH - 20.0));
+        this.m_sidebar.SetSize(new Vector2(sideW, newH - 20.0 * scale));
     }
 
     public func Show(gi: GameInstance, counterBreachTime: Float) -> Void {
@@ -776,15 +782,17 @@ protected cb func OnGameAttached() -> Bool {
 
     hudRoot.RemoveChildByName(n"BNTestCanvas");
 
+    let scale: Float = BNUIScale.GetScale(gi);
+
     let canvas = new inkCanvas();
     canvas.SetName(n"BNTestCanvas");
     canvas.SetAnchor(inkEAnchor.TopLeft);
     canvas.SetAnchorPoint(new Vector2(0.0, 0.0));
-    canvas.SetMargin(new inkMargin(20.0, 320.0, 0.0, 0.0));
-    canvas.SetSize(new Vector2(520.0, 320.0));
+    canvas.SetMargin(new inkMargin(20.0 * scale, 320.0 * scale, 0.0, 0.0));
+    canvas.SetSize(new Vector2(520.0 * scale, 320.0 * scale));
     canvas.Reparent(hudRoot);
 
-    sys.RegisterPanel(BNTestPanel.Create(canvas));
+    sys.RegisterPanel(BNTestPanel.Create(canvas, gi));
     sys.RegisterScanListener(gi);
     BNInfo("UI", "BNTestPanel injected");
 

@@ -6,6 +6,8 @@ import BetterNetrunningConfig.*
 import BetterNetrunning.Core.*
 import BetterNetrunning.Utils.*
 import BetterNetrunning.Breach.*
+import BetterNetrunning.Network.*
+import BetterNetrunning.Marking.*
 
 @wrapMethod(ScriptedPuppetPS)
 public func OnSetExposeQuickHacks(evt: ref<SetExposeQuickHacks>) -> EntityNotificationType {
@@ -133,6 +135,27 @@ private final func SetQuickhackInactiveReason(puppetAction: ref<PuppetAction>, a
   } else {
     puppetAction.SetInactiveWithReason(false, LocKeyToString(BNConstants.LOCKEY_QUICKHACKS_LOCKED()));
   }
+}
+
+@addMethod(ScriptedPuppetPS)
+public final func BN_IsVulnerableToQuickhacks() -> Bool {
+  let permissions: NPCHackPermissions = this.CalculateNPCHackPermissions();
+  return permissions.isBreached || this.IsWhiteListedForHacks();
+}
+
+@addMethod(ScriptedPuppetPS)
+public final func BN_ApplyICEDamageFromNPCHack(gameInstance: GameInstance, hits: Int32) -> Bool {
+  if this.BN_IsVulnerableToQuickhacks() { return true; }
+
+  NetworkStateUtils.ApplyIcepickEffectNPC(this, gameInstance, hits);
+  if !this.m_bnNPCIceDefeated { return false; }
+
+  let puppet: ref<ScriptedPuppet> = this.GetOwnerEntity() as ScriptedPuppet;
+  if IsDefined(puppet) {
+    let persistency: ref<GamePersistencySystem> = GameInstance.GetPersistencySystem(gameInstance);
+    TargetedBreachUtils.UnlockNPC(puppet, TimeUtils.GetCurrentTimestamp(gameInstance), persistency, puppet.GetEntityID());
+  }
+  return true;
 }
 
 @addMethod(ScriptedPuppetPS)

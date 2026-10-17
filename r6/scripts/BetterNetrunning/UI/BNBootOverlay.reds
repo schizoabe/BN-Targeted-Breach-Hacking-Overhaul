@@ -11,18 +11,18 @@ public class BNBootOverlay {
     private let m_progressFill: ref<inkImage>;
     private let m_animProxy:    ref<inkAnimProxy>;
 
-    public static func Create(parent: ref<inkCompoundWidget>) -> ref<BNBootOverlay> {
+    public static func Create(parent: ref<inkCompoundWidget>, gi: GameInstance) -> ref<BNBootOverlay> {
         let overlay = new BNBootOverlay();
-        overlay.Build(parent);
+        overlay.Build(parent, BNUIScale.GetScale(gi));
         return overlay;
     }
 
-    private func Build(parent: ref<inkCompoundWidget>) -> Void {
-        let w:     Float = 520.0;
-        let h:     Float = 110.0;
-        let sideW: Float = 50.0;
-        let txtX:  Float = sideW + 20.0;
-        let barW:  Float = w - txtX - 12.0;
+    private func Build(parent: ref<inkCompoundWidget>, scale: Float) -> Void {
+        let w:     Float = 520.0 * scale;
+        let h:     Float = 110.0 * scale;
+        let sideW: Float = 50.0 * scale;
+        let txtX:  Float = sideW + 20.0 * scale;
+        let barW:  Float = w - txtX - 12.0 * scale;
 
         let canvas = new inkCanvas();
         canvas.SetName(n"BNBootInner");
@@ -36,19 +36,19 @@ public class BNBootOverlay {
 
         let title = new inkText();
         title.SetFontFamily("base\\gameplay\\gui\\fonts\\raj\\raj.inkfontfamily");
-        title.SetFontSize(18);
+        title.SetFontSize(Cast<Int32>(18.0 * scale));
         title.SetLetterCase(textLetterCase.UpperCase);
         title.SetAnchor(inkEAnchor.TopLeft);
-        title.SetMargin(new inkMargin(txtX, 26.0, 12.0, 0.0));
+        title.SetMargin(new inkMargin(txtX, 26.0 * scale, 12.0 * scale, 0.0));
         title.SetTintColor(new HDRColor(1.2, 0.78, 0.12, 1.0));
-        title.SetText("BOOTING CYBERDECK");
+        title.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-Boot-Title") + " CYBERDECK");
         title.Reparent(canvas);
         this.m_title = title;
 
         let barBg = new inkImage();
         barBg.SetAnchor(inkEAnchor.TopLeft);
-        barBg.SetMargin(new inkMargin(txtX, 65.0, 0.0, 0.0));
-        barBg.SetSize(new Vector2(barW, 6.0));
+        barBg.SetMargin(new inkMargin(txtX, 65.0 * scale, 0.0, 0.0));
+        barBg.SetSize(new Vector2(barW, 6.0 * scale));
         barBg.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
         barBg.SetBrushTileType(inkBrushTileType.NoTile);
         barBg.SetAtlasResource(r"base\\gameplay\\gui\\common\\tooltip\\tooltips_new.inkatlas");
@@ -59,8 +59,8 @@ public class BNBootOverlay {
 
         let barFill = new inkImage();
         barFill.SetAnchor(inkEAnchor.TopLeft);
-        barFill.SetMargin(new inkMargin(txtX, 65.0, 0.0, 0.0));
-        barFill.SetSize(new Vector2(barW, 6.0));
+        barFill.SetMargin(new inkMargin(txtX, 65.0 * scale, 0.0, 0.0));
+        barFill.SetSize(new Vector2(barW, 6.0 * scale));
         barFill.SetRenderTransformPivot(new Vector2(0.0, 0.5));
         barFill.SetBrushMirrorType(inkBrushMirrorType.NoMirror);
         barFill.SetBrushTileType(inkBrushTileType.NoTile);
@@ -81,7 +81,7 @@ public class BNBootOverlay {
         let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
             .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
         if IsDefined(mss) && IsDefined(this.m_title) {
-            this.m_title.SetText("BOOTING " + mss.GetEquippedCyberdeckName());
+            this.m_title.SetText(GetLocalizedTextByKey(n"Better-Netrunning-UI-Boot-Title") + " " + mss.GetEquippedCyberdeckName());
         }
 
         this.m_canvas.SetOpacity(0.0);
@@ -182,15 +182,17 @@ protected cb func OnGameAttached() -> Bool {
 
     hudRoot.RemoveChildByName(n"BNBootCanvas");
 
+    let scale: Float = BNUIScale.GetScale(gi);
+
     let canvas = new inkCanvas();
     canvas.SetName(n"BNBootCanvas");
     canvas.SetAnchor(inkEAnchor.TopLeft);
     canvas.SetAnchorPoint(new Vector2(0.0, 0.0));
-    canvas.SetMargin(new inkMargin(20.0, 320.0, 0.0, 0.0));
-    canvas.SetSize(new Vector2(520.0, 110.0));
+    canvas.SetMargin(new inkMargin(20.0 * scale, 320.0 * scale, 0.0, 0.0));
+    canvas.SetSize(new Vector2(520.0 * scale, 110.0 * scale));
     canvas.Reparent(hudRoot);
 
-    sys.RegisterOverlay(BNBootOverlay.Create(canvas));
+    sys.RegisterOverlay(BNBootOverlay.Create(canvas, gi));
     BNInfo("UI", "BNBootOverlay injected");
 
     return result;
