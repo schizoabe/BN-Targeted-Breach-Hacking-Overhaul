@@ -7,7 +7,19 @@ import BetterNetrunningConfig.*
 @addField(ScriptableDeviceComponentPS)
 public let m_isSJKIStandaloneDevice: Bool;
 
-private func SJKI_IsTargetDevice(name: String) -> Bool {
+private func SJKI_IsTargetDevice(device: wref<GameObject>) -> Bool {
+  if !IsDefined(device) { return false; }
+
+  let className: CName = device.GetClassName();
+  if Equals(className, n"Computer")             ||
+     Equals(className, n"VendingMachine")       ||
+     Equals(className, n"WeaponVendingMachine") ||
+     Equals(className, n"Terminal")             ||
+     Equals(className, n"ArcadeMachine") {
+    return true;
+  }
+
+  let name: String = GetLocalizedText((device as Device).GetDeviceName());
   return
     Equals(name, "Computer")                                 ||
     Equals(name, "Spontaneous Craving Satisfaction Machine") ||
@@ -95,7 +107,8 @@ protected const func ShouldExposePersonalLinkAction() -> Bool {
   if !BetterNetrunningSettings.HackThePlanetEnabled() { return false; }
 
   let standaloneName: String = GetLocalizedText(this.GetDeviceName());
-  if SJKI_IsTargetDevice(standaloneName) && this.IsON() {
+  let standaloneEntity: wref<GameObject> = this.GetOwnerEntityWeak() as GameObject;
+  if SJKI_IsTargetDevice(standaloneEntity) && this.IsON() {
     this.m_hasNetworkBackdoor = true;
     this.SetHasPersonalLinkSlot(true);
     this.SetMinigameState(HackingMinigameState.Unknown);
@@ -194,7 +207,7 @@ public func SetHasPersonalLinkSlot(isPersonalLinkSlotPresent: Bool) -> Void {
   if !isPersonalLinkSlotPresent {
     let ownerDevice: ref<Device> = this.GetOwnerEntityWeak() as Device;
     let isStandalone: Bool = this.m_isSJKIStandaloneDevice
-      || (IsDefined(ownerDevice) && SJKI_IsTargetDevice(GetLocalizedText(ownerDevice.GetDeviceName())));
+      || SJKI_IsTargetDevice(ownerDevice as GameObject);
     if isStandalone {
       BNDebug("HackThePlanet", "SetHasPersonalLinkSlot: blocked disable on standalone");
       return;
