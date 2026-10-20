@@ -25,6 +25,16 @@ public class BetterNetrunningSettings {
         return IsDefined(cfg) ? cfg.markBeamsEnabled : true;
     }
 
+    public static func HackThePlanetEnabled() -> Bool {
+        let cfg: ref<BNConfig> = BNConfig.GetInstance(GetGameInstance());
+        return IsDefined(cfg) ? cfg.hackThePlanetEnabled : true;
+    }
+
+    public static func HackThePlanetReinitializeAccessPoints() -> Bool {
+        let cfg: ref<BNConfig> = BNConfig.GetInstance(GetGameInstance());
+        return IsDefined(cfg) ? cfg.hackThePlanetReinitializeAccessPoints : true;
+    }
+
     public static func OffensiveDaemonsEnabled() -> Bool {
         let cfg: ref<BNConfig> = BNConfig.GetInstance(GetGameInstance());
         return IsDefined(cfg) ? cfg.offensiveDaemonsEnabled : true;

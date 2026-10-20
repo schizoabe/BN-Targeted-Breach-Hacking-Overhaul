@@ -24,6 +24,9 @@ public persistent let m_betterNetrunningAPBreachFailedTimestamp: Float;
 @addField(ScriptedPuppetPS)
 public persistent let m_betterNetrunningNPCBreachFailedTimestamp: Float;
 
+@addField(ScriptedPuppetPS)
+public persistent let m_sjkiNPCSubnetBreached: Bool;
+
 @addField(SharedGameplayPS)
 public persistent let m_betterNetrunningRemoteBreachFailedTimestamp: Float;
 

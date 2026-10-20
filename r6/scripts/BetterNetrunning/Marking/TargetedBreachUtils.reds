@@ -6,16 +6,11 @@ import BetterNetrunning.Utils.*
 import BetterNetrunning.Logging.*
 import BetterNetrunning.Network.*
 
-@if(ModuleExists("HackthePlanetForReal"))
 @addMethod(ScriptedPuppetPS)
 public func BN_StampSJKIBreached() -> Void {
     this.m_sjkiNPCSubnetBreached = true;
     BNDebug("TargetedBreachUtils", "SJKI NPC breach flag stamped");
 }
-
-@if(!ModuleExists("HackthePlanetForReal"))
-@addMethod(ScriptedPuppetPS)
-public func BN_StampSJKIBreached() -> Void {}
 
 public abstract class TargetedBreachUtils {
 

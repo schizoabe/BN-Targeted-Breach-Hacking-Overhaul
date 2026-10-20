@@ -29,6 +29,9 @@ public class BNConfig extends ScriptableSystem {
   public let enableDebugLog:               Bool = false;
   public let debugLogLevel:                Int32 = 2;
 
+  public let hackThePlanetEnabled:               Bool = true;
+  public let hackThePlanetReinitializeAccessPoints: Bool = true;
+
   public let unconsciousBreachChoiceSlot:  Int32 = 3;
 
   private let m_provider: ref<BNConfigProvider>;
@@ -54,7 +57,10 @@ public class BNConfig extends ScriptableSystem {
 
   protected cb func OnSessionReady(event: ref<GameSessionEvent>) -> Void {
     if !IsDefined(this.m_provider) { return; }
-    DVRCF.Register(this.GetGameInstance(), BN_RCFModId(), "Netrunning Overhaul", "Configure Netrunning Overhaul.", this.m_provider);
+    DVRCF.Register(this.GetGameInstance(), BN_RCFModId(),
+      GetLocalizedTextByKey(n"Better-Netrunning-RCF-HubTitle"),
+      GetLocalizedTextByKey(n"Better-Netrunning-RCF-HubDescription"),
+      this.m_provider);
     this.PushToInputSystem();
   }
 
@@ -92,76 +98,82 @@ public class BNConfigProvider extends DVRCF_Provider {
   }
 
   public func BuildSchema() -> ref<DVRCF_Schema> {
-    let b: ref<DVRCF_SchemaBuilder> = DVRCF_SchemaBuilder.New("Netrunning Overhaul");
+    let b: ref<DVRCF_SchemaBuilder> = DVRCF_SchemaBuilder.New(GetLocalizedTextByKey(n"Better-Netrunning-RCF-HubTitle"));
 
-    b.Tab("Controls");
-    b.Section("Unconscious Breach");
+    b.Tab(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Tab-Controls"));
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-UnconsciousBreach"));
     let choiceSlots: array<String>;
-    ArrayPush(choiceSlots, "Choice 1");
-    ArrayPush(choiceSlots, "Choice 2");
-    ArrayPush(choiceSlots, "Choice 3");
-    ArrayPush(choiceSlots, "Choice 4");
-    b.Dropdown("BN_UnconsciousBreachChoiceSlot", "Unconscious Breaching Hotkey Slot", choiceSlots);
-    b.Tip("Which interaction-choice slot the \"Breach\" prompt occupies on an unconscious NPC's body. Change this if it conflicts with another mod's prompt on the same slot.");
+    ArrayPush(choiceSlots, GetLocalizedTextByKey(n"Better-Netrunning-RCF-ChoiceSlot1"));
+    ArrayPush(choiceSlots, GetLocalizedTextByKey(n"Better-Netrunning-RCF-ChoiceSlot2"));
+    ArrayPush(choiceSlots, GetLocalizedTextByKey(n"Better-Netrunning-RCF-ChoiceSlot3"));
+    ArrayPush(choiceSlots, GetLocalizedTextByKey(n"Better-Netrunning-RCF-ChoiceSlot4"));
+    b.Dropdown("BN_UnconsciousBreachChoiceSlot", GetLocalizedTextByKey(n"Better-Netrunning-RCF-UnconsciousBreachChoiceSlot-Label"), choiceSlots);
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-UnconsciousBreachChoiceSlot-Tip"));
 
-    b.Section("Hotkeys");
-    b.Keybind("BN_ClearMarks", "Clear All Marks");
-    b.Tip("Clears all breach marks and hides the HUD panels.");
-    b.Keybind("BN_ForceJackOut", "Force Jack-Out");
-    b.Tip("Emergency escape from a stuck breach board.");
-    b.Keybind("BN_CycleBreachMode", "Cycle Breach Mode");
-    b.Tip("Cycles between Scout, Attack, and Defend modes (requires cyberdeck).");
-    b.Keybind("BN_ToggleHUDPanels", "Toggle HUD Panels");
-    b.Tip("Shows or hides the Network Status and ICE Log panels.");
-    b.Keybind("BN_CycleCascadeQH", "Cycle Cascade Quickhack");
-    b.Tip("Cycles which installed quickhack the Cascade Protocol daemon broadcasts.");
-    b.Keybind("BN_DumpRAMForICE", "Dump RAM -> ICE");
-    b.Tip("Converts all current RAM into ICE hits (Defend mode only). Sacrifice offense for defense mid-fight.");
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-Hotkeys"));
+    b.Keybind("BN_ClearMarks", GetLocalizedTextByKey(n"Better-Netrunning-RCF-ClearMarks-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-ClearMarks-Tip"));
+    b.Keybind("BN_ForceJackOut", GetLocalizedTextByKey(n"Better-Netrunning-RCF-ForceJackOut-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-ForceJackOut-Tip"));
+    b.Keybind("BN_CycleBreachMode", GetLocalizedTextByKey(n"Better-Netrunning-RCF-CycleBreachMode-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-CycleBreachMode-Tip"));
+    b.Keybind("BN_ToggleHUDPanels", GetLocalizedTextByKey(n"Better-Netrunning-RCF-ToggleHUDPanels-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-ToggleHUDPanels-Tip"));
+    b.Keybind("BN_CycleCascadeQH", GetLocalizedTextByKey(n"Better-Netrunning-RCF-CycleCascadeQH-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-CycleCascadeQH-Tip"));
+    b.Keybind("BN_DumpRAMForICE", GetLocalizedTextByKey(n"Better-Netrunning-RCF-DumpRAMForICE-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-DumpRAMForICE-Tip"));
 
-    b.Tab("Breaching");
-    b.Section("General");
-    b.Toggle("BN_EnableClassicMode", "Enable Classic Mode");
-    b.Tip("If enabled, the entire network can be breached by uploading any daemon. Disables the subnet system and its breach daemons.");
-    b.Toggle("BN_AllowBreachUnconsciousNPCs", "Allow Breaching Unconscious NPCs");
-    b.Tip("Allows breaching unconscious NPCs connected to a network.");
-    b.Slider("BN_QuickhackUnlockDurationHours", "Quickhack Unlock Duration (Hours)", 0.0, 24.0, 1.0, true);
-    b.Tip("How long quickhacks stay unlocked after a successful breach (in-game time). 0 = permanent (never re-locks).");
-    b.Toggle("BN_OffensiveDaemonsEnabled", "Offensive Daemons");
-    b.Tip("When all marked cameras have their ICE compromised, adds camera shutdown and malfunction daemons to the breach board.");
-    b.Toggle("BN_MarkBeamsEnabled", "Mark Beams");
-    b.Tip("Draws a network beam from V to each marked entity. Beams appear on mark and disappear on unmark.");
+    b.Tab(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Tab-Breaching"));
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-General"));
+    b.Toggle("BN_EnableClassicMode", GetLocalizedTextByKey(n"Better-Netrunning-RCF-EnableClassicMode-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-EnableClassicMode-Tip"));
+    b.Toggle("BN_AllowBreachUnconsciousNPCs", GetLocalizedTextByKey(n"Better-Netrunning-RCF-AllowBreachUnconsciousNPCs-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-AllowBreachUnconsciousNPCs-Tip"));
+    b.Slider("BN_QuickhackUnlockDurationHours", GetLocalizedTextByKey(n"Better-Netrunning-RCF-QuickhackUnlockDurationHours-Label"), 0.0, 24.0, 1.0, true);
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-QuickhackUnlockDurationHours-Tip"));
+    b.Toggle("BN_OffensiveDaemonsEnabled", GetLocalizedTextByKey(n"Better-Netrunning-RCF-OffensiveDaemonsEnabled-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-OffensiveDaemonsEnabled-Tip"));
+    b.Toggle("BN_MarkBeamsEnabled", GetLocalizedTextByKey(n"Better-Netrunning-RCF-MarkBeamsEnabled-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-MarkBeamsEnabled-Tip"));
 
-    b.Tab("Breach Penalty");
-    b.Section("Failure Penalties");
-    b.Toggle("BN_BreachFailurePenaltyEnabled", "Enable Breach Failure Penalty");
-    b.Tip("Applies penalties when a breach protocol fails: disconnection VFX, type-specific lockout, and a trace attempt.");
-    b.Toggle("BN_APBreachFailurePenaltyEnabled", "Access Point Breach Penalty");
-    b.Tip("Locks Jack In on the failed Access Point target for a duration (other targets remain accessible).");
-    b.Toggle("BN_NPCBreachFailurePenaltyEnabled", "NPC Breach Penalty");
-    b.Tip("Locks Breach on the failed unconscious NPC for a duration (other NPCs remain breachable).");
-    b.Slider("BN_BreachPenaltyDurationMinutes", "Breach Penalty Duration (Minutes)", 1.0, 60.0, 1.0, true);
-    b.Tip("How long a target stays locked out after a failed breach attempt before it can be re-attempted.");
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-HackThePlanet"));
+    b.Toggle("BN_HackThePlanetEnabled", GetLocalizedTextByKey(n"Better-Netrunning-RCF-HackThePlanetEnabled-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-HackThePlanetEnabled-Tip"));
+    b.Toggle("BN_HackThePlanetReinitializeAccessPoints", GetLocalizedTextByKey(n"Better-Netrunning-RCF-HackThePlanetReinitializeAccessPoints-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-HackThePlanetReinitializeAccessPoints-Tip"));
 
-    b.Tab("Debug");
-    b.Section("Logging");
-    b.Toggle("BN_EnableDebugLog", "Enable Debug Logging");
-    b.Tip("Enables debug log output.");
+    b.Tab(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Tab-BreachPenalty"));
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-FailurePenalties"));
+    b.Toggle("BN_BreachFailurePenaltyEnabled", GetLocalizedTextByKey(n"Better-Netrunning-RCF-BreachFailurePenaltyEnabled-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-BreachFailurePenaltyEnabled-Tip"));
+    b.Toggle("BN_APBreachFailurePenaltyEnabled", GetLocalizedTextByKey(n"Better-Netrunning-RCF-APBreachFailurePenaltyEnabled-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-APBreachFailurePenaltyEnabled-Tip"));
+    b.Toggle("BN_NPCBreachFailurePenaltyEnabled", GetLocalizedTextByKey(n"Better-Netrunning-RCF-NPCBreachFailurePenaltyEnabled-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-NPCBreachFailurePenaltyEnabled-Tip"));
+    b.Slider("BN_BreachPenaltyDurationMinutes", GetLocalizedTextByKey(n"Better-Netrunning-RCF-BreachPenaltyDurationMinutes-Label"), 1.0, 60.0, 1.0, true);
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-BreachPenaltyDurationMinutes-Tip"));
+
+    b.Tab(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Tab-Debug"));
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-Logging"));
+    b.Toggle("BN_EnableDebugLog", GetLocalizedTextByKey(n"Better-Netrunning-RCF-EnableDebugLog-Label"));
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-EnableDebugLog-Tip"));
     let logLevels: array<String>;
-    ArrayPush(logLevels, "ERROR (Errors Only)");
-    ArrayPush(logLevels, "WARNING (Errors + Warnings)");
-    ArrayPush(logLevels, "INFO (Default)");
-    ArrayPush(logLevels, "DEBUG (Detailed)");
-    ArrayPush(logLevels, "TRACE (Very Detailed)");
-    b.Dropdown("BN_DebugLogLevel", "Log Level", logLevels);
-    b.Tip("Verbosity of debug logs. Only applies when Debug Logging is enabled.");
+    ArrayPush(logLevels, GetLocalizedTextByKey(n"Better-Netrunning-RCF-LogLevel-Error"));
+    ArrayPush(logLevels, GetLocalizedTextByKey(n"Better-Netrunning-RCF-LogLevel-Warning"));
+    ArrayPush(logLevels, GetLocalizedTextByKey(n"Better-Netrunning-RCF-LogLevel-Info"));
+    ArrayPush(logLevels, GetLocalizedTextByKey(n"Better-Netrunning-RCF-LogLevel-Debug"));
+    ArrayPush(logLevels, GetLocalizedTextByKey(n"Better-Netrunning-RCF-LogLevel-Trace"));
+    b.Dropdown("BN_DebugLogLevel", GetLocalizedTextByKey(n"Better-Netrunning-RCF-DebugLogLevel-Label"), logLevels);
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-DebugLogLevel-Tip"));
 
-    b.Section("Perks (Dev)");
-    b.ButtonPair("BN_DevPerksMax", "Max All", "BN_DevPerksZero", "Zero All", "Dev: All Perks", "");
-    b.Tip("Instantly sets every BN perk to max rank, or zeroes them all. For in-game testing only.");
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-PerksDev"));
+    b.ButtonPair("BN_DevPerksMax", GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevPerks-Max"), "BN_DevPerksZero", GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevPerks-Zero"), GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevPerks-GroupLabel"), "");
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevPerks-Tip"));
 
-    b.Section("Network Heat (Dev)");
-    b.ButtonPair("BN_DevHeatMax", "Max (100%)", "BN_DevHeatZero", "Zero (0%)", "Dev: Session Heat", "");
-    b.Tip("Forces session Heat to 100% or 0% instantly, bypassing Hide Presence/mode suppression. For testing Counter-Breach without waiting for Heat to climb naturally.");
+    b.Section(GetLocalizedTextByKey(n"Better-Netrunning-RCF-Section-HeatDev"));
+    b.ButtonPair("BN_DevHeatMax", GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevHeat-Max"), "BN_DevHeatZero", GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevHeat-Zero"), GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevHeat-GroupLabel"), "");
+    b.Tip(GetLocalizedTextByKey(n"Better-Netrunning-RCF-DevHeat-Tip"));
 
     return b.Build();
   }
@@ -177,6 +189,8 @@ public class BNConfigProvider extends DVRCF_Provider {
     if Equals(key, "BN_APBreachFailurePenaltyEnabled") { return c.apBreachFailurePenaltyEnabled; }
     if Equals(key, "BN_NPCBreachFailurePenaltyEnabled"){ return c.npcBreachFailurePenaltyEnabled; }
     if Equals(key, "BN_EnableDebugLog")                { return c.enableDebugLog; }
+    if Equals(key, "BN_HackThePlanetEnabled")          { return c.hackThePlanetEnabled; }
+    if Equals(key, "BN_HackThePlanetReinitializeAccessPoints") { return c.hackThePlanetReinitializeAccessPoints; }
     return false;
   }
 
@@ -191,6 +205,8 @@ public class BNConfigProvider extends DVRCF_Provider {
     else if Equals(key, "BN_APBreachFailurePenaltyEnabled") { c.apBreachFailurePenaltyEnabled = value; }
     else if Equals(key, "BN_NPCBreachFailurePenaltyEnabled"){ c.npcBreachFailurePenaltyEnabled = value; }
     else if Equals(key, "BN_EnableDebugLog")                { c.enableDebugLog = value; }
+    else if Equals(key, "BN_HackThePlanetEnabled")          { c.hackThePlanetEnabled = value; }
+    else if Equals(key, "BN_HackThePlanetReinitializeAccessPoints") { c.hackThePlanetReinitializeAccessPoints = value; }
   }
 
   public func GetInt(key: String) -> Int32 {

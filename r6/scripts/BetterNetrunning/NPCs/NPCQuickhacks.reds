@@ -95,7 +95,9 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
   let isConnectedToNetwork: Bool = this.IsConnectedToAccessPoint();
 
   if !isConnectedToNetwork {
-    permissions.isBreached = true;
+    let owner: wref<ScriptedPuppet> = this.GetOwnerEntity() as ScriptedPuppet;
+    let isCivilianOrVendor: Bool = IsDefined(owner) && (owner.IsCrowd() || owner.IsVendor());
+    permissions.isBreached = isCivilianOrVendor ? this.m_sjkiNPCSubnetBreached : true;
   } else if !permissions.isBreached {
 
     let deviceLink: ref<SharedGameplayPS> = this.GetDeviceLink();

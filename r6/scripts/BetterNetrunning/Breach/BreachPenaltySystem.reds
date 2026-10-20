@@ -168,7 +168,6 @@ public final func BNHandleSJKIBoardComplete(gi: GameInstance, completedPrograms:
   this.BNReopenBreachBoard(gi);
 }
 
-@if(ModuleExists("HackthePlanetForReal"))
 @addMethod(ScriptableDeviceComponentPS)
 public final func BNReInitiateDiveSJKI(gi: GameInstance) -> Void {
   this.m_bnSJKILooping = false;
@@ -185,10 +184,6 @@ public final func BNReInitiateDiveSJKI(gi: GameInstance) -> Void {
   bb.SetString (GetAllBlackboardDefs().NetworkBlackboard.NetworkName,   this.GetDeviceName(), true);
   BNInfo("BreachLoop", "SJKI re-entry: re-armed standalone, HUD reopened");
 }
-
-@if(!ModuleExists("HackthePlanetForReal"))
-@addMethod(ScriptableDeviceComponentPS)
-public final func BNReInitiateDiveSJKI(gi: GameInstance) -> Void {}
 
 @addMethod(ScriptableDeviceComponentPS)
 public final func BNReInitiateDive(gi: GameInstance) -> Void {

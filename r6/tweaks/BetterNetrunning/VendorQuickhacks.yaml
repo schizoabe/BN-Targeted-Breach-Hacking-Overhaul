@@ -1,0 +1,17 @@
+
+Character.Fluff_Vendor_NPC_Base:
+  $type: gamedataCharacter_Record
+  objectActions:
+    - GenericInteraction.Talk
+    - QuickHack.RemoteBreach
+    - QuickHack.BasePingHack
+    - QuickHack.BaseOverheatHack
+    - QuickHack.BaseContagionHack
+    - QuickHack.BaseWhistleHack
+    - QuickHack.BaseWeaponMalfunctionHack
+    - QuickHack.BaseLocomotionMalfunctionHack
+    - QuickHack.BaseCyberwareMalfunctionHack
+    - QuickHack.BaseBlindHack
+    - QuickHack.BaseCommsCallInHack
+    - QuickHack.BaseCommsNoiseHack
+    - QuickHack.BaseMemoryWipeHack
