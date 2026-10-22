@@ -52,6 +52,21 @@ protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
 }
 
 @addMethod(VehicleObject)
+public const func GetNetworkLinkSlotName() -> CName {
+  return n"NetworkLink";
+}
+
+@addMethod(VehicleObject)
+public const func GetNetworkLinkSlotName(out transform: WorldTransform) -> CName {
+  return n"NetworkLink";
+}
+
+@addMethod(VehicleObject)
+public const func IsNetworkLinkDynamic() -> Bool {
+  return true;
+}
+
+@addMethod(VehicleObject)
 protected cb func OnActionPing(evt: ref<PingDevice>) -> Bool {
   let gi: GameInstance = this.GetGame();
   let mss: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)

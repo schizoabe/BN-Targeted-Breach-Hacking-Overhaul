@@ -1,0 +1,13 @@
+
+Interactions.BNDataMine:
+  $base: Interactions.NetworkGainAccessProgram
+  caption: LocKey#Better-Netrunning-DataMine-Name
+  description: LocKey#Better-Netrunning-DataMine-Description
+  captionIcon: ChoiceCaptionParts.ICEMediumIcon
+
+MinigameAction.BN_DataMine:
+  $base: MinigameAction.NetworkLowerICEMajor
+  objectActionUI: Interactions.BNDataMine
+  completionEffects: []
+  type: MinigameAction.Both
+  complexity: 25.0

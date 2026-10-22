@@ -52,6 +52,17 @@ public class English extends ModLocalizationPackage {
     this.Text("Better-Netrunning-RemoteBreach-Name", "Remote Breach");
     this.Text("Better-Netrunning-RemoteBreach-Description", "Attempts a breach without physical access. Weakens ICE on success. Requires the Intrusion Suite upgrade.");
 
+    this.Text("Better-Netrunning-DataMine-Name", "DataMine Protocol");
+    this.Text("Better-Netrunning-DataMine-Description", "Siphons data from marked targets");
+    this.Text("Better-Netrunning-DataMine-Notify-Gained", "DataMine Protocol: +");
+    this.Text("Better-Netrunning-DataMine-Notify-GhostNET", " data — check GhostNET's Data Exchange");
+    this.Text("Better-Netrunning-DataMine-Notify-Empty", "DataMine Protocol: no usable data recovered");
+    this.Text("Better-Netrunning-DataMine-Type-0", "Personnel");
+    this.Text("Better-Netrunning-DataMine-Type-1", "Financial");
+    this.Text("Better-Netrunning-DataMine-Type-2", "Operational");
+    this.Text("Better-Netrunning-DataMine-Type-3", "Research");
+    this.Text("Better-Netrunning-DataMine-Type-4", "Executive");
+
     this.Text("Better-Netrunning-UI-Boot-Title", "BOOTING");
 
     this.Text("Better-Netrunning-UI-ICEScoutLog-Title", "Diagnostic Feed");
@@ -145,7 +156,7 @@ public class English extends ModLocalizationPackage {
     this.Text("Better-Netrunning-RCF-HackThePlanetEnabled-Label", "Enable Standalone Device Jacking");
     this.Text("Better-Netrunning-RCF-HackThePlanetEnabled-Tip", "Forces jack-in/breach actions onto devices and access points that vanilla wouldn't normally expose one on (vending machines, terminals, confession booths, etc.) and bypasses the DISABLED/UNPOWERED device-state gate on access points.");
     this.Text("Better-Netrunning-RCF-HackThePlanetReinitializeAccessPoints-Label", "Reinitialize Access Points");
-    this.Text("Better-Netrunning-RCF-HackThePlanetReinitializeAccessPoints-Tip", "Resets an access point's hacking-minigame state so it can be re-attempted after certain quest/script state changes. Disable only if this causes an issue with a specific quest access point.");
+    this.Text("Better-Netrunning-RCF-HackThePlanetReinitializeAccessPoints-Tip", "Resets an access point's hacking-minigame state so it can be re-attempted after certain quest/script state changes. CAUTION: also fires on every normal powered-on device the player approaches, not just disabled quest access points — this can prematurely expose a whole network's devices/NPCs without an actual breach. Only enable if you're hitting a specific stuck quest access point.");
 
     this.Text("Better-Netrunning-RCF-BreachFailurePenaltyEnabled-Label", "Enable Breach Failure Penalty");
     this.Text("Better-Netrunning-RCF-BreachFailurePenaltyEnabled-Tip", "Applies penalties when a breach protocol fails: disconnection VFX, type-specific lockout, and a trace attempt.");
@@ -174,5 +185,27 @@ public class English extends ModLocalizationPackage {
     this.Text("Better-Netrunning-RCF-DevHeat-Zero", "Zero (0%)");
     this.Text("Better-Netrunning-RCF-DevHeat-GroupLabel", "Dev: Session Heat");
     this.Text("Better-Netrunning-RCF-DevHeat-Tip", "Forces session Heat to 100% or 0% instantly, bypassing Hide Presence/mode suppression. For testing Counter-Breach without waiting for Heat to climb naturally.");
+
+    this.Text("Better-Netrunning-Alert-CounterBreachDefeated", "COUNTER-BREACH DEFEATED!");
+    this.Text("Better-Netrunning-Alert-ICERetaliating", "ICE IS RETALIATING, BREACH INCOMING!");
+    this.Text("Better-Netrunning-Alert-HostileICEPrefix", "HOSTILE ICE SUCCESSFUL — ");
+    this.Text("Better-Netrunning-Alert-HostileICESuffix", " DEPLOYED");
+    this.Text("Better-Netrunning-Alert-Hack-Overheat", "OVERHEAT");
+    this.Text("Better-Netrunning-Alert-Hack-Biohazard", "BIOHAZARD PAYLOAD");
+    this.Text("Better-Netrunning-Alert-Hack-ShortCircuit", "SHORT-CIRCUIT");
+    this.Text("Better-Netrunning-Alert-Hack-OpticsBreach", "OPTICS BREACH");
+    this.Text("Better-Netrunning-Alert-Hack-WeaponMalfunction", "WEAPON MALFUNCTION");
+    this.Text("Better-Netrunning-Alert-Hack-MovementLockdown", "MOVEMENT LOCKDOWN");
+    this.Text("Better-Netrunning-Alert-NoCyberdeckScoutOnly", "NO CYBERDECK — SCOUT MODE ONLY");
+    this.Text("Better-Netrunning-Alert-BreachModePrefix", "BREACH MODE: ");
+    this.Text("Better-Netrunning-Alert-Mode-Scout", "SCOUT");
+    this.Text("Better-Netrunning-Alert-Mode-Attack", "ATTACK");
+    this.Text("Better-Netrunning-Alert-Mode-Defend", "DEFEND");
+    this.Text("Better-Netrunning-Alert-CascadeNoCyberdeck", "CASCADE: NO CYBERDECK");
+    this.Text("Better-Netrunning-Alert-CascadeNoQuickhack", "CASCADE: NO QUICKHACK AVAILABLE");
+    this.Text("Better-Netrunning-Alert-CascadeQuickhackNotApplicable", "CASCADE: QUICKHACK NOT APPLICABLE");
+    this.Text("Better-Netrunning-Alert-CascadeBroadcastPrefix", "CASCADE: ");
+    this.Text("Better-Netrunning-Alert-CascadeBroadcastSuffix", " broadcasted.");
+    this.Text("Better-Netrunning-Alert-CascadeNoStampedNPCs", "CASCADE: NO STAMPED MARKED NPCS");
   }
 }

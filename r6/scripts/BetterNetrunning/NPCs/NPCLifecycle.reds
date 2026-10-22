@@ -47,7 +47,7 @@ public final const func GetValidChoices(const actions: script_ref<array<wref<Obj
       && !this.m_betterNetrunningWasDirectlyBreached {
 
     let ownerPuppet: wref<ScriptedPuppet> = this.GetOwnerEntity() as ScriptedPuppet;
-    if IsDefined(ownerPuppet) && ownerPuppet.IsIncapacitated() {
+    if IsDefined(ownerPuppet) && ownerPuppet.IsIncapacitated() && !ownerPuppet.IsDead() {
 
       let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance());
       let neuralTapOwned: Bool = true;

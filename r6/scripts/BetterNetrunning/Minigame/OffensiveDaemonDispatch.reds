@@ -246,10 +246,10 @@ private final func BNDispatchCascadeProtocol(
 
   if dispatched > 0 {
     let summary: String = StrLen(qhDisplayName) > 0 ? qhDisplayName : resolvedActionName;
-    if IsDefined(cbs) { cbs.ShowWarning("CASCADE: " + summary + " broadcasted."); }
+    if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-CascadeBroadcastPrefix") + summary + GetLocalizedTextByKey(n"Better-Netrunning-Alert-CascadeBroadcastSuffix")); }
     BNInfo("OffensiveDaemonDispatch", "Cascade Protocol: " + summary + " queued for " + ToString(dispatched) + " NPC(s)");
   } else {
-    if IsDefined(cbs) { cbs.ShowWarning("CASCADE: NO STAMPED MARKED NPCS"); }
+    if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-CascadeNoStampedNPCs")); }
     BNDebug("OffensiveDaemonDispatch", "Cascade: no stamped marked NPCs reachable");
   }
 }

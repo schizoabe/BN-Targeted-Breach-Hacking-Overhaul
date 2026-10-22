@@ -145,6 +145,10 @@ public static func CLASS_VICE_SYSTEM() -> CName {
     return t"MinigameAction.BN_OffloadProtocol";
   }
 
+  public static func PROGRAM_BN_DATAMINE() -> TweakDBID {
+    return t"MinigameAction.BN_DataMine";
+  }
+
   public static func PROGRAM_QUEST_LOOT_Q003() -> TweakDBID {
     return t"MinigameAction.NetworkLootQ003";
   }
@@ -284,6 +288,7 @@ public static func CLASS_VICE_SYSTEM() -> CName {
 
     if pid == BNConstants.PROGRAM_BN_ENTROPY_PROTOCOL() { return true; }
     if pid == BNConstants.PROGRAM_CASCADE_PROTOCOL()    { return true; }
+    if pid == BNConstants.PROGRAM_BN_DATAMINE()         { return true; }
     return false;
   }
 

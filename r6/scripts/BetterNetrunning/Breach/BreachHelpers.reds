@@ -80,6 +80,9 @@ protected cb func OnAccessPointMiniGameStatus(evt: ref<AccessPointMiniGameStatus
 
   let gi: GameInstance = this.GetGame();
 
+  BNInfo("UnconsciousBreach", "OnAccessPointMiniGameStatus fired — state=" + ToString(EnumInt(evt.minigameState))
+    + " isIncapacitated=" + ToString(this.IsIncapacitated()) + " isDead=" + ToString(this.IsDead()));
+
   if this.IsIncapacitated() {
     if Equals(evt.minigameState, HackingMinigameState.Succeeded) {
       this.HandleUnconsciousBreachSuccess(gi);

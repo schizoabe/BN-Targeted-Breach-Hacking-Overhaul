@@ -57,6 +57,12 @@ public persistent let m_bnNPCIceHitsApplied: Int32;
 @addField(ScriptedPuppetPS)
 public persistent let m_bnNPCIceDefeated: Bool;
 
+@addField(ScriptedPuppetPS)
+public persistent let m_bnTurnAuthFixApplied: Bool;
+
+@addField(SharedGameplayPS)
+public persistent let m_bnTurnAuthFixAppliedDevice: Bool;
+
 public class SetBreachedSubnet extends ActionBool {
 
   public let unlockTimestampBasic: Float;

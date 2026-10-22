@@ -87,6 +87,18 @@ private final func ApplyBetterNetrunningQuickhackFilter(
 
 @addMethod(ScriptedPuppetPS)
 private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
+
+  if !this.m_bnTurnAuthFixApplied {
+    this.m_bnTurnAuthFixApplied = true;
+    this.m_quickHacksExposed    = false;
+    this.m_sjkiNPCSubnetBreached = false;
+    this.m_bnNPCIceDefeated     = false;
+    this.m_bnNPCIceHitsApplied  = 0;
+    let fixDeviceLink: ref<SharedGameplayPS> = this.GetDeviceLink();
+    if IsDefined(fixDeviceLink) { fixDeviceLink.m_betterNetrunningUnlockTimestampNPCs = 0.0; }
+    BNInfo("TurnAuthFix", "One-time NPC re-lock applied");
+  }
+
   let permissions: NPCHackPermissions;
   let gameInstance: GameInstance = this.GetGameInstance();
 
@@ -95,9 +107,7 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
   let isConnectedToNetwork: Bool = this.IsConnectedToAccessPoint();
 
   if !isConnectedToNetwork {
-    let owner: wref<ScriptedPuppet> = this.GetOwnerEntity() as ScriptedPuppet;
-    let isCivilianOrVendor: Bool = IsDefined(owner) && (owner.IsCrowd() || owner.IsVendor());
-    permissions.isBreached = isCivilianOrVendor ? this.m_sjkiNPCSubnetBreached : true;
+    permissions.isBreached = this.m_sjkiNPCSubnetBreached;
   } else if !permissions.isBreached {
 
     let deviceLink: ref<SharedGameplayPS> = this.GetDeviceLink();
@@ -115,6 +125,17 @@ private final func CalculateNPCHackPermissions() -> NPCHackPermissions {
       }
     }
   }
+
+  let logOwner: wref<ScriptedPuppet> = this.GetOwnerEntity() as ScriptedPuppet;
+  BNInfo("NPCPermissions",
+    "CalculateNPCHackPermissions: npc=" + (IsDefined(logOwner) ? TDBID.ToStringDEBUG(logOwner.GetRecordID()) : "<unknown>")
+    + " isConnectedToNetwork=" + ToString(isConnectedToNetwork)
+    + " m_quickHacksExposed="  + ToString(this.m_quickHacksExposed)
+    + " m_sjkiNPCSubnetBreached=" + ToString(this.m_sjkiNPCSubnetBreached)
+    + " m_bnTurnAuthFixApplied="  + ToString(this.m_bnTurnAuthFixApplied)
+    + " isCrowd=" + ToString(IsDefined(logOwner) && logOwner.IsCrowd())
+    + " isVendor=" + ToString(IsDefined(logOwner) && logOwner.IsVendor())
+    + " => isBreached=" + ToString(permissions.isBreached));
 
   return permissions;
 }

@@ -26,7 +26,7 @@ public class CounterBreachSucceededEvent extends BNHackResultCallback {
       GameInstance.GetScriptableSystemsContainer(gi)
         .Get(BNConstants.CLASS_COUNTER_BREACH_SYSTEM()) as CounterBreachSystem;
     if IsDefined(cbs) {
-      cbs.ShowWarning("COUNTER-BREACH DEFEATED!");
+      cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-CounterBreachDefeated"));
       cbs.OnOutcomeFinished();
     }
   }
@@ -205,30 +205,30 @@ public class CounterBreachSystem extends ScriptableSystem {
     switch roll {
       case 0:
         effectID = t"BaseStatusEffect.Burning";
-        hackLabel = "OVERHEAT";
+        hackLabel = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Hack-Overheat");
         dealsDamage = true;
         break;
       case 1:
         effectID = t"BaseStatusEffect.Poisoned";
-        hackLabel = "BIOHAZARD PAYLOAD";
+        hackLabel = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Hack-Biohazard");
         dealsDamage = true;
         break;
       case 2:
         effectID = t"BaseStatusEffect.Electrocuted";
-        hackLabel = "SHORT-CIRCUIT";
+        hackLabel = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Hack-ShortCircuit");
         dealsDamage = true;
         break;
       case 3:
         effectID = t"BaseStatusEffect.Blind";
-        hackLabel = "OPTICS BREACH";
+        hackLabel = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Hack-OpticsBreach");
         break;
       case 4:
         effectID = t"BaseStatusEffect.WeaponMalfunction";
-        hackLabel = "WEAPON MALFUNCTION";
+        hackLabel = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Hack-WeaponMalfunction");
         break;
       default:
         effectID = t"BaseStatusEffect.LocomotionMalfunction";
-        hackLabel = "MOVEMENT LOCKDOWN";
+        hackLabel = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Hack-MovementLockdown");
         break;
     }
 
@@ -245,7 +245,7 @@ public class CounterBreachSystem extends ScriptableSystem {
       pools.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.Health, newHP, player, false);
     }
 
-    this.ShowWarning("HOSTILE ICE SUCCESSFUL — " + hackLabel + " DEPLOYED");
+    this.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-HostileICEPrefix") + hackLabel + GetLocalizedTextByKey(n"Better-Netrunning-Alert-HostileICESuffix"));
   }
 
   private func AlertNearbyNPCs(radius: Float) -> Void {

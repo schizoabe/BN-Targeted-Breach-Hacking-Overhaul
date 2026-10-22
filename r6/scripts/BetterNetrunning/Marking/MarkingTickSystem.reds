@@ -39,6 +39,7 @@ public class MarkingTickSystem extends ScriptableSystem {
 
   public func OnTick() -> Void {
     this.Update(0.1);
+    this.RefreshVehicleBeams();
 
     this.m_panelRefreshAccum += 0.1;
     if this.m_panelRefreshAccum >= 0.25 {
@@ -47,6 +48,15 @@ public class MarkingTickSystem extends ScriptableSystem {
     }
 
     this.ArmTick();
+  }
+
+  private func RefreshVehicleBeams() -> Void {
+    let gi: GameInstance = this.GetGameInstance();
+    let ms: ref<MarkingStateSystem> = GameInstance.GetScriptableSystemsContainer(gi)
+      .Get(BNConstants.CLASS_MARKING_STATE_SYSTEM()) as MarkingStateSystem;
+    if IsDefined(ms) && ms.HasMarkedVehicleInRoot() {
+      ms.RefreshMarkBeams();
+    }
   }
 
   private func IsPlayerInControl(gi: GameInstance, player: wref<PlayerPuppet>) -> Bool {
@@ -115,7 +125,7 @@ public class MarkingTickSystem extends ScriptableSystem {
     if this.m_counterBreachWasInMinigame && !inMinigame && this.m_counterBreachPending > 0.0 {
       this.m_counterBreachPending = 5.0;
       BNInfo("CounterBreach", "ICE still retaliating after breach exit — restarting countdown");
-      if IsDefined(cbs) { cbs.ShowWarning("ICE IS RETALIATING, BREACH INCOMING!"); }
+      if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-ICERetaliating")); }
     }
     this.m_counterBreachWasInMinigame = inMinigame;
 
@@ -130,7 +140,7 @@ public class MarkingTickSystem extends ScriptableSystem {
           this.m_counterBreachPending = 5.0;
           BNInfo("CounterBreach", "BLACK ICE IMMINENT: heat=" + ToString(maxHeat) + " countdown=" + ToString(this.m_counterBreachPending));
           if IsDefined(cbs) {
-            cbs.ShowWarning("ICE IS RETALIATING, BREACH INCOMING!");
+            cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-ICERetaliating"));
           } else {
             BNWarn("CounterBreach", "CounterBreachSystem not found, minigame cannot fire");
           }

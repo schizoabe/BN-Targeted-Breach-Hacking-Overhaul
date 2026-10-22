@@ -8,19 +8,19 @@ import BetterNetrunning.Logging.*
 
 public func ShouldRemoveBreachedPrograms(actionID: TweakDBID, entity: wref<GameObject>) -> Bool {
 
-  if !IsDefined(entity as Device) {
-    return false;
+  let sharedPS: ref<SharedGameplayPS>;
+  if IsDefined(entity as Device) {
+    sharedPS = (entity as Device).GetDevicePS();
+  } else if IsDefined(entity as VehicleObject) {
+    sharedPS = (entity as VehicleObject).GetVehiclePS();
   }
-
-  let devicePS: ref<DeviceComponentPS> = (entity as Device).GetDevicePS();
-  let sharedPS: ref<SharedGameplayPS> = devicePS as SharedGameplayPS;
 
   if !IsDefined(sharedPS) {
     return false;
   }
 
   let unlockDurationHours: Int32 = BetterNetrunningSettings.QuickhackUnlockDurationHours();
-  let currentTime: Float = TimeUtils.GetCurrentTimestamp(devicePS.GetGameInstance());
+  let currentTime: Float = TimeUtils.GetCurrentTimestamp(sharedPS.GetGameInstance());
 
   let unlockDurationSeconds: Float = Cast<Float>(unlockDurationHours) * 3600.0;
 

@@ -111,16 +111,25 @@ public class BNRemoteBreachSucceededEvent extends BNHackResultCallback {
 
       if devicePS.m_bnIceDefeated && !devicePS.IsBreached() {
         let deviceWeak: wref<GameObject> = devicePS.GetOwnerEntityWeak() as GameObject;
-        let deviceEntity: ref<Device> = IsDefined(deviceWeak)
-          ? GameInstance.FindEntityByID(gi, deviceWeak.GetEntityID()) as Device
+
+        let vehicleEntity: ref<VehicleObject> = IsDefined(deviceWeak)
+          ? GameInstance.FindEntityByID(gi, deviceWeak.GetEntityID()) as VehicleObject
           : null;
-        if IsDefined(deviceEntity) {
-          let targetType: TargetType = DaemonFilterUtils.IsCamera(devicePS)
-            ? TargetType.Camera
-            : (DaemonFilterUtils.IsTurret(devicePS) ? TargetType.Turret : TargetType.Basic);
-          let persistency: ref<GamePersistencySystem> = GameInstance.GetPersistencySystem(gi);
-          TargetedBreachUtils.UnlockDevice(deviceEntity, targetType, TimeUtils.GetCurrentTimestamp(gi), persistency);
-          BNInfo("RemoteBreach", "ICE fully broken — device auto-unlocked");
+        if IsDefined(vehicleEntity) {
+          TargetedBreachUtils.UnlockVehicle(vehicleEntity, TimeUtils.GetCurrentTimestamp(gi), gi);
+          BNInfo("RemoteBreach", "ICE fully broken — vehicle auto-unlocked");
+        } else {
+          let deviceEntity: ref<Device> = IsDefined(deviceWeak)
+            ? GameInstance.FindEntityByID(gi, deviceWeak.GetEntityID()) as Device
+            : null;
+          if IsDefined(deviceEntity) {
+            let targetType: TargetType = DaemonFilterUtils.IsCamera(devicePS)
+              ? TargetType.Camera
+              : (DaemonFilterUtils.IsTurret(devicePS) ? TargetType.Turret : TargetType.Basic);
+            let persistency: ref<GamePersistencySystem> = GameInstance.GetPersistencySystem(gi);
+            TargetedBreachUtils.UnlockDevice(deviceEntity, targetType, TimeUtils.GetCurrentTimestamp(gi), persistency);
+            BNInfo("RemoteBreach", "ICE fully broken — device auto-unlocked");
+          }
         }
       }
     } else if IsDefined(npcPS) {

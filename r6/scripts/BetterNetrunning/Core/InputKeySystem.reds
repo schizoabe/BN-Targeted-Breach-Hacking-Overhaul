@@ -81,7 +81,7 @@ public class BNInputActions {
     public static func CycleBreachMode(gi: GameInstance, hasDeck: Bool) -> Void {
         let cbs = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.CounterBreach.CounterBreachSystem") as CounterBreachSystem;
         if !hasDeck {
-            if IsDefined(cbs) { cbs.ShowWarning("NO CYBERDECK — SCOUT MODE ONLY"); }
+            if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-NoCyberdeckScoutOnly")); }
             return;
         }
         let ms = GameInstance.GetScriptableSystemsContainer(gi).Get(n"BetterNetrunning.Marking.MarkingStateSystem") as MarkingStateSystem;
@@ -89,10 +89,10 @@ public class BNInputActions {
         let nextMode = (ms.GetBreachMode() + 1) % 3;
         ms.SetBreachMode(nextMode);
         let label: String;
-        if nextMode == 0      { label = "SCOUT"; }
-        else if nextMode == 1 { label = "ATTACK"; }
-        else                  { label = "DEFEND"; }
-        if IsDefined(cbs) { cbs.ShowWarning("BREACH MODE: " + label); }
+        if nextMode == 0      { label = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Mode-Scout"); }
+        else if nextMode == 1 { label = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Mode-Attack"); }
+        else                  { label = GetLocalizedTextByKey(n"Better-Netrunning-Alert-Mode-Defend"); }
+        if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-BreachModePrefix") + label); }
     }
 
     public static func CycleCascadeQH(gi: GameInstance) -> Void {
@@ -104,7 +104,7 @@ public class BNInputActions {
         if !IsDefined(player) { return; }
         let deckID: ItemID = EquipmentSystem.GetData(player).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
         if !EquipmentSystem.IsItemCyberdeck(deckID) {
-            if IsDefined(cbs) { cbs.ShowWarning("CASCADE: NO CYBERDECK"); }
+            if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-CascadeNoCyberdeck")); }
             return;
         }
 
@@ -140,7 +140,7 @@ public class BNInputActions {
         }
         let count: Int32 = ArraySize(qhActions);
         if count == 0 {
-            if IsDefined(cbs) { cbs.ShowWarning("CASCADE: NO QUICKHACK AVAILABLE"); }
+            if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-CascadeNoQuickhack")); }
             return;
         }
 

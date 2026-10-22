@@ -49,6 +49,19 @@ private func SJKI_OpenBreachHUD(ps: ref<ScriptableDeviceComponentPS>) -> Void {
 @replaceMethod(ScriptableDeviceComponentPS)
 protected const func ShouldExposePersonalLinkAction() -> Bool {
 
+  if !this.m_bnTurnAuthFixAppliedDevice {
+    this.m_bnTurnAuthFixAppliedDevice = true;
+    this.m_hackingMinigameState = HackingMinigameState.Unknown;
+    this.m_betterNetrunningUnlockTimestampBasic   = 0.0;
+    this.m_betterNetrunningUnlockTimestampCameras = 0.0;
+    this.m_betterNetrunningUnlockTimestampTurrets = 0.0;
+    this.m_betterNetrunningUnlockTimestampNPCs    = 0.0;
+    this.m_bnIceDefeated    = false;
+    this.m_bnIceHitsApplied = 0;
+    this.m_isSJKIStandaloneDevice = false;
+    BNInfo("TurnAuthFix", "One-time device re-lock applied");
+  }
+
   if this.IsPersonalLinkConnecting()                                                                      { return false; }
   if TDBID.IsValid(this.m_personalLinkCustomInteraction) && this.IsPersonalLinkConnected()                { return false; }
   if Equals(this.m_personalLinkStatus, EPersonalLinkConnectionStatus.CONNECTED) || this.m_personalLinkForced { return true; }
@@ -207,7 +220,7 @@ public func SetHasPersonalLinkSlot(isPersonalLinkSlotPresent: Bool) -> Void {
   if !isPersonalLinkSlotPresent {
     let ownerDevice: ref<Device> = this.GetOwnerEntityWeak() as Device;
     let isStandalone: Bool = this.m_isSJKIStandaloneDevice
-      || SJKI_IsTargetDevice(ownerDevice as GameObject);
+      || SJKI_IsTargetDevice(ownerDevice);
     if isStandalone {
       BNDebug("HackThePlanet", "SetHasPersonalLinkSlot: blocked disable on standalone");
       return;

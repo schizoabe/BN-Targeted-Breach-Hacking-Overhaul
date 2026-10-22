@@ -40,7 +40,7 @@ public abstract class BNCascadeDispatchUtils {
   public static func ResolveSelectedAction(gi: GameInstance, player: ref<PlayerPuppet>, cbs: ref<CounterBreachSystem>, markingSystem: ref<MarkingStateSystem>) -> wref<ObjectAction_Record> {
     let deckID: ItemID = EquipmentSystem.GetData(player).GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
     if !EquipmentSystem.IsItemCyberdeck(deckID) {
-      if IsDefined(cbs) { cbs.ShowWarning("CASCADE: NO CYBERDECK"); }
+      if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-CascadeNoCyberdeck")); }
       BNInfo("CascadeDispatch", "No cyberdeck equipped");
       return null;
     }
@@ -78,7 +78,7 @@ public abstract class BNCascadeDispatchUtils {
 
     let qhCount: Int32 = ArraySize(qhActions);
     if qhCount == 0 {
-      if IsDefined(cbs) { cbs.ShowWarning("CASCADE: QUICKHACK NOT APPLICABLE"); }
+      if IsDefined(cbs) { cbs.ShowWarning(GetLocalizedTextByKey(n"Better-Netrunning-Alert-CascadeQuickhackNotApplicable")); }
       BNWarn("CascadeDispatch", "No PuppetQuickHack action in player quickhack list");
       return null;
     }

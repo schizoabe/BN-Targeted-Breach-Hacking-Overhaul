@@ -33,6 +33,8 @@ public class MarkingStateSystem extends ScriptableSystem {
   private let m_markedCameras: array<MarkEntry>;
   private let m_markedDefense: array<MarkEntry>;
 
+  private let m_cachedNetworkBeamFX: FxResource;
+
   private let m_sessionHeat: Float;
 
   private let m_hidePresenceTimer: Float;
@@ -660,9 +662,17 @@ public class MarkingStateSystem extends ScriptableSystem {
     let gi: GameInstance = this.GetGameInstance();
     let i: Int32 = 0;
     while i < ArraySize(this.m_markedRoot) {
-      let entity: ref<Device> = GameInstance.FindEntityByID(gi, this.m_markedRoot[i].entityID) as Device;
+      let entity: ref<GameObject> = GameInstance.FindEntityByID(gi, this.m_markedRoot[i].entityID) as GameObject;
       if IsDefined(entity) {
-        let ps: ref<ScriptableDeviceComponentPS> = entity.GetDevicePS();
+
+        let ps: ref<SharedGameplayPS>;
+        let vehicle: ref<VehicleObject> = entity as VehicleObject;
+        if IsDefined(vehicle) {
+          ps = vehicle.GetVehiclePS();
+        } else {
+          let device: ref<Device> = entity as Device;
+          if IsDefined(device) { ps = device.GetDevicePS(); }
+        }
         let ts: Float = IsDefined(ps) ? ps.m_betterNetrunningUnlockTimestampBasic : -1.0;
         if !IsDefined(ps) || ts <= 0.0 {
           BNDebug("MarkingState", "AllMarkedRootStamped: device[" + ToString(i) + "] not stamped → false");
@@ -760,6 +770,28 @@ public class MarkingStateSystem extends ScriptableSystem {
     this.RebuildMarkBeams();
   }
 
+  public func HasMarkedVehicleInRoot() -> Bool {
+    let gi: GameInstance = this.GetGameInstance();
+    let i: Int32 = 0;
+    while i < ArraySize(this.m_markedRoot) {
+      let entity: ref<VehicleObject> = GameInstance.FindEntityByID(gi, this.m_markedRoot[i].entityID) as VehicleObject;
+      if IsDefined(entity) { return true; }
+      i += 1;
+    }
+    return false;
+  }
+
+  public func CacheNetworkBeamFXIfValid(fx: FxResource) -> Void {
+    if FxResource.IsValid(fx) {
+      let wasInvalid: Bool = !FxResource.IsValid(this.m_cachedNetworkBeamFX);
+      this.m_cachedNetworkBeamFX = fx;
+
+      if wasInvalid && this.HasMarkedVehicleInRoot() {
+        this.RebuildMarkBeams();
+      }
+    }
+  }
+
   private func RebuildMarkBeams() -> Void {
     let gi: GameInstance = this.GetGameInstance();
     let player: ref<PlayerPuppet> = GetPlayer(gi);
@@ -821,9 +853,18 @@ public class MarkingStateSystem extends ScriptableSystem {
         let device: ref<Device> = entity as Device;
         if IsDefined(device) {
           linkData.fxResource = device.GetDefaultNetworkBeamResource();
+          if FxResource.IsValid(linkData.fxResource) {
+            this.m_cachedNetworkBeamFX = linkData.fxResource;
+          }
         } else {
 
           linkData.fxResource = entity.GetFxResourceByKey(n"pingNetworkLink");
+          if !FxResource.IsValid(linkData.fxResource) {
+
+            linkData.fxResource = this.m_cachedNetworkBeamFX;
+            BNDebug("MarkingState", "RegisterBeamsForEntries: class=" + NameToString(entity.GetClassName())
+              + " used cached fallback, valid=" + ToString(FxResource.IsValid(linkData.fxResource)));
+          }
         }
         networkSys.RegisterNetworkLink(linkData);
         ArrayPush(this.m_beamedEntityIDs, entityID);

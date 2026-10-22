@@ -246,6 +246,26 @@ public final func InjectBetterNetrunningPrograms(programs: script_ref<array<Mini
       + (hasCascade ? "already present" : "injected"));
   }
 
+  let dmLevel: Int32 = IsDefined(perkSysNPC) ? perkSysNPC.GetPerkLevel(BNPerk.DataMineProtocol) : 0;
+  if hasMarks
+      && markingSystem.IsAttackMode()
+      && (markingSystem.HasMarkedNPCs() || markingSystem.HasMarkedRoot())
+      && dmLevel > 0 {
+    let hasDataMine: Bool = false;
+    let dm: Int32 = 0;
+    while dm < ArraySize(Deref(programs)) {
+      if Deref(programs)[dm].actionID == BNConstants.PROGRAM_BN_DATAMINE() { hasDataMine = true; }
+      dm += 1;
+    }
+    if !hasDataMine {
+      let dataMineProg: MinigameProgramData;
+      dataMineProg.actionID    = BNConstants.PROGRAM_BN_DATAMINE();
+      dataMineProg.programName = n"BN_DataMine";
+      ArrayInsert(Deref(programs), 0, dataMineProg);
+    }
+    BNInfo("ProgramInjection", "DataMine=" + (hasDataMine ? "already present" : "injected"));
+  }
+
   let opLevel: Int32 = IsDefined(perkSysNPC) ? perkSysNPC.GetPerkLevel(BNPerk.OffloadProtocol) : 0;
   if hasMarks && opLevel > 0 {
     let hasOffload: Bool = false;

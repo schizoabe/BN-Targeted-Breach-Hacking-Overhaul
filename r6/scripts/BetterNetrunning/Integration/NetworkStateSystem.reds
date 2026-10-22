@@ -7,6 +7,8 @@ import BetterNetrunning.Marking.*
 import BetterNetrunning.Perks.*
 import BetterNetrunning.Systems.*
 
+import GhostNET.*
+
 @if(ModuleExists("DarkFuture.Needs"))
 import DarkFuture.Needs.{DFNerveSystem, DFChangeNeedValueProps}
 
@@ -82,10 +84,9 @@ public abstract class NetworkStateUtils {
   }
 
   public static func OnBreachEntered(
-    devicePS: ref<ScriptableDeviceComponentPS>,
+    sharedPS: ref<SharedGameplayPS>,
     gameInstance: GameInstance
   ) -> Void {
-    let sharedPS: ref<SharedGameplayPS> = devicePS;
     NetworkStateUtils.EnsureDeviceICERolled(sharedPS, gameInstance);
 
     if IsDefined(sharedPS) {
@@ -194,6 +195,38 @@ public abstract class NetworkStateUtils {
     }
   }
 
+  public static func RollDataMineType() -> Int32 {
+    let roll: Int32 = RandRange(0, 100);
+    return roll < 50 ? 0 : (roll < 62 ? 1 : (roll < 75 ? 2 : (roll < 87 ? 3 : 4)));
+  }
+
+  private static func ShowDataMineNotification(gameInstance: GameInstance, dataType: Int32, amount: Int32) -> Void {
+    let typeKey: CName;
+    if dataType == 0      { typeKey = n"Better-Netrunning-DataMine-Type-0"; }
+    else { if dataType == 1 { typeKey = n"Better-Netrunning-DataMine-Type-1"; }
+    else { if dataType == 2 { typeKey = n"Better-Netrunning-DataMine-Type-2"; }
+    else { if dataType == 3 { typeKey = n"Better-Netrunning-DataMine-Type-3"; }
+    else                     { typeKey = n"Better-Netrunning-DataMine-Type-4"; }; }; }; }
+
+    let text: String;
+    if amount <= 0 {
+      text = GetLocalizedTextByKey(n"Better-Netrunning-DataMine-Notify-Empty");
+    } else {
+      text = GetLocalizedTextByKey(n"Better-Netrunning-DataMine-Notify-Gained")
+        + ToString(amount) + " " + GetLocalizedTextByKey(typeKey)
+        + GetLocalizedTextByKey(n"Better-Netrunning-DataMine-Notify-GhostNET");
+    }
+
+    let msg: SimpleScreenMessage;
+    msg.isShown  = true;
+    msg.duration = 4.0;
+    msg.message  = text;
+    let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gameInstance).Get(GetAllBlackboardDefs().UI_Notifications);
+    if IsDefined(bb) {
+      bb.SetVariant(GetAllBlackboardDefs().UI_Notifications.WarningMessage, ToVariant(msg), true);
+    }
+  }
+
   public static func OnDaemonsCompleted(
     activePrograms: array<TweakDBID>,
     devicePS:       ref<ScriptableDeviceComponentPS>,
@@ -274,6 +307,18 @@ public abstract class NetworkStateUtils {
           let currentRAM: Float = statPoolSys.GetStatPoolValue(playerID, gamedataStatPoolType.Memory, false);
           statPoolSys.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.Memory, currentRAM + offloadGain, player, false);
           BNInfo("NetworkState", "Offload Protocol r" + ToString(offloadRank) + " — RAM +" + ToString(Cast<Int32>(offloadGain)) + " (was " + ToString(currentRAM) + ")");
+        }
+
+      } else if Equals(pid, BNConstants.PROGRAM_BN_DATAMINE()) {
+
+        let ghostNET: ref<GhostNETSystem> = GhostNETSystem.GetInstance(gameInstance);
+        if IsDefined(ghostNET) {
+          let dataType: Int32 = NetworkStateUtils.RollDataMineType();
+          let amount: Int32 = RandRange(0, 4);
+          ghostNET.GrantDataMine(dataType, amount);
+          BNInfo("NetworkState", "DataMine — granted " + ToString(amount) + " type=" + ToString(dataType));
+
+          NetworkStateUtils.ShowDataMineNotification(gameInstance, dataType, amount);
         }
       }
 

@@ -28,6 +28,8 @@ public enum BNPerk {
 
   FirewallReflect  = 17,
   FirewallBreach   = 18,
+
+  DataMineProtocol = 19,
 }
 
 public abstract class BNPerkData {
@@ -53,6 +55,7 @@ public abstract class BNPerkData {
       case BNPerk.OffloadProtocol:  return 3;
       case BNPerk.FirewallReflect:  return 1;
       case BNPerk.FirewallBreach:   return 1;
+      case BNPerk.DataMineProtocol: return 1;
       default:                       return 0;
     }
   }
@@ -78,6 +81,7 @@ public abstract class BNPerkData {
       case BNPerk.OffloadProtocol:  return "Offload Protocol";
       case BNPerk.FirewallReflect:  return "Firewall Reflect";
       case BNPerk.FirewallBreach:   return "Firewall Breach";
+      case BNPerk.DataMineProtocol: return "DataMine Protocol";
       default:                       return "Unknown";
     }
   }
@@ -85,7 +89,7 @@ public abstract class BNPerkData {
   public static func ApplyDevAll(player: ref<PlayerPuppet>, toMax: Bool) -> Void {
     if !IsDefined(player) { return; }
     let i: Int32 = 0;
-    while i <= 18 {
+    while i <= 19 {
       let perk: BNPerk = IntEnum<BNPerk>(i);
       player.SetBNPerkLevel(perk, toMax ? BNPerkData.GetMaxLevel(perk) : 0);
       i += 1;

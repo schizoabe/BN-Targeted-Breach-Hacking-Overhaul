@@ -146,7 +146,7 @@ public abstract class TargetedBreachUtils {
         return unlockedNames;
     }
 
-    private static func UnlockVehicle(
+    public static func UnlockVehicle(
         vehicle:      ref<VehicleObject>,
         currentTime:  Float,
         gameInstance: GameInstance

@@ -195,7 +195,7 @@ private final func BNTryFirewall(gi: GameInstance) -> Bool {
 
   GameInstance.GetTimeSystem(gi).SetTimeDilation(n"BNFirewall", 0.0);
 
-  let npcEntity: wref<Entity> = this.m_npcPuppet as Entity;
+  let npcEntity: wref<Entity> = this.m_npcPuppet;
   let launched: Bool = BNNativeBreachLauncher.Launch(
     gi, this.m_playerPuppet, t"CustomHackingSystemMinigame.BNFirewall", "BN Firewall", npcEntity
   );

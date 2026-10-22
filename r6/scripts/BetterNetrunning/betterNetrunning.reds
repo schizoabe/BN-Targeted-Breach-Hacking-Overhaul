@@ -25,6 +25,9 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
     gameInstance = (this.m_entity as ScriptedPuppet).GetGame();
   } else if IsDefined(this.m_entity as Device) {
     gameInstance = (this.m_entity as Device).GetGame();
+  } else if IsDefined(this.m_entity as VehicleObject) {
+
+    gameInstance = (this.m_entity as VehicleObject).GetGame();
   }
 
   let markingSystem: ref<MarkingStateSystem>;
@@ -36,7 +39,7 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
   }
 
   let npcPuppet: ref<ScriptedPuppet> = this.m_entity as ScriptedPuppet;
-  if IsDefined(npcPuppet) && npcPuppet.IsIncapacitated() {
+  if IsDefined(npcPuppet) && npcPuppet.IsIncapacitated() && !npcPuppet.IsDead() {
     if GameInstance.IsValid(gameInstance) {
       let perkSysNPC: ref<BNPerkSystem> = BNPerkSystem.GetInstance(gameInstance);
       if IsDefined(perkSysNPC) && perkSysNPC.GetPerkLevel(BNPerk.NeuralTap) <= 0 {
@@ -130,12 +133,15 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
   }
 
   if GameInstance.IsValid(gameInstance) {
-    let breachDevicePS: ref<ScriptableDeviceComponentPS>;
+
+    let breachSharedPS: ref<SharedGameplayPS>;
     if IsDefined(this.m_entity as Device) {
-      breachDevicePS = (this.m_entity as Device).GetDevicePS();
+      breachSharedPS = (this.m_entity as Device).GetDevicePS();
+    } else if IsDefined(this.m_entity as VehicleObject) {
+      breachSharedPS = (this.m_entity as VehicleObject).GetVehiclePS();
     }
-    if IsDefined(breachDevicePS) {
-      NetworkStateUtils.OnBreachEntered(breachDevicePS, gameInstance);
+    if IsDefined(breachSharedPS) {
+      NetworkStateUtils.OnBreachEntered(breachSharedPS, gameInstance);
     }
 
     let cbs: ref<CounterBreachSystem> =
@@ -145,6 +151,8 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
       let isStandalone: Bool;
       if IsDefined(this.m_entity as AccessPoint) || (this.m_entity as GameObject).IsPuppet() {
         isStandalone = false;
+      } else if IsDefined(this.m_entity as VehicleObject) {
+        isStandalone = true;
       } else if IsDefined(this.m_entity as Device) {
         isStandalone = !(this.m_entity as Device).GetDevicePS().IsConnectedToPhysicalAccessPoint();
       }
@@ -236,6 +244,8 @@ public final func FilterPlayerPrograms(programs: script_ref<array<MinigameProgra
 
   if (this.m_entity as GameObject).IsPuppet() {
     connectedToNetwork = true;
+  } else if IsDefined(this.m_entity as VehicleObject) {
+    connectedToNetwork = false;
   } else {
     let isAccessPoint: Bool = IsDefined(this.m_entity as AccessPoint);
     if isAccessPoint {

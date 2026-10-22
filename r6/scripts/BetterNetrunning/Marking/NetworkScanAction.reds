@@ -368,6 +368,11 @@ public final func GetRemoteActions(out outActions: array<ref<DeviceAction>>, con
     return;
   }
 
+  let beamSourceDevice: ref<Device> = deviceEntity as Device;
+  if IsDefined(beamSourceDevice) {
+    mss.CacheNetworkBeamFXIfValid(beamSourceDevice.GetDefaultNetworkBeamResource());
+  }
+
   let subnetType: MarkedSubnetType;
   if DaemonFilterUtils.IsCamera(this) {
     subnetType = MarkedSubnetType.Camera;

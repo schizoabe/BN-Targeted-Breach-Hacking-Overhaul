@@ -22,7 +22,7 @@ public class BetterNetrunningSettings {
 
     public static func MarkBeamsEnabled() -> Bool {
         let cfg: ref<BNConfig> = BNConfig.GetInstance(GetGameInstance());
-        return IsDefined(cfg) ? cfg.markBeamsEnabled : true;
+        return IsDefined(cfg) ? cfg.markBeamsEnabled : false;
     }
 
     public static func HackThePlanetEnabled() -> Bool {

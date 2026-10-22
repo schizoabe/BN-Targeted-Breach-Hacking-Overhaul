@@ -22,7 +22,7 @@ public class BNConfig extends ScriptableSystem {
   public let enableClassicMode:            Bool = false;
   public let allowBreachUnconsciousNPCs:   Bool = true;
   public let offensiveDaemonsEnabled:      Bool = true;
-  public let markBeamsEnabled:             Bool = true;
+  public let markBeamsEnabled:             Bool = false;
   public let breachFailurePenaltyEnabled:    Bool = true;
   public let apBreachFailurePenaltyEnabled:  Bool = true;
   public let npcBreachFailurePenaltyEnabled: Bool = true;
@@ -30,7 +30,8 @@ public class BNConfig extends ScriptableSystem {
   public let debugLogLevel:                Int32 = 2;
 
   public let hackThePlanetEnabled:               Bool = true;
-  public let hackThePlanetReinitializeAccessPoints: Bool = true;
+
+  public let hackThePlanetReinitializeAccessPoints: Bool = false;
 
   public let unconsciousBreachChoiceSlot:  Int32 = 3;
 
